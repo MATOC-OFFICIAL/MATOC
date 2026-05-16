@@ -104,8 +104,11 @@
     <div class="auth-gate" id="authGate">
         <div class="auth-card">
             <h2 style="text-transform: uppercase; margin-bottom: 10px; color: var(--primary);">Terminal Log</h2>
-            <p style="font-size: 12px; color: #666; margin-bottom: 25px;">Enter username to synchronize workspace session.</p>
-            <input type="text" id="authUsername" placeholder="Enter Unique Username">
+            <p style="font-size: 12px; color: #666; margin-bottom: 25px;">Enter your assigned handle credentials to bypass system security.</p>
+            
+            <input type="text" id="authUsername" placeholder="Enter Username">
+            <input type="password" id="authPassword" placeholder="Enter Password">
+            
             <button onclick="handleTerminalLogin()" style="background:var(--primary); color:white; border:none; padding:14px; width:100%; border-radius:8px; font-weight:bold; cursor:pointer; text-transform:uppercase;">Connect Terminal</button>
         </div>
     </div>
@@ -233,7 +236,7 @@
     </div>
 
     <script>
-        // FULLY POPULATED INITIALIZATION WITH SAFE SCANNER ESCAPE STRINGS
+        // FIREBASE PROJECT DATA SYNCHRONIZER CONFIG
         const firebaseConfig = {
             apiKey: "AIzaSy" + "CP1yvH-mJx7_vxtG4k18PjforZicWTXm4", 
             authDomain: "potato-builders.firebaseapp.com",
@@ -248,54 +251,38 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        // RUNTIME STORAGE
+        // 🌟 LOCAL ACCOUNTS STORAGE (Edit this directly to add/change accounts!)
+        const localAccounts = {
+            "nafeez": "1234",
+            "admin": "potato2026",
+            "guest": "0000"
+        };
+
+        // APPLICATION RUNTIME STATE
         let cart = [];
         let marketItems = []; 
         let activeDMPath = null;
         let currentUser = null; 
         let computedAppraisalValue = 0;
 
-        // ACCELERATED PASSWORDLESS SYSTEM WITH UNIQUE LOGOUT HARDWARE IDENTIFICATION
+        // LOCAL VALIDATION SYSTEM (NO FIREBASE ENGAGED FOR THIS STAGE)
         function handleTerminalLogin() {
             let user = document.getElementById('authUsername').value.trim().toLowerCase();
+            let pass = document.getElementById('authPassword').value.trim();
             
-            if(!user) { alert("Please input a handle name."); return; }
-            if(user.includes(" ")) { alert("Usernames cannot contain spaces!"); return; }
-            if(user.includes(".") || user.includes("#") || user.includes("$") || user.includes("[") || user.includes("]")) {
-                alert("Special characters not allowed inside matrix nodes.");
-                return;
+            if(!user || !pass) { alert("Please input both username and password."); return; }
+
+            // Validate against the local hardcoded accounts list
+            if (localAccounts[user] && localAccounts[user] === pass) {
+                loginSuccess(user);
+            } else {
+                alert("Access Denied: Invalid Terminal Credentials!");
             }
-
-            let deviceToken = localStorage.getItem('potato_device_token');
-            if(!deviceToken) {
-                deviceToken = 'dev_' + Math.random().toString(36).substring(2, 15);
-                localStorage.setItem('potato_device_token', deviceToken);
-            }
-
-            database.ref('marketplace/users/' + user).once('value', snapshot => {
-                let existingUser = snapshot.val();
-
-                if(existingUser) {
-                    if(existingUser.deviceToken === deviceToken) {
-                        loginSuccess(user);
-                    } else {
-                        alert("Access Denied: Username taken, try another one!");
-                    }
-                } else {
-                    database.ref('marketplace/users/' + user).set({
-                        username: user,
-                        deviceToken: deviceToken,
-                        timestamp: Date.now()
-                    }).then(() => {
-                        loginSuccess(user);
-                    }).catch(e => alert("Database Node Connection Error: " + e.message));
-                }
-            });
         }
 
         function loginSuccess(username) {
             currentUser = username;
-            localStorage.setItem('potato_active_session', username);
+            localStorage.setItem('potato_local_session', username);
             document.getElementById('authGate').style.display = 'none';
             document.getElementById('userDisplayTag').innerText = `USER: ${username.toUpperCase()}`;
             listenToMarketplace();
@@ -303,25 +290,19 @@
 
         function logoutTerminal() {
             currentUser = null;
-            localStorage.removeItem('potato_active_session');
+            localStorage.removeItem('potato_local_session');
             document.getElementById('authGate').style.display = 'flex';
             document.getElementById('authUsername').value = "";
+            document.getElementById('authPassword').value = "";
             document.getElementById('userDisplayTag').innerText = "Not Logged In";
             if(activeDMPath) database.ref(activeDMPath).off();
         }
 
+        // AUTO SESSION RESTORATION
         window.onload = function() {
-            let savedSession = localStorage.getItem('potato_active_session');
-            let deviceToken = localStorage.getItem('potato_device_token');
-            if(savedSession && deviceToken) {
-                database.ref('marketplace/users/' + savedSession).once('value', snapshot => {
-                    let d = snapshot.val();
-                    if(d && d.deviceToken === deviceToken) {
-                        loginSuccess(savedSession);
-                    } else {
-                        logoutTerminal();
-                    }
-                });
+            let savedSession = localStorage.getItem('potato_local_session');
+            if(savedSession && localAccounts[savedSession]) {
+                loginSuccess(savedSession);
             }
         };
 
@@ -338,7 +319,7 @@
             if(document.getElementById('sidebar').classList.contains('active')) toggleSidebar();
         }
 
-        // DATABASE ADAPTER READ STREAMS
+        // FIREBASE DATABASE READ SUBSCRIPTION STREAM
         function listenToMarketplace() {
             database.ref('marketplace/items').on('value', snapshot => {
                 const data = snapshot.val();
@@ -353,7 +334,7 @@
             });
         }
 
-        // RENDER MARKET CODES
+        // MARKET ELEMENT BUILDER LOOPS
         function renderMarketGrid() {
             let grid = document.getElementById('marketGrid');
             grid.innerHTML = "";
@@ -403,7 +384,7 @@
             });
         }
 
-        // CART ROUTINES
+        // CART AND CHECKOUT ROUTINES (FIREBASE WRITE AGENTS)
         function addToCart(itemId, title, price) {
             let itemData = marketItems.find(i => i.id === itemId);
             if(itemData && parseInt(itemData.stocks) <= 0) { alert("Out of stock!"); return; }
@@ -462,14 +443,14 @@
             }
 
             database.ref().update(updates).then(() => {
-                alert("Order confirmed! Stock decremented successfully inside the database node.");
+                alert("Order confirmed! Stock decremented inside the cloud database node.");
                 cart = [];
                 updateCartUI();
                 toggleCart();
             }).catch(e => alert("Stock Sync Error: " + e.message));
         }
 
-        // DIRECT INSTANT CHATTING LOGIC SETUP
+        // INTER-USER DIRECT CHAT CHANNELS
         function openInternalDM(itemId, itemTitle, sellerName) {
             if(!currentUser) return;
             if(currentUser === sellerName) { alert("You can't chat with yourself, machi!"); return; }
@@ -496,6 +477,7 @@
             });
         }
 
+        // CHAT DISCONNECTS
         function closeDMWindow() {
             if(activeDMPath) database.ref(activeDMPath).off();
             document.getElementById('dmBox').style.display = 'none';
@@ -517,7 +499,7 @@
             database.ref(activeDMPath).push(msgPayload).then(() => { el.value = ""; });
         }
 
-        // APPRAISAL ADS ACTIONS
+        // SELLINGS LOGIC & PRICING APPRAISALS
         function openSell() {
             if(!currentUser) return;
             document.getElementById('hardwareName').value = "";
@@ -571,7 +553,7 @@
             }
         }
 
-        // BUDGET CONTROLS
+        // PRICE STRATEGIZER SLIDERS
         const slider = document.getElementById('budgetSlider');
         slider.oninput = function() {
             document.getElementById('priceLabel').innerText = parseInt(this.value).toLocaleString('en-IN');
