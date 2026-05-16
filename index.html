@@ -113,8 +113,8 @@
     <div class="auth-gate" id="authGate">
         <div class="auth-card">
             <h2 id="authTitle" style="text-transform: uppercase; margin-bottom: 25px; color: var(--primary);">Terminal Log</h2>
-            <input type="email" id="authEmail" placeholder="Access Email Address">
-            <input type="password" id="authPassword" placeholder="Security Token Passphrase">
+            <input type="text" id="authUsername" placeholder="Create Unique Username">
+            <input type="password" id="authLockPin" placeholder="Security Lock PIN Code" maxlength="8">
             <button onclick="handleAuthSubmit()" id="authSubmitBtn" style="background:var(--primary); color:white; border:none; padding:14px; width:100%; border-radius:8px; font-weight:bold; cursor:pointer; text-transform:uppercase; margin-bottom:15px;">Login Terminal</button>
             <div style="font-size:12px; color:#666; cursor:pointer;" onclick="toggleAuthMode()" id="authToggleMsg">Need credentials? Register an account</div>
         </div>
@@ -243,7 +243,7 @@
     </div>
 
     <script>
-// 1. DATABASE REGISTRATION KEYS (Locked & Loaded for marketplace-web)
+        // LIVE MATRIX KEYS FOR YOUR MARKETPLACE-WEB APP
         const firebaseConfig = {
             apiKey: "AIzaSyCP1yvH-mJx7_vxtG4k18PjforZicWTXm4", 
             authDomain: "potato-builders.firebaseapp.com",
@@ -259,7 +259,7 @@
         const auth = firebase.auth();
         const database = firebase.database();
 
-        // RUNTIME MEMORY
+        // RUNTIME STORAGE
         let cart = [];
         let marketItems = []; 
         let activeDMPath = null;
@@ -267,23 +267,41 @@
         let currentUser = null;
         let computedAppraisalValue = 0;
 
-        // AUTH CONTROL ROUTINES
+        // AUTH SYSTEM REFACTORED TO USERNAME + LOCK PIN ARRAYS
         function toggleAuthMode() {
             authLoginMode = !authLoginMode;
             document.getElementById('authTitle').innerText = authLoginMode ? "Terminal Log" : "Register Access";
             document.getElementById('authSubmitBtn').innerText = authLoginMode ? "Login Terminal" : "Create Account";
             document.getElementById('authToggleMsg').innerText = authLoginMode ? "Need credentials? Register an account" : "Have an account? Login here";
+            document.getElementById('authUsername').placeholder = authLoginMode ? "Enter Username" : "Create Unique Username";
         }
 
         function handleAuthSubmit() {
-            let email = document.getElementById('authEmail').value.trim();
-            let pass = document.getElementById('authPassword').value;
-            if(!email || !pass) { alert("Complete security inputs."); return; }
+            let rawUser = document.getElementById('authUsername').value.trim().toLowerCase();
+            let rawPin = document.getElementById('authLockPin').value;
+            
+            if(!rawUser || !rawPin) { alert("Please complete both inputs."); return; }
+            if(rawUser.includes(" ")) { alert("Usernames cannot contain spaces!"); return; }
+
+            // Stitches fake email and safe custom salted password for Firebase backend rules
+            let syntheticEmail = `${rawUser}@potato.com`;
+            let syntheticPassword = `${rawPin}_potato_secure_gate`;
 
             if(authLoginMode) {
-                auth.signInWithEmailAndPassword(email, pass).catch(e => alert("Access Denied: " + e.message));
+                auth.signInWithEmailAndPassword(syntheticEmail, syntheticPassword)
+                    .catch(e => alert("Terminal Entry Denied: Bad Username or Lock PIN!"));
             } else {
-                auth.createUserWithEmailAndPassword(email, pass).catch(e => alert("Registration Failed: " + e.message));
+                auth.createUserWithEmailAndPassword(syntheticEmail, syntheticPassword)
+                    .then(cred => {
+                        alert(`Account successfully created!\nUsername: ${rawUser}\nKeep your PIN safe!`);
+                    })
+                    .catch(e => {
+                        if(e.code === "auth/email-already-in-use") {
+                            alert("CRITICAL ERROR: That username is already taken by someone else!");
+                        } else {
+                            alert("Registration Blocked: Make sure your Lock PIN is secure!");
+                        }
+                    });
             }
         }
 
@@ -294,7 +312,10 @@
             if(user) {
                 currentUser = user;
                 document.getElementById('authGate').style.display = 'none';
-                document.getElementById('userDisplayTag').innerText = user.email;
+                
+                // Show clean custom username inside toolbar layout instead of email
+                let cleanUsername = user.email.split('@')[0].toUpperCase();
+                document.getElementById('userDisplayTag').innerText = `USER: ${cleanUsername}`;
                 listenToMarketplace();
             } else {
                 currentUser = null;
@@ -305,7 +326,6 @@
 
         // VIEW UTILS
         function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
-        function toggleTheme() { document.body.dataset.theme = document.body.dataset.theme === 'light' ? 'dark' : 'light'; }
         function closeModals() { document.getElementById('sellModal').style.display = 'none'; }
         function toggleCart() { document.getElementById('cartPanel').classList.toggle('active'); }
 
@@ -346,15 +366,15 @@
                 let stockCount = parseInt(item.stocks) || 0;
                 let isOutOfStock = stockCount <= 0;
                 
-                // Hide or change button state if out of stock
                 let buyActionBtn = isOutOfStock 
                     ? `<button disabled style="background:#333; color:#666; border:none; padding:8px; border-radius:6px; font-weight:bold; font-size:13px;">SOLD OUT</button>`
                     : `<button onclick="addToCart('${item.id}', '${item.title}', ${item.price})" style="background:var(--primary); border:none; color:white; padding:8px 12px; border-radius:6px; cursor:pointer; font-weight:bold; font-size:13px;">🛒 +</button>`;
 
-                // Conditionally display delete button ONLY if you are the owner who posted it
                 let deleteBtn = (currentUser && item.sellerUid === currentUser.uid)
                     ? `<button class="delete-listing-btn" onclick="deleteMarketItem('${item.id}')">✖</button>`
                     : "";
+
+                let cleanDisplaySeller = item.sellerName ? item.sellerName : "System";
 
                 grid.innerHTML += `
                     <div class="market-card">
@@ -369,7 +389,7 @@
                                     <span class="market-tag prime">${item.type}</span>
                                     <span class="market-tag" style="color:${isOutOfStock ? '#ff4444':'#01940b'}">Stock: ${stockCount} left</span>
                                 </div>
-                                ${item.thoughts ? `<div class="seller-thoughts-box"><b>Seller:</b> "${item.thoughts}"</div>` : ''}
+                                ${item.thoughts ? `<div class="seller-thoughts-box"><b>${cleanDisplaySeller}:</b> "${item.thoughts}"</div>` : ''}
                                 <div class="market-item-price">₹${item.price.toLocaleString('en-IN')}</div>
                             </div>
                             <div class="market-action-row">
@@ -420,7 +440,7 @@
             document.getElementById('cartTotalValue').innerText = "₹" + total.toLocaleString('en-IN');
         }
 
-        // CHECKOUT TRANSFERS AND CRITICAL STOCK DECREMENTATION
+        // CHECKOUT AND STOCK DECREMENTATION
         function checkoutTerminal() {
             if(cart.length === 0) return;
             
@@ -454,12 +474,10 @@
             if(!currentUser) return;
             if(currentUser.uid === sellerUid) { alert("You can't chat with yourself, machi!"); return; }
 
-            // Create a unique combined path room for this buyer and this specific item listing
             activeDMPath = `marketplace/chats/${itemId}_${currentUser.uid}`;
             document.getElementById('dmTargetTitle').innerText = `Chat: ${itemTitle}`;
             document.getElementById('dmBox').style.display = 'flex';
 
-            // Connect real-time message listener stream
             database.ref(activeDMPath).on('value', snapshot => {
                 let logs = document.getElementById('dmLogs');
                 logs.innerHTML = "";
@@ -467,9 +485,10 @@
                 if(msgs) {
                     Object.keys(msgs).forEach(k => {
                         let m = msgs[k];
-                        let alignStyle = m.senderEmail === currentUser.email ? 'align-self:flex-end; background:var(--primary);' : 'align-self:flex-start; background:#222;';
+                        let cleanSender = m.senderName ? m.senderName : "User";
+                        let alignStyle = m.senderUid === currentUser.uid ? 'align-self:flex-end; background:var(--primary);' : 'align-self:flex-start; background:#222;';
                         logs.innerHTML += `<div style="padding:10px 14px; border-radius:12px; margin-bottom:6px; max-width:80%; ${alignStyle} color:white;">
-                            <div style="font-size:9px; opacity:0.5; margin-bottom:2px;">${m.senderEmail}</div>
+                            <div style="font-size:9px; opacity:0.5; margin-bottom:2px;">${cleanSender}</div>
                             <div>${m.msgText}</div>
                         </div>`;
                     });
@@ -490,8 +509,11 @@
             let txt = el.value.trim();
             if(!txt || !activeDMPath) return;
 
+            let myName = currentUser.email.split('@')[0];
+
             let msgPayload = {
-                senderEmail: currentUser.email,
+                senderUid: currentUser.uid,
+                senderName: myName,
                 msgText: txt,
                 timestamp: Date.now()
             };
@@ -530,6 +552,8 @@
             if(!title) { alert("Enter an item title!"); return; }
             if(computedAppraisalValue <= 0) { alert("Appraisal price must exceed zero!"); return; }
 
+            let myName = currentUser.email.split('@')[0];
+
             let payload = {
                 title: title,
                 imageUrl: img,
@@ -539,6 +563,7 @@
                 type: document.getElementById('hardwareType').value,
                 condition: "Inspected Tier",
                 sellerUid: currentUser.uid,
+                sellerName: myName,
                 timestamp: Date.now()
             };
 
@@ -553,7 +578,7 @@
             }
         }
 
-        // STRATEGIC HARDWARE ALGORITHMS
+        // SLIDER CONTROL LOOP
         const slider = document.getElementById('budgetSlider');
         slider.oninput = function() {
             document.getElementById('priceLabel').innerText = parseInt(this.value).toLocaleString('en-IN');
