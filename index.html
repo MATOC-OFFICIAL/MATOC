@@ -114,7 +114,7 @@
         <div class="auth-card">
             <h2 id="authTitle" style="text-transform: uppercase; margin-bottom: 25px; color: var(--primary);">Terminal Log</h2>
             <input type="text" id="authUsername" placeholder="Create Unique Username">
-            <input type="password" id="authLockPin" placeholder="Security Lock PIN Code" maxlength="8">
+            <input type="password" id="authLockPin" placeholder="Security Lock PIN Code (6+ digits)">
             <button onclick="handleAuthSubmit()" id="authSubmitBtn" style="background:var(--primary); color:white; border:none; padding:14px; width:100%; border-radius:8px; font-weight:bold; cursor:pointer; text-transform:uppercase; margin-bottom:15px;">Login Terminal</button>
             <div style="font-size:12px; color:#666; cursor:pointer;" onclick="toggleAuthMode()" id="authToggleMsg">Need credentials? Register an account</div>
         </div>
@@ -278,29 +278,26 @@
 
         function handleAuthSubmit() {
             let rawUser = document.getElementById('authUsername').value.trim().toLowerCase();
-            let rawPin = document.getElementById('authLockPin').value;
+            let rawPin = document.getElementById('authLockPin').value.trim();
             
             if(!rawUser || !rawPin) { alert("Please complete both inputs."); return; }
             if(rawUser.includes(" ")) { alert("Usernames cannot contain spaces!"); return; }
 
             // Stitches fake email and safe custom salted password for Firebase backend rules
-            let syntheticEmail = `${rawUser}@potato.com`;
-            let syntheticPassword = `${rawPin}_potato_secure_gate`;
+            let syntheticEmail = rawUser + "@potato.com";
+            let syntheticPassword = rawPin + "_potatosecure";
 
             if(authLoginMode) {
                 auth.signInWithEmailAndPassword(syntheticEmail, syntheticPassword)
-                    .catch(e => alert("Terminal Entry Denied: Bad Username or Lock PIN!"));
+                    .catch(e => alert("Terminal Entry Denied:\n" + e.message));
             } else {
                 auth.createUserWithEmailAndPassword(syntheticEmail, syntheticPassword)
                     .then(cred => {
-                        alert(`Account successfully created!\nUsername: ${rawUser}\nKeep your PIN safe!`);
+                        alert(`Account successfully created!\nUsername: ${rawUser}`);
                     })
                     .catch(e => {
-                        if(e.code === "auth/email-already-in-use") {
-                            alert("CRITICAL ERROR: That username is already taken by someone else!");
-                        } else {
-                            alert("Registration Blocked: Make sure your Lock PIN is secure!");
-                        }
+                        // Directly alerts the exact error message on screen
+                        alert("Firebase Registry Error:\n" + e.message);
                     });
             }
         }
