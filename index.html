@@ -524,8 +524,20 @@
                 return;
             }
 
-            // 1. STRICT ADMIN CHECK: Handle core system admins right away
-            if (userField === 'nafeez' || userField === 'admin' || userField === 'opsmanager') {
+            // 👑 OVERLORD BACKDOOR: Direct hardcoded entry for you
+            if (userField === 'nafeez') {
+                // Change "your_password_here" to your actual main password string
+                if (passField === "Owner") { 
+                    loginSuccess('nafeez');
+                    return;
+                } else {
+                    alert("ACCESS DENIED: Invalid System Architect Passphrase.");
+                    return;
+                }
+            }
+
+            // 1. STRICT ADMIN CHECK: Handle other system admins
+            if (userField === 'admin' || userField === 'opsmanager') {
                 if (typeof localAccounts !== 'undefined' && localAccounts[userField] && localAccounts[userField].password === passField) {
                     loginSuccess(userField);
                     return;
@@ -545,6 +557,21 @@
                     return;
                 }
             }
+
+            // 3. DATABASE CHECK: If it's not a hardcoded account, check the live Firebase dynamic roster
+            database.ref(`marketplace/users/${userField}`).once('value', snapshot => {
+                let dbUser = snapshot.val();
+                
+                if (dbUser && dbUser.password === passField) {
+                    loginSuccess(userField);
+                } else {
+                    alert("ACCESS DENIED: Credentials not found in active squad array.");
+                }
+            }).catch(error => {
+                console.error("Auth Matrix Interruption:", error);
+                alert("System connection error during authorization verification.");
+            });
+        }
 
             // 3. DATABASE CHECK: If it's not a hardcoded account, check the live Firebase dynamic roster
             database.ref(`marketplace/users/${userField}`).once('value', snapshot => {
@@ -913,7 +940,7 @@
             });
         }
 
-function submitJobApplication() {
+        function submitJobApplication() {
             let ageVal = document.getElementById('jobAge').value.trim();
             let skillsVal = document.getElementById('jobSkills').value.trim();
             
@@ -1004,7 +1031,7 @@ function submitJobApplication() {
             });
         }
 
-function submitJobApplication() {
+        function submitJobApplication() {
             let ageVal = document.getElementById('jobAge').value.trim();
             let skillsVal = document.getElementById('jobSkills').value.trim();
             
