@@ -12,7 +12,6 @@
 
     <style>
         /* 🎨 SYSTEM DESIGN GRAPHIC PROFILES */
-        /* Default Terminal Matrix Style */
         :root { 
             --primary: #01940b; 
             --bg: #0b0b0b; 
@@ -25,7 +24,6 @@
             --glow: none;
         }
         
-        /* Premium Minimalist Style (Clean, Flat White, Premium Premium) */
         body.theme-minimalist {
             --primary: #000000;
             --bg: #f5f5f7;
@@ -38,7 +36,6 @@
             --glow: none;
         }
 
-        /* Extreme Maximalist Style (Cyberpunk Neon Override, RGB Overload) */
         body.theme-maximalist {
             --primary: #ff007f;
             --bg: #050014;
@@ -85,6 +82,7 @@
         .sidebar { position: fixed; top: 0; left: -300px; width: 280px; height: 100%; background: var(--card); border-right: 1px solid var(--border); transition: 0.4s; z-index: 2000; padding: 70px 20px; overflow-y: auto; box-sizing: border-box; visibility: hidden; }
         .sidebar.active { left: 0; visibility: visible; }
         .nav-item { padding: 12px; border-bottom: 1px solid var(--border); cursor: pointer; font-weight: bold; font-size: 13px; text-transform: uppercase; }
+        .admin-only-nav { display: none; border-left: 3px solid #1a73e8; padding-left: 8px; color: #1a73e8; }
 
         /* PC BUILDER STEP SYSTEM WIZARD */
         .wizard-container { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 35px; max-width: 600px; margin: 0 auto; box-sizing: border-box; box-shadow: var(--shadow); position: relative; }
@@ -123,7 +121,7 @@
         .cart-footer { border-top: 1px solid var(--border); padding-top: 15px; margin-top: 15px; }
         .checkout-btn { width: 100%; background: var(--primary); border: none; color: white; padding: 12px; border-radius: var(--radius); font-weight: bold; cursor: pointer; text-transform: uppercase; }
 
-        /* MARKETPLACE GRID & ADVERTISING SYSTEMS */
+        /* MARKETPLACE GRID SYSTEM */
         .market-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
         .market-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
         .market-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.3s ease; position: relative; box-shadow: var(--shadow); }
@@ -145,6 +143,11 @@
         .chat-seller-btn { display: flex; align-items: center; justify-content: center; background: #1a73e8; color: white; border: none; padding: 8px; border-radius: 6px; font-weight: bold; font-size: 13px; flex: 1; cursor: pointer; }
         .delete-listing-btn { position: absolute; top: 10px; right: 10px; background: rgba(255, 0, 0, 0.85); color: white; border: none; width: 28px; height: 28px; border-radius: 50%; font-weight: bold; cursor: pointer; z-index: 10; }
 
+        /* LIVE ORDER OPS TRACKING PANELS */
+        .ops-grid { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; }
+        .ops-order-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; position: relative; }
+        .ops-badge { position: absolute; top: 20px; right: 20px; background: rgba(26, 115, 232, 0.15); color: #1a73e8; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
+
         /* POST MODAL INPUT POPUPS */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 3000; justify-content: center; align-items: center; }
         .modal-content { background: var(--card); width: 90%; max-width: 440px; padding: 30px; border-radius: var(--radius); border: 1px solid var(--primary); max-height: 90vh; overflow-y: auto; box-sizing: border-box; text-align: left; }
@@ -152,7 +155,7 @@
         input, select, textarea { width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid var(--border); color: var(--text); border-radius: 8px; margin-bottom: 16px; box-sizing: border-box; font-size: 14px; font-family: inherit; }
         body.theme-minimalist input, body.theme-minimalist select, body.theme-minimalist textarea { background: #fff; color: #000; border-color: #ccc; }
 
-        /* DIRECT MESSAGE PEER REALTIME CHAT WINDOWS */
+        /* REALTIME MESSAGING DRAWER BOX */
         .dm-box { display: none; position: fixed; bottom: 20px; right: 20px; width: 360px; height: 480px; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); z-index: 4000; flex-direction: column; overflow: hidden; }
         .dm-header { background: #1a73e8; color: white; padding: 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
         body.theme-minimalist .dm-header { background: #000; }
@@ -195,11 +198,13 @@
         <div class="nav-item" onclick="switchTab('marketView')">🛒 Browse Store</div>
         <div class="nav-item" onclick="switchTab('buildView')">🖥️ Strategic Configurator</div>
         <div class="nav-item" onclick="openSell()">⚙️ Appraise & Sell Gear</div>
+        <div class="nav-item admin-only-nav" id="adminSidebarLink" onclick="switchTab('opsView')">📊 Live Order Pipeline</div>
     </div>
 
     <div class="tab-navigation">
         <button class="tab-btn active" id="btn-marketView" onclick="switchTab('marketView')">🛒 Marketplace</button>
         <button class="tab-btn" id="btn-buildView" onclick="switchTab('buildView')">🖥️ PC Builder</button>
+        <button class="tab-btn admin-only-nav" id="btn-opsView" onclick="switchTab('opsView')">📊 Pipeline</button>
     </div>
 
     <div class="cart-panel" id="cartPanel">
@@ -222,29 +227,23 @@
             <h2 style="text-transform: uppercase; margin: 0; font-size: 24px;">Matrix Marketplace</h2>
             <button onclick="openSell()" style="background:var(--primary); color:white; border:none; padding:10px 20px; border-radius:8px; font-weight:bold; cursor:pointer; text-transform:uppercase; font-size:12px;">+ Post an Ad</button>
         </div>
-
         <div id="terminal-ad-slot" style="background:rgba(0,0,0,0.3); border:1px dashed var(--primary); border-radius:12px; min-height:90px; margin-bottom:25px; display:flex; align-items:center; justify-content:center; color:#666; font-size:11px; text-transform:uppercase; letter-spacing:1px;">
             📡 Console Stream: Awaiting Ad Network Script Deployment Node...
         </div>
-
         <div class="market-grid" id="marketGrid"></div>
     </div>
 
     <div class="app-view" id="buildView">
         <div class="wizard-container">
-            
             <div class="wizard-step active" id="wizStep1">
                 <h3 style="text-transform: uppercase; color: var(--primary); margin-top: 0;">Step 1: Set Target Budget</h3>
                 <p style="font-size: 13px; color: #777;">Drag the tracker node or write your precise budget capacity allocation limits.</p>
-                
                 <div style="font-size: 44px; font-weight: 900; color: var(--text); text-align: center; margin: 20px 0;">
                     ₹<span id="wizPriceDisplay">15,000</span>
                 </div>
                 <input type="range" id="wizBudgetSlider" min="15000" max="400000" step="1000" value="15000" oninput="syncBudgetInputs('slider')">
-                
                 <label style="font-size: 11px; font-weight: bold; color: #555;">MANUAL SPECIFICATION INPUT (15,000 - 4,00,000)</label>
                 <input type="number" id="wizBudgetManual" min="15000" max="400000" value="15000" oninput="syncBudgetInputs('manual')">
-                
                 <div class="wizard-nav-row" style="justify-content: flex-end;">
                     <button class="wiz-btn next" onclick="changeWizardStep(2)">Next Range ➔</button>
                 </div>
@@ -253,19 +252,16 @@
             <div class="wizard-step" id="wizStep2">
                 <h3 style="text-transform: uppercase; color: var(--primary); margin-top: 0;">Step 2: Choose Classification</h3>
                 <p style="font-size: 13px; color: #777;">Select structural optimization tuning presets based on functional workloads.</p>
-                
                 <div class="category-grid">
                     <div class="category-card" id="cat-gaming" onclick="selectCategory('gaming')">🎮 Gaming</div>
                     <div class="category-card" id="cat-editing" onclick="selectCategory('editing')">🎬 Video Editing</div>
                     <div class="category-card" id="cat-school" onclick="selectCategory('school')">📚 School Purpose</div>
                     <div class="category-card" id="cat-modelling" onclick="selectCategory('modelling')">🧊 3D Modelling</div>
                 </div>
-
                 <div class="spec-output-box">
                     <h4 style="margin: 0 0 10px 0; color: var(--primary); text-transform: uppercase; font-size: 12px;">Generated Matrix Configuration</h4>
                     <div id="generatedSpecsArea">Select a category node to display optimization specs.</div>
                 </div>
-
                 <div class="wizard-nav-row">
                     <button class="wiz-btn" onclick="changeWizardStep(1)">⬅ Back</button>
                     <button class="wiz-btn next" onclick="goToStep3()">Next Stage ➔</button>
@@ -275,13 +271,11 @@
             <div class="wizard-step" id="wizStep3">
                 <h3 style="text-transform: uppercase; color: var(--primary); margin-top: 0;">Step 3: Payment Node</h3>
                 <p style="font-size: 13px; color: #777;">Define alternative banking streams and apply treasure chest discount codes.</p>
-                
                 <label>Billing Stream Route</label>
                 <select id="paymentMethodSelect" onchange="togglePaymentFields()">
                     <option value="cod">Cash On Delivery (COD)</option>
                     <option value="upi">Unified Payments Interface (UPI) / Cards</option>
                 </select>
-
                 <div id="upiPaymentFields" style="display: none; background:rgba(0,0,0,0.2); padding:15px; border-radius:12px; border:1px solid var(--border); margin-bottom:15px;">
                     <label>Select UPI Stream Method</label>
                     <select id="upiProvider">
@@ -291,7 +285,6 @@
                     <label>Card / Virtual Account ID Number String</label>
                     <input type="text" id="paymentAccountString" placeholder="Enter card numbers or VPA routing handle">
                 </div>
-
                 <div class="treasure-box" id="treasureContainer">
                     <input type="checkbox" id="useTreasureCheckbox" style="width: auto; margin: 0;" onchange="calculateFinalWizardPrice()" disabled>
                     <div>
@@ -299,12 +292,10 @@
                         <span style="font-size: 12px; display: block; color: #666;" id="treasureDesc">Checking database files... Only users with previous completed checkout orders can use coins.</span>
                     </div>
                 </div>
-
                 <div style="margin-top: 25px; padding-top: 15px; border-top: 1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
                     <span style="font-weight:bold; font-size:14px;">Adjusted Invoice Cost:</span>
                     <strong style="font-size:24px; color:var(--primary);" id="wizardInvoiceTotal">₹0</strong>
                 </div>
-
                 <div class="wizard-nav-row">
                     <button class="wiz-btn" onclick="changeWizardStep(2)">⬅ Back</button>
                     <button class="wiz-btn next" onclick="changeWizardStep(4)">Next Stage ➔</button>
@@ -314,13 +305,10 @@
             <div class="wizard-step" id="wizStep4">
                 <h3 style="text-transform: uppercase; color: var(--primary); margin-top: 0;">Step 4: Delivery Destination</h3>
                 <p style="font-size: 13px; color: #777;">Input target coordinates to deploy and dispatch built architecture systems.</p>
-                
                 <label>Street Address Location</label>
                 <input type="text" id="shipAddress" placeholder="Apartment building number, Street Name...">
-
                 <label>City Hub Node</label>
                 <input type="text" id="shipCity" placeholder="e.g., Chennai, Nagercoil, Mumbai">
-
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                     <div>
                         <label>Province / State Territory</label>
@@ -331,13 +319,19 @@
                         <input type="text" id="shipPincode" placeholder="e.g., 629177" maxlength="6">
                     </div>
                 </div>
-
                 <div class="wizard-nav-row">
                     <button class="wiz-btn" onclick="changeWizardStep(3)">⬅ Back</button>
                     <button class="wiz-btn next" style="background:#1a73e8;" onclick="finalizeWizardBuildOrder()">Deploy Build Order 🛠️</button>
                 </div>
             </div>
+        </div>
+    </div>
 
+    <div class="app-view" id="opsView">
+        <h2 style="text-transform: uppercase; margin: 0 0 5px 0; font-size: 24px;">Live Operations Pipeline</h2>
+        <p style="font-size: 13px; color: #666; margin-bottom: 25px;">Real-time incoming client build data modules sync tracking dashboard.</p>
+        <div class="ops-grid" id="opsGrid">
+            <div style="text-align:center; color:#555; padding:40px;">Establishing background database sync connection node...</div>
         </div>
     </div>
 
@@ -388,7 +382,7 @@
     </div>
 
     <script>
-        // CORE INTEGRATED BACKEND ENGINE SCHEMATICS
+        // CORE BACKEND MATRIX INITIALIZATION CONFIGURATIONS
         const firebaseConfig = {
             apiKey: "AIzaSy" + "CP1yvH-mJx7_vxtG4k18PjforZicWTXm4", 
             authDomain: "potato-builders.firebaseapp.com",
@@ -403,9 +397,11 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
+        // ACCREDITED CORPORATE ROLE MAP NODES
         const localAccounts = {
             "nafeez": "1234",
             "admin": "potato2026",
+            "opsmanager": "opspass2026", // Add your employee account details here!
             "guest": "0000"
         };
 
@@ -418,19 +414,14 @@
         let selectedCategoryNode = 'gaming';
         let activeSelectedBudget = 15000;
 
-        // VISUAL STYLE ENGINE EXECUTION PRESETS
         function applyCorporateTheme(themeName) {
             document.body.className = ""; 
             document.querySelectorAll('.theme-toggle-btn').forEach(btn => btn.classList.remove('active'));
-            
-            if (themeName !== 'matrix') {
-                document.body.classList.add('theme-' + themeName);
-            }
+            if (themeName !== 'matrix') document.body.classList.add('theme-' + themeName);
             document.getElementById('theme-btn-' + themeName).classList.add('active');
             localStorage.setItem('potato_terminal_theme', themeName);
         }
 
-        // SECURITY LOG PASS LOGIC
         function handleTerminalLogin() {
             let user = document.getElementById('authUsername').value.trim().toLowerCase();
             let pass = document.getElementById('authPassword').value.trim();
@@ -451,29 +442,82 @@
             listenToMarketplace();
             selectCategory('gaming');
             
-            // Re-verify theme state
             let savedTheme = localStorage.getItem('potato_terminal_theme') || 'matrix';
             applyCorporateTheme(savedTheme);
 
-            // DETECT ACCESS CLEARANCE HOOKS FOR REALTIME NOTIFICATION LISTENERS
-            if (username === 'nafeez' || username === 'admin') {
+            // EVALUATE HIGH LEVEL ACCESS PRIVILEGES FOR OPERATIONS
+            if (username === 'nafeez' || username === 'admin' || username === 'opsmanager') {
+                document.querySelectorAll('.admin-only-nav').forEach(el => el.style.display = 'block');
                 activateAdminOrderListener();
+                syncOperationsPipeline();
+            } else {
+                document.querySelectorAll('.admin-only-nav').forEach(el => el.style.display = 'none');
             }
         }
 
-        // 🚨 PASSIVE REVENUE REALTIME ADMINISTRATIVE TRACKING LISTENER NODES
+        // 🚨 LIVE BACKGROUND AUDIO DESKTOP NOTIFICATION LISTENER
         function activateAdminOrderListener() {
-            console.log("📡 Admin Order Tracking Stream Active...");
+            console.log("📡 Admin Order Tracking Stream Active with Audio Context...");
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
             database.ref('marketplace/orders').on('child_added', (snapshot) => {
                 let orderData = snapshot.val();
-                // Flag alert context blocks only for new active streams
                 if (orderData && orderData.timestamp > (Date.now() - 10000)) {
-                    alert(`🚨 NEW INCOMING ORDER SUBMITTED! 🚨\n\n` +
-                          `👤 Buyer Node: ${orderData.buyerName.toUpperCase()}\n` +
+                    // Trigger double beep synth alarm frequency
+                    playNotificationBeep(audioCtx, 587.33, 0.1); // D5 Note
+                    setTimeout(() => playNotificationBeep(audioCtx, 659.25, 0.15), 120); // E5 Note
+
+                    alert(`🚨 NEW BUSINESS ORDER DEPLOYED! 🚨\n\n` +
+                          `👤 User Node: ${orderData.buyerName.toUpperCase()}\n` +
                           `📦 Pipeline: ${orderData.orderType}\n` +
-                          `💰 Invoiced: ₹${orderData.invoiceCost.toLocaleString('en-IN')}\n` +
-                          `📍 Core Hub: ${orderData.shippingCoordinates ? orderData.shippingCoordinates.city : 'In-Store Checkout'}`);
+                          `💰 Invoiced: ₹${orderData.invoiceCost.toLocaleString('en-IN')}`);
                 }
+            });
+        }
+
+        function playNotificationBeep(ctx, frequency, duration) {
+            try {
+                let osc = ctx.createOscillator();
+                let gain = ctx.createGain();
+                osc.type = "sine";
+                osc.frequency.value = frequency;
+                gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + duration);
+            } catch(e) { console.log("Audio trigger pending interaction block."); }
+        }
+
+        // LIVE PIPELINE MANAGER STORAGE VIEW ENGINE
+        function syncOperationsPipeline() {
+            database.ref('marketplace/orders').on('value', snapshot => {
+                let grid = document.getElementById('opsGrid');
+                grid.innerHTML = "";
+                let orders = snapshot.val();
+
+                if (!orders) {
+                    grid.innerHTML = `<div style="text-align:center; color:#555; padding:40px;">No active client builds running inside database matrices.</div>`;
+                    return;
+                }
+
+                Object.keys(orders).reverse().forEach(key => {
+                    let ord = orders[key];
+                    let dateStr = new Date(ord.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                    let coordHtml = ord.shippingCoordinates 
+                        ? `<p style="margin:4px 0; font-size:13px;">📍 <b>Routing target:</b> ${ord.shippingCoordinates.address}, ${ord.shippingCoordinates.city} (${ord.shippingCoordinates.pincode})</p>`
+                        : `<p style="margin:4px 0; font-size:13px; color:#888;">🛒 In-store instant checkout collection transaction</p>`;
+
+                    grid.innerHTML += `
+                        <div class="ops-order-card">
+                            <span class="ops-badge">${ord.chosenPayment || 'DIRECT'}</span>
+                            <h4 style="margin:0 0 10px 0; text-transform:uppercase; color:var(--primary); font-size:15px;">Order Context: ${ord.orderType}</h4>
+                            <p style="margin:4px 0; font-size:13px;">👤 <b>Account Handle:</b> ${ord.buyerName.toUpperCase()} at [${dateStr}]</p>
+                            ${ord.categoryPreset ? `<p style="margin:4px 0; font-size:13px;">🖥️ <b>Preset Profile Allocation:</b> ${ord.categoryPreset.toUpperCase()} layout</p>` : ''}
+                            ${coordHtml}
+                            <div style="margin-top:12px; font-weight:bold; font-size:16px; color:var(--text);">Net Value: <span style="color:var(--primary)">₹${ord.invoiceCost.toLocaleString('en-IN')}</span></div>
+                        </div>`;
+                });
             });
         }
 
@@ -497,15 +541,14 @@
             document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(viewId).classList.add('active');
-            document.getElementById('btn-' + viewId).classList.add('active');
+            let btn = document.getElementById('btn-' + viewId);
+            if(btn) btn.classList.add('active');
             if(document.getElementById('sidebar').classList.contains('active')) toggleSidebar();
         }
 
-        // RANGE ADJUSTMENT INPUT SYNCHRONIZATION DATA ROUTING
         function syncBudgetInputs(source) {
             let slider = document.getElementById('wizBudgetSlider');
             let manual = document.getElementById('wizBudgetManual');
-            
             if (source === 'slider') {
                 activeSelectedBudget = parseInt(slider.value);
                 manual.value = activeSelectedBudget;
@@ -546,21 +589,17 @@
             database.ref('marketplace/orders').once('value', snapshot => {
                 let orders = snapshot.val();
                 let hasPurchased = false;
-
                 if (orders) {
                     Object.keys(orders).forEach(key => {
-                        if (orders[key].buyerName === currentUser) {
-                            hasPurchased = true;
-                        }
+                        if (orders[key].buyerName === currentUser) hasPurchased = true;
                     });
                 }
-
                 if (hasPurchased) {
                     tCheckbox.disabled = false;
                     tBox.classList.add('unlocked');
                     tTitle.innerText = "✨ Treasure Coins Active!";
                     tTitle.style.color = "#ffd700";
-                    tDesc.innerText = "Verified Customer! 200 coins checked. Apply code to slash ₹100 (Max ₹500 discount)";
+                    tDesc.innerText = "Verified Customer! 200 coins checked. Apply code to slash ₹500 discount";
                     tDesc.style.color = "#aaa";
                 } else {
                     tCheckbox.disabled = true;
@@ -649,7 +688,6 @@
             }).catch(e => alert("Network Error: " + e.message));
         }
 
-        // MARKETPLACE STORES & GRID BUILD RENDERING INTERFACES
         function listenToMarketplace() {
             database.ref('marketplace/items').on('value', snapshot => {
                 const data = snapshot.val();
@@ -719,18 +757,17 @@
 
             cart.forEach(c => {
                 let dbItem = marketItems.find(i => i.id === c.itemId);
-                if(dbItem) { updates[`marketplace/items/${c.itemId}/stocks`] = Math.max(0, parseInt(dbItem.stocks) - 1); }
+                if(dbItem) updates[`marketplace/items/${c.itemId}/stocks`] = Math.max(0, parseInt(dbItem.stocks) - 1);
             });
             
             database.ref().update(updates).then(() => { 
-                alert("Checked out successfully! Your profile is verified as an active customer node."); 
+                alert("Checked out successfully! Active customer node verified."); 
                 cart = []; 
                 updateCartUI(); 
                 toggleCart(); 
             });
         }
 
-        // CHAT PACK ROUTER CORE CONTROLLERS
         function openInternalDM(itemId, itemTitle, sellerName) {
             if(!currentUser || currentUser === sellerName) return;
             activeDMPath = `marketplace/chats/${itemId}_${currentUser}`;
@@ -754,7 +791,6 @@
             database.ref(activeDMPath).push({ senderName: currentUser, msgText: txt, timestamp: Date.now() }).then(() => { el.value = ""; });
         }
 
-        // DEPRECIATION VALUE CALCULATOR FOR APPRAISALS
         function openSell() { if(!currentUser) return; document.getElementById('sellModal').style.display = 'flex'; }
         function calculateHardwareValue() {
             let orig = parseFloat(document.getElementById('origPrice').value) || 0;
