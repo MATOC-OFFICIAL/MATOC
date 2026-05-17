@@ -224,7 +224,14 @@
 
     <div class="header">
         <div onclick="toggleSidebar()" style="cursor:pointer; font-size: 24px; padding: 5px 10px;">☰</div>
-        <div style="font-weight: 900; letter-spacing: -1px;">LBPC <span style="color:var(--primary)">TERMINAL</span></div>
+        
+        <div style="display: flex; align-items: center; gap: 10px; font-weight: 900; letter-spacing: -1px;">
+            <div style="width: 26px; height: 26px; background: var(--primary); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 13px; font-family: monospace; box-shadow: 0 0 10px rgba(1, 148, 11, 0.2); font-weight: bold; transition: background 0.3s ease;">
+                LB
+            </div>
+            <span>LBPC <span style="color:var(--primary)">TERMINAL</span></span>
+        </div>
+
         <div style="display:flex; gap:20px; align-items:center;">
             <div id="userDisplayTag" style="font-size:11px; color:#666;">Not Logged In</div>
             <div onclick="logoutTerminal()" style="cursor:pointer; font-size: 11px; font-weight: bold; color: #ff4444;">🚪 EXIT</div>
@@ -429,7 +436,7 @@
     <div class="app-view" id="jobsView">
         <div class="wizard-container" style="max-width: 550px;">
             <h2 style="text-transform: uppercase; color: #0284c7; margin-top:0; font-style: italic;">💼 Squad Recruitment Desk</h2>
-            <p style="font-size: 13px; color: #475569; margin-bottom: 20px;">Deploy your technical profile metrics directly into our core review registry.</p>
+            <p style="font-size: 13px; color: #475569; margin-bottom: 20px;">Deploy your operational handle metrics directly into our structural review board.</p>
             
             <label>Target Operational Role</label>
             <select id="jobRole">
@@ -439,14 +446,8 @@
                 <option value="PC Hardware Specialist">PC Rig Assembly & Repair Specialist</option>
             </select>
 
-            <label>Portfolio / Github / Drive Repository Link</label>
-            <input type="url" id="jobPortfolio" placeholder="https://github.com/... or Google Drive URL">
-
-            <label>Expected Retainer Fee / Pay Scale (₹ / Project)</label>
-            <input type="number" id="jobPay" placeholder="Expected pricing node...">
-
-            <label>Core Technical Skillset & Hardware Experience</label>
-            <textarea id="jobSkills" placeholder="List your dev engines, frameworks, or past system configurations..." rows="3"></textarea>
+            <label>Core Technical Skillset, Hardware Experience & Background</label>
+            <textarea id="jobSkills" placeholder="List your dev engines, frameworks, past custom build configurations, or execution ideas..." rows="5"></textarea>
 
             <button onclick="submitJobApplication()" style="width:100%; background:linear-gradient(180deg, #60a5fa, #2563eb); color:white; border:none; padding:14px; border-radius:12px; font-weight:bold; cursor:pointer; text-transform:uppercase; box-shadow: 0 4px 12px rgba(37,99,235,0.2);">Submit Application Packet</button>
         </div>
@@ -932,35 +933,29 @@
 
         function openSell() { if(!currentUser) return; document.getElementById('sellModal').style.display = 'flex'; }
 
-        // 💼 SUBMIT JOB APPLICATION TO BACKEND ARRAY
+        // 💼 SUBMIT SIMPLIFIED APPLICATION PACKET TO BACKEND
         function submitJobApplication() {
             let role = document.getElementById('jobRole').value;
-            let portfolio = document.getElementById('jobPortfolio').value.trim();
-            let pay = document.getElementById('jobPay').value.trim();
             let skills = document.getElementById('jobSkills').value.trim();
 
-            if (!portfolio || !skills) { 
-                alert("Verification Error: Portfolio link and Skillset fields must be filled!"); 
+            if (!skills) { 
+                alert("Verification Error: Skillset descriptions cannot be left blank!"); 
                 return; 
             }
 
             database.ref('marketplace/job_applications').push({
                 applicantName: currentUser || "anonymous_node",
                 role: role,
-                portfolioUrl: portfolio,
-                expectedPay: pay ? parseInt(pay) : 0,
                 skillDescription: skills,
                 timestamp: Date.now()
             }).then(() => {
-                document.getElementById('jobPortfolio').value = "";
-                document.getElementById('jobPay').value = "";
                 document.getElementById('jobSkills').value = "";
-                alert("🚀 Application packet successfully processed and deployed to HQ review boards!");
+                alert("🚀 Profile entry processed and deployed to review boards successfully!");
                 switchTab('marketView');
-            }).catch(e => alert("Database Network Error: " + e.message));
+            }).catch(e => alert("Database Network Error: " + "machi" + e.message));
         }
 
-        // 📡 MONITOR HR APPLICANTS (STREAM INTO PIPELINE PANELS)
+        // 📡 MONITOR SIMPLIFIED HR PIPELINE INTERFACE
         function syncHRApplications() {
             database.ref('marketplace/job_applications').on('value', snapshot => {
                 let hrGrid = document.getElementById('hrOpsGrid');
@@ -981,18 +976,10 @@
                             <button class="delete-listing-btn" onclick="purgeApplication('${key}')">✖</button>
                             <span class="ops-badge" style="background:rgba(56,239,125,0.15); color:#11998e;">${appDate}</span>
                             <h4 style="margin:0 0 8px 0; text-transform:uppercase; color:#0284c7; font-size:15px;">Role: ${app.role}</h4>
-                            <p style="margin:4px 0; font-size:13px;">👤 <b>Applicant:</b> ${app.applicantName.toUpperCase()}</p>
-                            <p style="margin:4px 0; font-size:13px;">💰 <b>Expected Pay:</b> ₹${parseInt(app.expectedPay).toLocaleString('en-IN')}</p>
-                            <p style="margin:8px 0; font-size:12px; background:rgba(255,255,255,0.4); padding:10px; border-radius:6px; color:#334155;">
-                                <b>Skills:</b> ${app.skillDescription}
+                            <p style="margin:4px 0; font-size:13px;">👤 <b>Applicant Handle:</b> ${app.applicantName.toUpperCase()}</p>
+                            <p style="margin:8px 0; font-size:12px; background:rgba(255,255,255,0.4); padding:10px; border-radius:6px; color:#334155; line-height:1.4;">
+                                <b>Profile Metrics & Skills:</b><br>${app.skillDescription}
                             </p>
-                            <div style="display:flex; justify-content:flex-end; margin-top:10px;">
-                                <a href="${app.portfolioUrl}" target="_blank" style="text-decoration:none;">
-                                    <button style="background:#0284c7; color:white; border:none; padding:8px 12px; border-radius:6px; cursor:pointer; font-weight:bold; font-size:11px;">
-                                        📂 OPEN PORTFOLIO
-                                    </button>
-                                </a>
-                            </div>
                         </div>`;
                 });
             });
@@ -1040,7 +1027,7 @@
 
         function deleteMarketItem(id) { if(confirm("Strip entry?")) database.ref(`marketplace/items/${id}`).remove(); }
 
-        // 📡 MONITOR VAULT ARCHIVE CHANGES (ANONYMOUS CODES)
+        // 📡 MONITOR VAULT ARCHIVE CHANGES
         function listenToGameVault() {
             database.ref('marketplace/vault_games').on('value', snapshot => {
                 let grid = document.getElementById('vaultGameGrid');
@@ -1090,7 +1077,7 @@
             });
         }
 
-        // 💾 WRITE MODULE WITH NEW EXTENDED METADATA
+        // 💾 WRITE MODULE FOR DEVELOPER VAULT
         function submitGameToVault() {
             let title = document.getElementById('vaultGameName').value.trim();
             let url = document.getElementById('vaultGameUrl').value.trim();
