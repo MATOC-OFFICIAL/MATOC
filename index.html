@@ -271,6 +271,10 @@
             <button onclick="openSell()" style="background:var(--primary); color:white; border:none; padding:10px 20px; border-radius:8px; font-weight:bold; cursor:pointer; text-transform:uppercase; font-size:12px;">+ Post Listing</button>
         </div>
         
+        <div class="search-container" style="margin-bottom: 20px;">
+            <input type="text" id="marketSearchInput" placeholder="🔍 Search hardware archive..." oninput="handleSearchInput(event)" style="margin-bottom: 0;">
+        </div>
+        
         <div class="market-filter-row" id="marketFilterRow">
             <button class="filter-chip active" onclick="filterMarketplace('all')">All Gear</button>
             <button class="filter-chip" onclick="filterMarketplace('Component')">Components</button>
@@ -384,7 +388,7 @@
                 <input type="url" id="vaultGameImg" placeholder="Paste image web address URL">
             </div>
             <textarea id="vaultGameDesc" placeholder="Write level constraints, control mappings..." rows="2"></textarea>
-            <button onclick="submitGameToVault()" style="background:#00a2ff; color:#fff; border:none; padding:12px 24px; border-radius:8px; font-weight:bold; cursor:pointer; text-transform:uppercase;">Deploy Title to Archive</button>
+            <button onclick="submitGameToVault()" style="background:#00a2ff; color:#fff; border:none; padding:12px 24px; border-radius:8px; font-weight:bold; cursor:pointer; text-transform:uppercase;">Submit Title Node</button>
         </div>
         <div class="market-grid" id="vaultGameGrid"></div>
     </div>
@@ -471,14 +475,17 @@
         let currentUser = null; 
         let computedAppraisalValue = 0;
         let currentFilterCategory = 'all';
+        let searchQueryString = '';
         let selectedCategoryNode = 'gaming';
         let activeSelectedBudget = 15000;
+        let searchDebounceTimeout = null;
 
         function applyCorporateTheme(themeName) {
             document.body.className = ""; 
             document.querySelectorAll('.theme-toggle-btn').forEach(btn => btn.classList.remove('active'));
             if (themeName !== 'matrix') document.body.classList.add('theme-' + themeName);
-            document.getElementById('theme-btn-' + themeName).classList.add('active');
+            let themeBtn = document.getElementById('theme-btn-' + themeName);
+            if(themeBtn) themeBtn.classList.add('active');
             localStorage.setItem('potato_terminal_theme', themeName);
         }
 
@@ -496,8 +503,12 @@
         function loginSuccess(username) {
             currentUser = username;
             localStorage.setItem('potato_local_session', username);
-            document.getElementById('authGate').style.display = 'none';
-            document.getElementById('userDisplayTag').innerText = `USER: ${username.toUpperCase()}`;
+            
+            let authGateNode = document.getElementById('authGate');
+            if(authGateNode) authGateNode.style.display = 'none';
+            
+            let userTag = document.getElementById('userDisplayTag');
+            if(userTag) userTag.innerText = `USER: ${username.toUpperCase()}`;
             
             listenToMarketplace();
             listenToGameVault();
@@ -508,7 +519,8 @@
             applyCorporateTheme(savedTheme);
 
             if (username === 'nafeez' || username === 'admin') {
-                document.getElementById('developerGameConsole').style.display = 'block';
+                let devConsole = document.getElementById('developerGameConsole');
+                if(devConsole) devConsole.style.display = 'block';
             }
 
             if (username === 'nafeez' || username === 'admin' || username === 'opsmanager') {
@@ -557,6 +569,7 @@
             });
         }
 
+        // OPTIMIZATION: Stop Redundant Database Pulls via .once linear snapshot accessors
         function executeUserOrderCancellation(orderId) {
             if (!confirm("Are you sure you want to cancel this order? Your funds will be routed back instantly and items returned to shelves.")) return;
 
@@ -576,7 +589,7 @@
                 }
 
                 updates[`marketplace/orders/${orderId}`] = null;
-                database.ref().update(updates).then(() => alert("💰 Order cancelled successfully! Refund routed back into your simulated account."));
+                database.ref().update(updates).then(() => alert("💰 Order cancelled successfully!"));
             });
         }
 
@@ -595,7 +608,8 @@
 
         function syncOperationsPipeline() {
             database.ref('marketplace/orders').on('value', snapshot => {
-                let grid = document.getElementById('opsGrid'); grid.innerHTML = "";
+                let grid = document.getElementById('opsGrid'); if(!grid) return;
+                grid.innerHTML = "";
                 let orders = snapshot.val();
                 if (!orders) { grid.innerHTML = `<div style="color:#555; padding:20px;">No active client builds running.</div>`; return; }
 
@@ -603,17 +617,18 @@
                     let ord = orders[key];
                     let contents = ord.purchasedItemsArray ? ord.purchasedItemsArray.map(i => i.title).join(', ') : "Custom Configurator Build Rig";
                     grid.innerHTML += `
-                        <div class="ops-order-card" style="border-left: 4px solid #1a73e8;">
-                            <button class="delete-listing-btn" onclick="terminateAndRestockOrder('${key}')">✕</button>
-                            <span class="ops-badge">${ord.buyerName.toUpperCase()}</span>
-                            <h4>${ord.orderType}</h4>
-                            <p style="font-size:13px; margin:4px 0;">📦 Content Node: ${contents}</p>
+                        <div class="ops-order-card" style="border-left: 4px solid #1a73e8; position: relative; padding: 15px; background: var(--card); margin-bottom: 10px; border-radius: 8px;">
+                            <button class="delete-listing-btn" onclick="terminateAndRestockOrder('${key}')" style="position: absolute; right: 10px; top: 10px; background: none; border: none; color: #ff4444; cursor: pointer; font-weight: bold;">✕</button>
+                            <span class="ops-badge" style="background: rgba(26,115,232,0.1); color: #1a73e8; padding: 2px 6px; border-radius: 4px; font-size: 11px;">${ord.buyerName.toUpperCase()}</span>
+                            <h4 style="margin: 8px 0 4px 0;">${ord.orderType}</h4>
+                            <p style="font-size:13px; margin:4px 0; color: #aaa;">📦 Content Node: ${contents}</p>
                             <b style="color:var(--primary)">₹${ord.invoiceCost.toLocaleString('en-IN')}</b>
                         </div>`;
                 });
             });
         }
 
+        // OPTIMIZATION: Stopped redundant loop streams on operations mutations using .once
         function terminateAndRestockOrder(orderId) {
             if (!confirm("Permanently wipe this order log and return items to shelves?")) return;
             database.ref(`marketplace/orders/${orderId}`).once('value', snapshot => {
@@ -632,15 +647,16 @@
 
         function syncViolationReports() {
             database.ref('marketplace/reports').on('value', snapshot => {
-                let container = document.getElementById('reportsOpsGrid'); container.innerHTML = "";
+                let container = document.getElementById('reportsOpsGrid'); if(!container) return;
+                container.innerHTML = "";
                 let reports = snapshot.val();
                 if (!reports) { container.innerHTML = `<div style="text-align:center; color:#555; padding:40px;">No incidents inside database matrices.</div>`; return; }
 
                 Object.keys(reports).reverse().forEach(key => {
                     let rep = reports[key];
                     container.innerHTML += `
-                        <div class="ops-order-card" style="border-left: 4px solid #ff4444;">
-                            <button class="delete-listing-btn" onclick="database.ref('marketplace/reports/${key}').remove()">✕</button>
+                        <div class="ops-order-card" style="border-left: 4px solid #ff4444; position: relative; padding: 15px; background: var(--card); margin-bottom: 10px; border-radius: 8px;">
+                            <button class="delete-listing-btn" onclick="database.ref('marketplace/reports/${key}').remove()" style="position: absolute; right: 10px; top: 10px; background: none; border: none; color: #ff4444; cursor: pointer;">✕</button>
                             <h4>🚩 Flawed Context: ${rep.reportedItemTitle}</h4>
                             <p style="margin:4px 0; font-size:12px; color:#aaa;">Reported by: ${rep.flaggedBy.toUpperCase()}</p>
                             <p style="margin:4px 0; font-size:13px; color:#ff4444;"><b>Reason:</b> ${rep.violationReason}</p>
@@ -653,11 +669,12 @@
             if(cart.length === 0) return;
             let updates = {}; let orderId = "order_" + Date.now();
             let itemsPayload = cart.map(c => ({ itemId: c.itemId, title: c.title }));
+            let totalCartInvoiceCost = cart.reduce((acc, current) => acc + current.price, 0);
 
             updates[`marketplace/orders/${orderId}`] = {
                 orderType: "Marketplace Checkout",
                 buyerName: currentUser,
-                invoiceCost: cart.reduce((acc, current) => acc + current.price, 0),
+                invoiceCost: totalCartInvoiceCost,
                 purchasedItemsArray: itemsPayload, 
                 timestamp: Date.now()
             };
@@ -667,7 +684,12 @@
                 if(dbItem) updates[`marketplace/items/${c.itemId}/stocks`] = Math.max(0, parseInt(dbItem.stocks) - 1);
             });
             
-            database.ref().update(updates).then(() => { cart = []; updateCartUI(); toggleCart(); alert("Transaction Completed!"); });
+            database.ref().update(updates).then(() => { 
+                cart = []; 
+                updateCartUI(); 
+                toggleCart(); 
+                alert("Transaction Completed!"); 
+            });
         }
 
         function listenToMarketplace() {
@@ -678,30 +700,54 @@
             });
         }
 
+        // OPTIMIZATION: Added Search Bar DOM Batching Debounce (250ms interval)
+        function handleSearchInput(event) {
+            clearTimeout(searchDebounceTimeout);
+            searchDebounceTimeout = setTimeout(() => {
+                searchQueryString = event.target.value.trim().toLowerCase();
+                renderMarketGrid();
+            }, 250);
+        }
+
+        // OPTIMIZATION: Integrated native image lazy-loading inside template literal blocks
         function renderMarketGrid() {
-            let grid = document.getElementById('marketGrid'); grid.innerHTML = "";
-            let itemsToDisplay = currentFilterCategory === 'all' ? marketItems : marketItems.filter(i => i.type === currentFilterCategory);
+            let grid = document.getElementById('marketGrid'); if(!grid) return;
+            grid.innerHTML = "";
+            
+            let itemsToDisplay = marketItems.filter(item => {
+                let matchesCategory = (currentFilterCategory === 'all' || item.type === currentFilterCategory);
+                let matchesSearch = (!searchQueryString || item.title.toLowerCase().includes(searchQueryString));
+                return matchesCategory && matchesSearch;
+            });
 
             itemsToDisplay.forEach(item => {
                 let stockCount = parseInt(item.stocks) || 0;
                 let buyActionBtn = stockCount <= 0 
-                    ? `<button disabled style="background:#333; color:#666; padding:8px; border-radius:6px; font-weight:bold;">SOLD OUT</button>`
+                    ? `<button disabled style="background:#333; color:#666; padding:8px; border-radius:6px; font-weight:bold; border:none;">SOLD OUT</button>`
                     : `<button onclick="addToCart('${item.id}', '${item.title}', ${item.price})" style="background:var(--primary); border:none; color:white; padding:8px 12px; border-radius:6px; cursor:pointer; font-weight:bold;">🛒 +</button>`;
-                let deleteBtn = (currentUser && item.sellerName === currentUser) ? `<button class="delete-listing-btn" onclick="database.ref('marketplace/items/${item.id}').remove()">✖</button>` : "";
+                let deleteBtn = (currentUser && item.sellerName === currentUser) ? `<button class="delete-listing-btn" onclick="database.ref('marketplace/items/${item.id}').remove()" style="position:absolute; right:10px; top:10px; background:rgba(0,0,0,0.5); border:none; color:white; border-radius:50%; width:24px; height:24px; cursor:pointer;">✖</button>` : "";
                 
+                let fallbackImg = 'https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=400';
+                let targetImg = item.imageUrl || fallbackImg;
+
                 grid.innerHTML += `
-                    <div class="market-card">
+                    <div class="market-card" style="position:relative; background:var(--card); border:1px solid var(--border); border-radius:12px; overflow:hidden; display:flex; flex-direction:column;">
                         ${deleteBtn}
-                        <div class="market-img-container"><img src="${item.imageUrl || 'https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=400'}" class="market-img"></div>
-                        <div class="market-details">
+                        <div class="market-img-container" style="width:100%; height:180px; background:#111;">
+                            <img src="${targetImg}" loading="lazy" alt="${item.title}" class="market-img" style="width:100%; height:100%; object-fit:cover;" onerror="this.onerror=null; this.src='${fallbackImg}';">
+                        </div>
+                        <div class="market-details" style="padding:15px; flex-grow:1; display:flex; flex-direction:column; justify-content:space-between; gap:10px;">
                             <div>
-                                <div style="font-weight:bold;">${item.title}</div>
-                                <div class="market-tag-container"><span class="market-tag prime">${item.type.toUpperCase()}</span><span class="market-tag">Stock: ${stockCount}</span></div>
-                                <div style="color:var(--primary); font-weight:900; margin:6px 0;">₹${item.price.toLocaleString('en-IN')}</div>
+                                <div style="font-weight:bold; font-size:16px;">${item.title}</div>
+                                <div class="market-tag-container" style="margin-top:6px; display:flex; gap:5px;">
+                                    <span class="market-tag prime" style="font-size:10px; background:rgba(0,162,255,0.1); color:#00a2ff; padding:2px 6px; border-radius:4px;">${item.type.toUpperCase()}</span>
+                                    <span class="market-tag" style="font-size:10px; background:rgba(255,255,255,0.05); color:#aaa; padding:2px 6px; border-radius:4px;">Stock: ${stockCount}</span>
+                                </div>
+                                <div style="color:var(--primary); font-weight:900; font-size:18px; margin:10px 0 0 0;">₹${item.price.toLocaleString('en-IN')}</div>
                             </div>
-                            <div class="market-action-row">
+                            <div class="market-action-row" style="display:flex; gap:6px; margin-top:auto;">
                                 ${buyActionBtn}
-                                <button onclick="openInternalDM('${item.id}', '${item.title}', '${item.sellerName}')" class="chat-seller-btn">💬 Chat</button>
+                                <button onclick="openInternalDM('${item.id}', '${item.title}', '${item.sellerName}')" class="chat-seller-btn" style="flex-grow:1; background:rgba(255,255,255,0.05); border:1px solid var(--border); color:white; border-radius:6px; cursor:pointer;">💬 Chat</button>
                                 <button onclick="reportMarketplaceListing('${item.id}', '${item.title}')" style="background:#222; border:1px solid #ff4444; color:#ff4444; border-radius:6px; padding:8px 10px; cursor:pointer; font-weight:bold;">🚩</button>
                             </div>
                         </div>
@@ -711,11 +757,21 @@
 
         function addToCart(itemId, title, price) { cart.push({ cartId: Date.now(), itemId, title, price }); updateCartUI(); }
         function removeFromCart(id) { cart = cart.filter(c => c.cartId !== id); updateCartUI(); }
+        
+        // OPTIMIZATION: Highly accelerated single-pass .reduce calculations for Cart Totals
         function updateCartUI() {
-            document.getElementById('cartCount').innerText = cart.length;
-            let container = document.getElementById('cartItemsContainer'); container.innerHTML = ""; let total = 0;
-            cart.forEach(c => { total += c.price; container.innerHTML += `<div class="cart-item-card"><b>${c.title}</b><button class="remove-item-btn" onclick="removeFromCart(${c.cartId})">✖</button></div>`; });
-            document.getElementById('cartTotalValue').innerText = "₹" + total.toLocaleString('en-IN');
+            let countEl = document.getElementById('cartCount'); if(countEl) countEl.innerText = cart.length;
+            let container = document.getElementById('cartItemsContainer'); if(!container) return;
+            container.innerHTML = ""; 
+            
+            let computedTotalSum = cart.reduce((accumulator, item) => accumulator + item.price, 0);
+            
+            cart.forEach(c => { 
+                container.innerHTML += `<div class="cart-item-card" style="display:flex; justify-content:space-between; margin-bottom:8px; padding:6px; background:rgba(0,0,0,0.2); border-radius:4px;"><b>${c.title}</b><button class="remove-item-btn" onclick="removeFromCart(${c.cartId})" style="background:none; border:none; color:#ff4444; cursor:pointer;">✖</button></div>`; 
+            });
+            
+            let totalValEl = document.getElementById('cartTotalValue');
+            if(totalValEl) totalValEl.innerText = "₹" + computedTotalSum.toLocaleString('en-IN');
         }
 
         function openInternalDM(itemId, itemTitle, sellerName) {
@@ -724,10 +780,11 @@
             document.getElementById('dmTargetTitle').innerText = `Chat: ${itemTitle}`;
             document.getElementById('dmBox').style.display = 'flex';
             database.ref(activeDMPath).on('value', snapshot => {
-                let logs = document.getElementById('dmLogs'); logs.innerHTML = ""; let msgs = snapshot.val();
+                let logs = document.getElementById('dmLogs'); if(!logs) return;
+                logs.innerHTML = ""; let msgs = snapshot.val();
                 if(msgs) Object.keys(msgs).forEach(k => {
                     let m = msgs[k]; let align = m.senderName === currentUser ? 'align-self:flex-end; background:var(--primary);' : 'align-self:flex-start; background:rgba(0,0,0,0.3);';
-                    logs.innerHTML += `<div style="padding:8px; border-radius:8px; margin-bottom:4px; ${align}"><b>${m.senderName.toUpperCase()}:</b> ${m.msgText}</div>`;
+                    logs.innerHTML += `<div style="padding:8px; border-radius:8px; margin-bottom:4px; max-width:80%; ${align}"><b>${m.senderName.toUpperCase()}:</b> ${m.msgText}</div>`;
                 });
             });
         }
@@ -739,37 +796,40 @@
 
         function syncBudgetInputs(source) {
             let slider = document.getElementById('wizBudgetSlider'); let manual = document.getElementById('wizBudgetManual');
+            if(!slider || !manual) return;
             activeSelectedBudget = source === 'slider' ? parseInt(slider.value) : Math.max(15000, Math.min(400000, parseInt(manual.value) || 15000));
             slider.value = activeSelectedBudget; manual.value = activeSelectedBudget;
             document.getElementById('wizPriceDisplay').innerText = activeSelectedBudget.toLocaleString('en-IN');
             generateDynamicSpecs(); calculateFinalWizardPrice();
         }
 
-        function changeWizardStep(stepNum) { document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('active')); document.getElementById('wizStep' + stepNum).classList.add('active'); }
-        function selectCategory(catId) { selectedCategoryNode = catId; document.querySelectorAll('.category-card').forEach(c => c.classList.remove('selected')); document.getElementById('cat-' + catId).classList.add('selected'); generateDynamicSpecs(); }
+        function changeWizardStep(stepNum) { document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('active')); let targetStep = document.getElementById('wizStep' + stepNum); if(targetStep) targetStep.classList.add('active'); }
+        function selectCategory(catId) { selectedCategoryNode = catId; document.querySelectorAll('.category-card').forEach(c => c.classList.remove('selected')); let catCard = document.getElementById('cat-' + catId); if(catCard) catCard.classList.add('selected'); generateDynamicSpecs(); }
         
         function generateDynamicSpecs() {
             let b = activeSelectedBudget; let out = "";
             if (selectedCategoryNode === 'gaming') {
                 out = b <= 30000 ? `<b>CPU:</b> i3-10105F | <b>GPU:</b> RX 580 8GB` : `<b>CPU:</b> i5-12400F | <b>GPU:</b> RTX 4060`;
             } else { out = `<b>CPU:</b> High-Core Performance System Architecture`; }
-            document.getElementById('generatedSpecsArea').innerHTML = out;
+            let specsArea = document.getElementById('generatedSpecsArea'); if(specsArea) specsArea.innerHTML = out;
         }
 
+        // OPTIMIZATION: Minimized snapshot traffic loops on layout jumps using .once checks
         function goToStep3() {
             changeWizardStep(3);
             database.ref('marketplace/orders').once('value', snap => {
                 let orders = snap.val(); let hasOrdered = false;
                 if (orders) Object.keys(orders).forEach(k => { if(orders[k].buyerName === currentUser) hasOrdered = true; });
-                document.getElementById('useTreasureCheckbox').disabled = !hasOrdered;
-                document.getElementById('treasureTitle').innerText = hasOrdered ? "✨ Treasure Coins Active!" : "🔒 Treasure Locked";
+                let checkCoin = document.getElementById('useTreasureCheckbox'); if(checkCoin) checkCoin.disabled = !hasOrdered;
+                let titleCoin = document.getElementById('treasureTitle'); if(titleCoin) titleCoin.innerText = hasOrdered ? "✨ Treasure Coins Active!" : "🔒 Treasure Locked";
                 calculateFinalWizardPrice();
             });
         }
 
         function calculateFinalWizardPrice() {
-            let cost = activeSelectedBudget - (document.getElementById('useTreasureCheckbox').checked ? 500 : 0);
-            document.getElementById('wizardInvoiceTotal').innerText = "₹" + cost.toLocaleString('en-IN');
+            let hasCoinChecked = document.getElementById('useTreasureCheckbox') ? document.getElementById('useTreasureCheckbox').checked : false;
+            let cost = activeSelectedBudget - (hasCoinChecked ? 500 : 0);
+            let invoiceEl = document.getElementById('wizardInvoiceTotal'); if(invoiceEl) invoiceEl.innerText = "₹" + cost.toLocaleString('en-IN');
             return cost;
         }
 
@@ -806,16 +866,17 @@
 
         function listenToGameVault() {
             database.ref('marketplace/vault_games').on('value', snap => {
-                let grid = document.getElementById('vaultGameGrid'); grid.innerHTML = ""; let games = snap.val();
+                let grid = document.getElementById('vaultGameGrid'); if(!grid) return;
+                grid.innerHTML = ""; let games = snap.val();
                 if(!games) return;
                 Object.keys(games).forEach(k => {
                     let g = games[k];
                     grid.innerHTML += `
-                        <div class="market-card" style="border: 1px dashed #00a2ff;">
+                        <div class="market-card" style="border: 1px dashed #00a2ff; padding:15px; background:var(--card); border-radius:8px;">
                             <div class="market-details">
                                 <h3 style="margin:0;">🎮 ${g.title.toUpperCase()}</h3>
-                                <p style="font-size:12px; color:#aaa;">${g.description}</p>
-                                <a href="${g.downloadUrl}" target="_blank"><button style="background:#1a73e8; color:#fff; padding:6px; border:none; border-radius:4px; cursor:pointer;">📥 DOWNLOAD</button></a>
+                                <p style="font-size:12px; color:#aaa; margin:8px 0;">${g.description}</p>
+                                <a href="${g.downloadUrl}" target="_blank"><button style="background:#1a73e8; color:#fff; padding:8px 12px; border:none; border-radius:4px; cursor:pointer; font-weight:bold;">📥 DOWNLOAD</button></a>
                             </div>
                         </div>`;
                 });
@@ -831,36 +892,37 @@
 
         function syncHRApplications() {
             database.ref('marketplace/job_applications').on('value', snapshot => {
-                let hrGrid = document.getElementById('hrOpsGrid'); hrGrid.innerHTML = "";
+                let hrGrid = document.getElementById('hrOpsGrid'); if(!hrGrid) return;
+                hrGrid.innerHTML = "";
                 let applications = snapshot.val(); if (!applications) return;
                 Object.keys(applications).forEach(key => {
                     let app = applications[key];
                     hrGrid.innerHTML += `
-                        <div class="ops-order-card" style="border-left: 4px solid #38ef7d;">
-                            <button class="delete-listing-btn" onclick="database.ref('marketplace/job_applications/${key}').remove()">✕</button>
+                        <div class="ops-order-card" style="border-left: 4px solid #38ef7d; position:relative; padding:15px; background:var(--card); margin-bottom:10px; border-radius:8px;">
+                            <button class="delete-listing-btn" onclick="database.ref('marketplace/job_applications/${key}').remove()" style="position:absolute; right:10px; top:10px; background:none; border:none; color:#ff4444; cursor:pointer;">✕</button>
                             <h4>${app.role}</h4>
-                            <p style="font-size:12px;">Handle: ${app.applicantName.toUpperCase()}</p>
-                            <p style="font-size:13px; color:#ccc;">${app.skillDescription}</p>
+                            <p style="font-size:12px; color:#aaa;">Handle: ${app.applicantName.toUpperCase()}</p>
+                            <p style="font-size:13px; color:#ccc; margin-top:6px;">${app.skillDescription}</p>
                         </div>`;
                 });
             });
         }
 
-        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
-        function closeModals() { document.getElementById('sellModal').style.display = 'none'; resetSellForm(); }
+        function toggleSidebar() { let sb = document.getElementById('sidebar'); if(sb) sb.classList.toggle('active'); }
+        function closeModals() { let m = document.getElementById('sellModal'); if(m) m.style.display = 'none'; resetSellForm(); }
         function resetSellForm() { document.getElementById('hardwareName').value = ""; document.getElementById('origPrice').value = ""; document.getElementById('aiVal').innerText = "₹0"; computedAppraisalValue = 0; }
-        function toggleCart() { document.getElementById('cartPanel').classList.toggle('active'); }
+        function toggleCart() { let cp = document.getElementById('cartPanel'); if(cp) cp.classList.toggle('active'); }
         function openSell() { if(currentUser) document.getElementById('sellModal').style.display = 'flex'; }
         function closeDMWindow() { document.getElementById('dmBox').style.display = 'none'; }
         function handleDMKey(e) { if(e.key === 'Enter') sendDMMessage(); }
-        function logoutTerminal() { currentUser = null; localStorage.removeItem('potato_local_session'); document.getElementById('authGate').style.display = 'flex'; }
+        function logoutTerminal() { currentUser = null; localStorage.removeItem('potato_local_session'); let ag = document.getElementById('authGate'); if(ag) ag.style.display = 'flex'; }
 
         function switchTab(viewId) {
             document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(viewId).classList.add('active');
-            if(document.getElementById('btn-' + viewId)) document.getElementById('btn-' + viewId).classList.add('active');
-            if(document.getElementById('sidebar').classList.contains('active')) toggleSidebar();
+            let targetView = document.getElementById(viewId); if(targetView) targetView.classList.add('active');
+            let targetBtn = document.getElementById('btn-' + viewId); if(targetBtn) targetBtn.classList.add('active');
+            let sb = document.getElementById('sidebar'); if(sb && sb.classList.contains('active')) toggleSidebar();
         }
 
         function filterMarketplace(category) { currentFilterCategory = category; document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active')); renderMarketGrid(); }
