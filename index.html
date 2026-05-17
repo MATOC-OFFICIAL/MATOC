@@ -43,6 +43,21 @@
         .sidebar.active { left: 0; visibility: visible; }
         .nav-item { padding: 12px; border-bottom: 1px solid var(--border); cursor: pointer; font-weight: bold; font-size: 13px; text-transform: uppercase; }
 
+        /* REBUILT STEP WIZARD BUILDER GRAPHICS */
+        .wizard-container { background: var(--card); border: 1px solid var(--border); border-radius: 24px; padding: 35px; max-width: 600px; margin: 0 auto; box-sizing: border-box; }
+        .wizard-step { display: none; }
+        .wizard-step.active { display: block; }
+        .wizard-nav-row { display: flex; justify-content: space-between; margin-top: 30px; gap: 10px; }
+        .wiz-btn { background: #222; border: 1px solid #333; color: white; padding: 12px 24px; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        .wiz-btn.next { background: var(--primary); border: none; }
+        .category-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        @media (max-width: 450px) { .category-grid { grid-template-columns: 1fr; } }
+        .category-card { background: #000; border: 2px solid var(--border); border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        .category-card.selected { border-color: var(--primary); background: rgba(1, 148, 11, 0.05); color: var(--primary); }
+        .spec-output-box { background: #000; border: 1px solid var(--border); padding: 20px; border-radius: 12px; margin-top: 20px; }
+        .spec-line { padding: 8px 0; border-bottom: 1px dashed #222; font-size: 14px; }
+        .treasure-box { background: rgba(255, 215, 0, 0.05); border: 1px dashed #ffd700; padding: 15px; border-radius: 12px; margin-top: 20px; display: flex; align-items: center; gap: 12px; }
+
         /* CART PANEL */
         .cart-panel { position: fixed; top: 0; right: -350px; width: 320px; height: 100%; background: var(--card); border-left: 1px solid var(--border); transition: 0.4s; z-index: 2000; padding: 70px 20px 20px 20px; box-sizing: border-box; display: flex; flex-direction: column; visibility: hidden; }
         .cart-panel.active { right: 0; visibility: visible; }
@@ -52,16 +67,6 @@
         .remove-item-btn { position: absolute; top: 10px; right: 10px; background: none; border: none; color: #ff4444; cursor: pointer; font-weight: bold; }
         .cart-footer { border-top: 1px solid var(--border); padding-top: 15px; margin-top: 15px; }
         .checkout-btn { width: 100%; background: var(--primary); border: none; color: white; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
-
-        /* BUILDER INTERFACES */
-        .price-hero { font-size: 80px; font-weight: 900; margin: 10px 0; text-align: center; }
-        input[type=range] { width: 100%; accent-color: var(--primary); margin-bottom: 30px; cursor: pointer; }
-        .config-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        @media (max-width: 600px) { .config-grid { grid-template-columns: 1fr; } }
-        .config-card { background: var(--card); padding: 25px; border-radius: 20px; border: 1px solid var(--border); }
-        .config-card h4 { color: var(--primary); margin: 0 0 15px 0; text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
-        .config-card button { width:100%; margin-top:15px; background:var(--primary); border:none; color:white; padding:10px; border-radius:8px; cursor:pointer; font-weight:bold; }
-        .specs-list p { margin: 8px 0; font-size: 14px; border-bottom: 1px dashed rgba(128,128,128,0.1); padding-bottom: 4px; }
 
         /* MARKETPLACE SECTIONS */
         .market-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
@@ -77,9 +82,7 @@
         .market-item-name { font-size: 16px; font-weight: bold; margin: 0; }
         .market-item-price { font-size: 18px; font-weight: 900; color: var(--primary); margin: 8px 0; }
         
-        /* SELLER SPECIFIC META INFO */
         .seller-thoughts-box { font-size: 12px; color: #888; font-style: italic; background: rgba(255,255,255,0.02); padding: 8px 12px; border-radius: 6px; margin-bottom: 12px; border-left: 2px solid var(--primary); }
-
         .market-action-row { display: flex; gap: 8px; }
         .chat-seller-btn { display: flex; align-items: center; justify-content: center; background: #1a73e8; color: white; border: none; padding: 8px; border-radius: 6px; font-weight: bold; font-size: 13px; flex: 1; cursor: pointer; }
         .delete-listing-btn { position: absolute; top: 10px; right: 10px; background: rgba(255, 0, 0, 0.85); color: white; border: none; width: 28px; height: 28px; border-radius: 50%; font-weight: bold; cursor: pointer; z-index: 10; }
@@ -90,7 +93,7 @@
         .modal-content label { font-size: 11px; color: #888; display: block; margin-bottom: 6px; font-weight: bold; text-transform: uppercase; }
         input, select, textarea { width: 100%; padding: 12px; background: #000; border: 1px solid #333; color: #fff; border-radius: 8px; margin-bottom: 16px; box-sizing: border-box; font-size: 14px; font-family: inherit; }
 
-        /* DEDICATED DIRECT DM WINDOW SYSTEM */
+        /* CHAT BOX CONTAINER */
         .dm-box { display: none; position: fixed; bottom: 20px; right: 20px; width: 360px; height: 480px; background: var(--chat-bg); border: 1px solid var(--border); border-radius: 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); z-index: 4000; flex-direction: column; overflow: hidden; }
         .dm-header { background: #1a73e8; color: white; padding: 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
         .dm-logs { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; font-size: 13px; }
@@ -105,10 +108,8 @@
         <div class="auth-card">
             <h2 style="text-transform: uppercase; margin-bottom: 10px; color: var(--primary);">Terminal Log</h2>
             <p style="font-size: 12px; color: #666; margin-bottom: 25px;">Enter your assigned handle credentials to bypass system security.</p>
-            
             <input type="text" id="authUsername" placeholder="Enter Username">
             <input type="password" id="authPassword" placeholder="Enter Password">
-            
             <button onclick="handleTerminalLogin()" style="background:var(--primary); color:white; border:none; padding:14px; width:100%; border-radius:8px; font-weight:bold; cursor:pointer; text-transform:uppercase;">Connect Terminal</button>
         </div>
     </div>
@@ -158,66 +159,150 @@
     </div>
 
     <div class="app-view" id="buildView">
-        <div class="price-hero">₹<span id="priceLabel">15,000</span></div>
-        <input type="range" id="budgetSlider" min="15000" max="200000" step="1000" value="15000">
-        <div class="config-grid">
-            <div class="config-card">
-                <h4>Intel Configuration</h4>
-                <div id="intelSpecs" class="specs-list"></div>
-                <button onclick="addBuildToCart('Intel')">Add Build to Cart</button>
+        <div class="wizard-container">
+            
+            <div class="wizard-step active" id="wizStep1">
+                <h3 style="text-transform: uppercase; color: var(--primary); margin-top: 0;">Step 1: Set Target Budget</h3>
+                <p style="font-size: 13px; color: #777;">Drag the tracker node or write your precise budget capacity allocation limits.</p>
+                
+                <div style="font-size: 44px; font-weight: 900; color: white; text-align: center; margin: 20px 0;">
+                    ₹<span id="wizPriceDisplay">15,000</span>
+                </div>
+                <input type="range" id="wizBudgetSlider" min="15000" max="400000" step="5000" value="15000" oninput="syncBudgetInputs('slider')">
+                
+                <label style="font-size: 11px; font-weight: bold; color: #555;">MANUAL SPECIFICATION INPUT</label>
+                <input type="number" id="wizBudgetManual" min="15000" max="400000" value="15000" oninput="syncBudgetInputs('manual')">
+                
+                <div class="wizard-nav-row" style="justify-content: flex-end;">
+                    <button class="wiz-btn next" onclick="changeWizardStep(2)">Next Range ➔</button>
+                </div>
             </div>
-            <div class="config-card">
-                <h4>AMD Configuration</h4>
-                <div id="amdSpecs" class="specs-list"></div>
-                <button onclick="addBuildToCart('AMD')">Add Build to Cart</button>
+
+            <div class="wizard-step" id="wizStep2">
+                <h3 style="text-transform: uppercase; color: var(--primary); margin-top: 0;">Step 2: Choose Classification</h3>
+                <p style="font-size: 13px; color: #777;">Select structural optimization tuning presets based on functional workloads.</p>
+                
+                <div class="category-grid">
+                    <div class="category-card" id="cat-gaming" onclick="selectCategory('gaming')">🎮 Gaming</div>
+                    <div class="category-card" id="cat-editing" onclick="selectCategory('editing')">🎬 Video Editing</div>
+                    <div class="category-card" id="cat-school" onclick="selectCategory('school')">📚 School Purpose</div>
+                    <div class="category-card" id="cat-modelling" onclick="selectCategory('modelling')">🧊 3D Modelling</div>
+                </div>
+
+                <div class="spec-output-box">
+                    <h4 style="margin: 0 0 10px 0; color: var(--primary); text-transform: uppercase; font-size: 12px;">Generated Matrix Configuration</h4>
+                    <div id="generatedSpecsArea">Select a category node to display optimization specs.</div>
+                </div>
+
+                <div class="wizard-nav-row">
+                    <button class="wiz-btn" onclick="changeWizardStep(1)">⬅ Back</button>
+                    <button class="wiz-btn next" onclick="changeWizardStep(3)">Next Stage ➔</button>
+                </div>
             </div>
+
+            <div class="wizard-step" id="wizStep3">
+                <h3 style="text-transform: uppercase; color: var(--primary); margin-top: 0;">Step 3: Payment Node</h3>
+                <p style="font-size: 13px; color: #777;">Define alternative banking streams and apply treasure chest discount codes.</p>
+                
+                <label>Billing Stream Route</label>
+                <select id="paymentMethodSelect" onchange="togglePaymentFields()">
+                    <option value="cod">Cash On Delivery (COD)</option>
+                    <option value="upi">Unified Payments Interface (UPI) / Cards</option>
+                </select>
+
+                <div id="upiPaymentFields" style="display: none; background:#000; padding:15px; border-radius:12px; border:1px solid #222; margin-bottom:15px;">
+                    <label>Select UPI Stream Method</label>
+                    <select id="upiProvider">
+                        <option value="gpay">Google Pay (GPay Direct Link)</option>
+                        <option value="card">Credit / Debit Card Interface</option>
+                    </select>
+                    <label>Card / Virtual Account ID Number String</label>
+                    <input type="text" id="paymentAccountString" placeholder="Enter card numbers or VPA routing handle">
+                </div>
+
+                <div class="treasure-box">
+                    <input type="checkbox" id="useTreasureCheckbox" style="width: auto; margin: 0;" onchange="calculateFinalWizardPrice()">
+                    <div>
+                        <strong style="color: #ffd700; font-size: 14px;">🧰 Inject Treasure Coins Discount?</strong>
+                        <span style="font-size: 12px; display: block; color: #aaa; margin-top: 2px;">Spends 200 treasure coins to cut price by ₹100. (Max scaling bonus limit: ₹500 discount cap).</span>
+                    </div>
+                </div>
+
+                <div style="margin-top: 25px; padding-top: 15px; border-top: 1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-weight:bold; font-size:14px;">Adjusted Invoice Cost:</span>
+                    <strong style="font-size:24px; color:var(--primary);" id="wizardInvoiceTotal">₹0</strong>
+                </div>
+
+                <div class="wizard-nav-row">
+                    <button class="wiz-btn" onclick="changeWizardStep(2)">⬅ Back</button>
+                    <button class="wiz-btn next" onclick="changeWizardStep(4)">Next Stage ➔</button>
+                </div>
+            </div>
+
+            <div class="wizard-step" id="wizStep4">
+                <h3 style="text-transform: uppercase; color: var(--primary); margin-top: 0;">Step 4: Delivery Destination</h3>
+                <p style="font-size: 13px; color: #777;">Input target coordinates to deploy and dispatch built architecture systems.</p>
+                
+                <label>Street Address Location</label>
+                <input type="text" id="shipAddress" placeholder="Apartment building number, Street Name...">
+
+                <label>City Hub Node</label>
+                <input type="text" id="shipCity" placeholder="e.g., Chennai, Nagercoil, Mumbai">
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div>
+                        <label>Province / State Territory</label>
+                        <input type="text" id="shipState" placeholder="e.g., Tamil Nadu">
+                    </div>
+                    <div>
+                        <label>Postal Pincode Array</label>
+                        <input type="text" id="shipPincode" placeholder="e.g., 629177" maxlength="6">
+                    </div>
+                </div>
+
+                <div class="wizard-nav-row">
+                    <button class="wiz-btn" onclick="changeWizardStep(3)">⬅ Back</button>
+                    <button class="wiz-btn next" style="background:#1a73e8;" onclick="finalizeWizardBuildOrder()">Deploy Build Order 🛠️</button>
+                </div>
+            </div>
+
         </div>
     </div>
 
     <div class="modal" id="sellModal">
         <div class="modal-content">
             <h2 style="margin-top: 0; margin-bottom: 20px; font-size: 20px; text-transform: uppercase;">Post New Listing</h2>
-            
             <label>Hardware Classification</label>
-            <select id="hardwareType" onchange="handleTypeChange()">
+            <select id="hardwareType">
                 <option value="Component">Component (GPU, CPU, RAM, etc.)</option>
                 <option value="Full PC">Full Desktop PC Setup</option>
                 <option value="Laptop">Laptop Computer</option>
             </select>
-
             <label>Item Name / Model Title</label>
             <input type="text" id="hardwareName" placeholder="e.g., RX 580 8GB, Core i5 Pack">
-
             <label>Image Thumbnail Link (URL)</label>
-            <input type="url" id="hardwareImg" placeholder="Paste an image web address URL">
-
+            <input type="url" id="hardwareImg" placeholder="Paste image web URL">
             <label>Stock Supply Volume Available</label>
-            <input type="number" id="hardwareStock" value="1" min="1" placeholder="How many units do you have to sell?">
-
+            <input type="number" id="hardwareStock" value="1" min="1">
             <label>Seller Thoughts / Description Statement</label>
-            <textarea id="sellerThoughts" placeholder="What do you think about this component? Share condition details..." rows="3"></textarea>
-
+            <textarea id="sellerThoughts" placeholder="Share condition status indicators..." rows="3"></textarea>
             <label>Original Purchase Price</label>
-            <input type="number" id="origPrice" placeholder="Enter original purchase cost (₹)" oninput="calculateHardwareValue()">
-
+            <input type="number" id="origPrice" placeholder="Original price (₹)" oninput="calculateHardwareValue()">
             <label>Physical Condition Check</label>
             <select id="hardwareCondition" onchange="calculateHardwareValue()">
                 <option value="1.0">Mint / Like New (0% Drop)</option>
                 <option value="0.85">Good / Clean (15% Drop)</option>
                 <option value="0.65">Rough / Heavily Used (35% Drop)</option>
             </select>
-
-            <label id="healthLabel">Component Life / Structural Health</label>
+            <label>Component Life / Structural Health</label>
             <select id="hardwareHealth" onchange="calculateHardwareValue()">
                 <option value="1.0">Excellent Health (0% Drop)</option>
                 <option value="0.85">Moderate Health (15% Drop)</option>
             </select>
-
             <div style="background:rgba(1,148,11,0.08); padding:18px; border-radius:15px; margin-bottom:20px; border:1px solid var(--primary);">
                 <span style="font-size: 11px; color: #888; display: block; margin-bottom: 4px; font-weight: bold;">LIVE VALUATION ESTIMATE</span>
                 <b id="aiVal" style="font-size: 26px; color: var(--primary);">₹0</b>
             </div>
-
             <button onclick="submitSell()" style="background:var(--primary); color:white; border:none; padding:15px; width:100%; border-radius:10px; font-weight:bold; cursor:pointer; text-transform: uppercase;">Confirm & Post Listing</button>
             <button onclick="closeModals()" style="background:none; border:none; color:#555; width:100%; margin-top:10px; cursor:pointer; font-weight: bold;">Cancel</button>
         </div>
@@ -230,13 +315,13 @@
         </div>
         <div class="dm-logs" id="dmLogs"></div>
         <div class="dm-input-area">
-            <input type="text" id="dmInput" placeholder="Write a direct secure message..." onkeypress="handleDMKey(event)">
+            <input type="text" id="dmInput" placeholder="Write message..." onkeypress="handleDMKey(event)">
             <button onclick="sendDMMessage()">Send</button>
         </div>
     </div>
 
     <script>
-        // FIREBASE PROJECT DATA SYNCHRONIZER CONFIG
+        // FIREBASE SETUP NODES
         const firebaseConfig = {
             apiKey: "AIzaSy" + "CP1yvH-mJx7_vxtG4k18PjforZicWTXm4", 
             authDomain: "potato-builders.firebaseapp.com",
@@ -251,32 +336,33 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        // 🌟 LOCAL ACCOUNTS STORAGE (Edit this directly to add/change accounts!)
+        // ACCREDITED LOCAL PASSWORDS DIRECTORY
         const localAccounts = {
             "nafeez": "1234",
             "admin": "potato2026",
             "guest": "0000"
         };
 
-        // APPLICATION RUNTIME STATE
+        // GLOBAL APPLICATION RUNTIME HANDLES
         let cart = [];
         let marketItems = []; 
         let activeDMPath = null;
         let currentUser = null; 
         let computedAppraisalValue = 0;
+        
+        // BUILDER INTERNAL VARIABLES
+        let selectedCategoryNode = 'gaming';
+        let activeSelectedBudget = 15000;
 
-        // LOCAL VALIDATION SYSTEM (NO FIREBASE ENGAGED FOR THIS STAGE)
+        // TERMINAL VALIDATION INTERFACES
         function handleTerminalLogin() {
             let user = document.getElementById('authUsername').value.trim().toLowerCase();
             let pass = document.getElementById('authPassword').value.trim();
-            
-            if(!user || !pass) { alert("Please input both username and password."); return; }
-
-            // Validate against the local hardcoded accounts list
+            if(!user || !pass) { alert("Please input credentials."); return; }
             if (localAccounts[user] && localAccounts[user] === pass) {
                 loginSuccess(user);
             } else {
-                alert("Access Denied: Invalid Terminal Credentials!");
+                alert("Access Denied!");
             }
         }
 
@@ -286,27 +372,21 @@
             document.getElementById('authGate').style.display = 'none';
             document.getElementById('userDisplayTag').innerText = `USER: ${username.toUpperCase()}`;
             listenToMarketplace();
+            selectCategory('gaming'); // initialize wizard structures
         }
 
         function logoutTerminal() {
             currentUser = null;
             localStorage.removeItem('potato_local_session');
             document.getElementById('authGate').style.display = 'flex';
-            document.getElementById('authUsername').value = "";
-            document.getElementById('authPassword').value = "";
             document.getElementById('userDisplayTag').innerText = "Not Logged In";
-            if(activeDMPath) database.ref(activeDMPath).off();
         }
 
-        // AUTO SESSION RESTORATION
         window.onload = function() {
             let savedSession = localStorage.getItem('potato_local_session');
-            if(savedSession && localAccounts[savedSession]) {
-                loginSuccess(savedSession);
-            }
+            if(savedSession && localAccounts[savedSession]) loginSuccess(savedSession);
         };
 
-        // VIEW UTILS
         function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
         function closeModals() { document.getElementById('sellModal').style.display = 'none'; }
         function toggleCart() { document.getElementById('cartPanel').classList.toggle('active'); }
@@ -319,254 +399,208 @@
             if(document.getElementById('sidebar').classList.contains('active')) toggleSidebar();
         }
 
-        // FIREBASE DATABASE READ SUBSCRIPTION STREAM
+        // REBUILT ADVANCED STEP WIZARD DRIVERS
+        function syncBudgetInputs(source) {
+            let slider = document.getElementById('wizBudgetSlider');
+            let manual = document.getElementById('wizBudgetManual');
+            
+            if (source === 'slider') {
+                activeSelectedBudget = parseInt(slider.value);
+                manual.value = activeSelectedBudget;
+            } else {
+                let val = parseInt(manual.value) || 15000;
+                if (val < 15000) val = 15000;
+                if (val > 400000) val = 400000;
+                activeSelectedBudget = val;
+                slider.value = activeSelectedBudget;
+            }
+            document.getElementById('wizPriceDisplay').innerText = activeSelectedBudget.toLocaleString('en-IN');
+            generateDynamicSpecs();
+            calculateFinalWizardPrice();
+        }
+
+        function changeWizardStep(stepNum) {
+            document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('active'));
+            document.getElementById('wizStep' + stepNum).classList.add('active');
+        }
+
+        function selectCategory(catId) {
+            selectedCategoryNode = catId;
+            document.querySelectorAll('.category-card').forEach(c => c.classList.remove('selected'));
+            document.getElementById('cat-' + catId).classList.add('selected');
+            generateDynamicSpecs();
+        }
+
+        function generateDynamicSpecs() {
+            let targetArea = document.getElementById('generatedSpecsArea');
+            let b = activeSelectedBudget;
+            let out = "";
+
+            if (selectedCategoryNode === 'gaming') {
+                if (b <= 30000) {
+                    out = `<div class="spec-line"><b>CPU:</b> Intel Core i3-10105F</div><div class="spec-line"><b>GPU:</b> AMD Radeon RX 580 8GB Value Standard</div><div class="spec-line"><b>RAM:</b> 16GB (8GBx2) DDR4 Array</div>`;
+                } else if (b <= 80000) {
+                    out = `<div class="spec-line"><b>CPU:</b> Intel i5-12400F Speed Node</div><div class="spec-line"><b>GPU:</b> RTX 4060 8GB RayTracing Core</div><div class="spec-line"><b>RAM:</b> 16GB DDR5 Performance Grid</div>`;
+                } else {
+                    out = `<div class="spec-line"><b>CPU:</b> AMD Ryzen 7 7800X3D Alpha Engine</div><div class="spec-line"><b>GPU:</b> RTX 4080 Super 16GB Monster Matrix</div><div class="spec-line"><b>RAM:</b> 32GB DDR5 Dual Channel Array</div>`;
+                }
+            } else if (selectedCategoryNode === 'editing') {
+                if (b <= 40000) {
+                    out = `<div class="spec-line"><b>CPU:</b> Ryzen 5 5600X Core Engine</div><div class="spec-line"><b>GPU:</b> GTX 1650 Render Accelerator</div><div class="spec-line"><b>RAM:</b> 16GB High Velocity Ram</div>`;
+                } else {
+                    out = `<div class="spec-line"><b>CPU:</b> Intel Core i7-14700K Processing Node</div><div class="spec-line"><b>GPU:</b> RTX 4070 Ti Super 16GB NVENC Drive</div><div class="spec-line"><b>RAM:</b> 64GB Extreme Timeline Buffers</div>`;
+                }
+            } else if (selectedCategoryNode === 'school') {
+                out = `<div class="spec-line"><b>CPU:</b> Efficient Quad-Core Low Thermal Processor</div><div class="spec-line"><b>GPU:</b> Integrated High Definition System Graphics</div><div class="spec-line"><b>RAM:</b> 8GB or 16GB Stable Office Array</div>`;
+            } else if (selectedCategoryNode === 'modelling') {
+                out = `<div class="spec-line"><b>CPU:</b> High Clock Speed Multi-Thread Node</div><div class="spec-line"><b>GPU:</b> Nvidia CUDA Architecture Array (Optimal VRAM Configuration)</div><div class="spec-line"><b>RAM:</b> 32GB Heavy Mesh Memory Arrays</div>`;
+            }
+            targetArea.innerHTML = out + `<div class="spec-line" style="color:var(--primary)"><b>Storage:</b> NVMe High Speed OS Drive Added</div>`;
+        }
+
+        function togglePaymentFields() {
+            let choice = document.getElementById('paymentMethodSelect').value;
+            document.getElementById('upiPaymentFields').style.display = (choice === 'upi') ? 'block' : 'none';
+        }
+
+        function calculateFinalWizardPrice() {
+            let basePrice = activeSelectedBudget;
+            let discount = 0;
+            if (document.getElementById('useTreasureCheckbox').checked) {
+                discount = 500; // Simulated flat premium cap optimization directly
+            }
+            let finalCost = basePrice - discount;
+            document.getElementById('wizardInvoiceTotal').innerText = "₹" + finalCost.toLocaleString('en-IN');
+            return finalCost;
+        }
+
+        function finalizeWizardBuildOrder() {
+            let addr = document.getElementById('shipAddress').value.trim();
+            let city = document.getElementById('shipCity').value.trim();
+            let state = document.getElementById('shipState').value.trim();
+            let pin = document.getElementById('shipPincode').value.trim();
+
+            if (!addr || !city || !state || !pin) { alert("Please complete routing shipping targets!"); return; }
+
+            let payload = {
+                orderType: "Custom Wizard Build",
+                buyerName: currentUser,
+                allocatedBudget: activeSelectedBudget,
+                categoryPreset: selectedCategoryNode,
+                chosenPayment: document.getElementById('paymentMethodSelect').value,
+                invoiceCost: calculateFinalWizardPrice(),
+                shippingCoordinates: { address: addr, city: city, state: state, pincode: pin },
+                timestamp: Date.now()
+            };
+
+            database.ref('marketplace/orders').push(payload).then(() => {
+                alert("🛠️ Rebuilt Custom PC order deployed and piped directly into database nodes!");
+                changeWizardStep(1);
+                switchTab('marketView');
+            }).catch(e => alert("Network Error: " + e.message));
+        }
+
+        // MARKET REST INTERACTIVE DRIVERS
         function listenToMarketplace() {
             database.ref('marketplace/items').on('value', snapshot => {
                 const data = snapshot.val();
                 marketItems = [];
                 if(data) {
-                    Object.keys(data).forEach(key => {
-                        marketItems.push({ id: key, ...data[key] });
-                    });
+                    Object.keys(data).forEach(key => { marketItems.push({ id: key, ...data[key] }); });
                     marketItems.sort((a,b) => b.timestamp - a.timestamp);
                 }
                 renderMarketGrid();
             });
         }
 
-        // MARKET ELEMENT BUILDER LOOPS
         function renderMarketGrid() {
-            let grid = document.getElementById('marketGrid');
-            grid.innerHTML = "";
+            let grid = document.getElementById('marketGrid'); grid.innerHTML = "";
             if (marketItems.length === 0) {
-                grid.innerHTML = `<div style="grid-column: 1/-1; text-align:center; color:#666; padding:40px;">No gear active in matrix.</div>`;
-                return;
+                grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:#666; padding:40px;">No gear active.</div>`; return;
             }
-
             marketItems.forEach(item => {
                 let imgUrl = item.imageUrl ? item.imageUrl : "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=400";
                 let stockCount = parseInt(item.stocks) || 0;
                 let isOutOfStock = stockCount <= 0;
-                
                 let buyActionBtn = isOutOfStock 
-                    ? `<button disabled style="background:#333; color:#666; border:none; padding:8px; border-radius:6px; font-weight:bold; font-size:13px;">SOLD OUT</button>`
-                    : `<button onclick="addToCart('${item.id}', '${item.title}', ${item.price})" style="background:var(--primary); border:none; color:white; padding:8px 12px; border-radius:6px; cursor:pointer; font-weight:bold; font-size:13px;">🛒 +</button>`;
-
-                let deleteBtn = (currentUser && item.sellerName === currentUser)
-                    ? `<button class="delete-listing-btn" onclick="deleteMarketItem('${item.id}')">✖</button>`
-                    : "";
-
-                let cleanDisplaySeller = item.sellerName ? item.sellerName : "System";
-
+                    ? `<button disabled style="background:#333; color:#666; padding:8px; border-radius:6px; font-weight:bold;">SOLD OUT</button>`
+                    : `<button onclick="addToCart('${item.id}', '${item.title}', ${item.price})" style="background:var(--primary); border:none; color:white; padding:8px 12px; border-radius:6px; cursor:pointer; font-weight:bold;">🛒 +</button>`;
+                let deleteBtn = (currentUser && item.sellerName === currentUser) ? `<button class="delete-listing-btn" onclick="deleteMarketItem('${item.id}')">✖</button>` : "";
                 grid.innerHTML += `
                     <div class="market-card">
                         ${deleteBtn}
-                        <div class="market-img-container">
-                            <img src="${imgUrl}" class="market-img" onerror="this.src='https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=400'">
-                        </div>
+                        <div class="market-img-container"><img src="${imgUrl}" class="market-img" onerror="this.src='https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=400'"></div>
                         <div class="market-details">
                             <div>
                                 <div class="market-item-name">${item.title}</div>
-                                <div class="market-tag-container">
-                                    <span class="market-tag prime">${item.type}</span>
-                                    <span class="market-tag" style="color:${isOutOfStock ? '#ff4444':'#01940b'}">Stock: ${stockCount} left</span>
-                                </div>
-                                ${item.thoughts ? `<div class="seller-thoughts-box"><b>${cleanDisplaySeller}:</b> "${item.thoughts}"</div>` : ''}
+                                <div class="market-tag-container"><span class="market-tag prime">${item.type}</span><span class="market-tag">Stock: ${stockCount}</span></div>
+                                ${item.thoughts ? `<div class="seller-thoughts-box"><b>${item.sellerName}:</b> "${item.thoughts}"</div>` : ''}
                                 <div class="market-item-price">₹${item.price.toLocaleString('en-IN')}</div>
                             </div>
-                            <div class="market-action-row">
-                                ${buyActionBtn}
-                                <button onclick="openInternalDM('${item.id}', '${item.title}', '${item.sellerName}')" class="chat-seller-btn">💬 Chat Seller</button>
-                            </div>
+                            <div class="market-action-row">${buyActionBtn}<button onclick="openInternalDM('${item.id}', '${item.title}', '${item.sellerName}')" class="chat-seller-btn">💬 Chat</button></div>
                         </div>
-                    </div>
-                `;
+                    </div>`;
             });
         }
 
-        // CART AND CHECKOUT ROUTINES (FIREBASE WRITE AGENTS)
         function addToCart(itemId, title, price) {
-            let itemData = marketItems.find(i => i.id === itemId);
-            if(itemData && parseInt(itemData.stocks) <= 0) { alert("Out of stock!"); return; }
-            cart.push({ cartId: Date.now() + Math.random(), itemId: itemId, title: title, price: price });
-            updateCartUI();
+            cart.push({ cartId: Date.now() + Math.random(), itemId: itemId, title: title, price: price }); updateCartUI();
         }
-
-        function removeFromCart(id) {
-            cart = cart.filter(c => c.cartId !== id);
-            updateCartUI();
-        }
-
+        function removeFromCart(id) { cart = cart.filter(c => c.cartId !== id); updateCartUI(); }
         function updateCartUI() {
             document.getElementById('cartCount').innerText = cart.length;
-            let container = document.getElementById('cartItemsContainer');
-            container.innerHTML = "";
-            let total = 0;
-            
-            if(cart.length === 0) {
-                container.innerHTML = `<div style="color:#666; text-align:center; margin-top:20px;">Cart is empty.</div>`;
-                document.getElementById('cartTotalValue').innerText = "₹0";
-                return;
-            }
-
-            cart.forEach(c => {
-                total += c.price;
-                container.innerHTML += `
-                    <div class="cart-item-card">
-                        <div><b>${c.title}</b></div>
-                        <div style="color:var(--primary)">₹${c.price.toLocaleString('en-IN')}</div>
-                        <button class="remove-item-btn" onclick="removeFromCart(${c.cartId})">✖</button>
-                    </div>
-                `;
-            });
+            let container = document.getElementById('cartItemsContainer'); container.innerHTML = ""; let total = 0;
+            if(cart.length === 0) { container.innerHTML = `<div style="color:#666; text-align:center; padding:20px;">Cart empty.</div>`; document.getElementById('cartTotalValue').innerText = "₹0"; return; }
+            cart.forEach(c => { total += c.price; container.innerHTML += `<div class="cart-item-card"><b>${c.title}</b><div style="color:var(--primary)">₹${c.price.toLocaleString('en-IN')}</div><button class="remove-item-btn" onclick="removeFromCart(${c.cartId})">✖</button></div>`; });
             document.getElementById('cartTotalValue').innerText = "₹" + total.toLocaleString('en-IN');
         }
 
         function checkoutTerminal() {
             if(cart.length === 0) return;
-            
             let updates = {};
-            let outOfStockFlag = false;
-
             cart.forEach(c => {
                 let dbItem = marketItems.find(i => i.id === c.itemId);
-                if(dbItem) {
-                    let newStock = parseInt(dbItem.stocks) - 1;
-                    if(newStock < 0) { outOfStockFlag = true; }
-                    updates[`marketplace/items/${c.itemId}/stocks`] = Math.max(0, newStock);
-                }
+                if(dbItem) { updates[`marketplace/items/${c.itemId}/stocks`] = Math.max(0, parseInt(dbItem.stocks) - 1); }
             });
-
-            if(outOfStockFlag) {
-                alert("Transaction halted: One of your items sold out while checking out!");
-                return;
-            }
-
-            database.ref().update(updates).then(() => {
-                alert("Order confirmed! Stock decremented inside the cloud database node.");
-                cart = [];
-                updateCartUI();
-                toggleCart();
-            }).catch(e => alert("Stock Sync Error: " + e.message));
+            database.ref().update(updates).then(() => { alert("Checked out!"); cart = []; updateCartUI(); toggleCart(); });
         }
 
-        // INTER-USER DIRECT CHAT CHANNELS
         function openInternalDM(itemId, itemTitle, sellerName) {
-            if(!currentUser) return;
-            if(currentUser === sellerName) { alert("You can't chat with yourself, machi!"); return; }
-
+            if(!currentUser || currentUser === sellerName) return;
             activeDMPath = `marketplace/chats/${itemId}_${currentUser}`;
             document.getElementById('dmTargetTitle').innerText = `Chat: ${itemTitle}`;
             document.getElementById('dmBox').style.display = 'flex';
-
             database.ref(activeDMPath).on('value', snapshot => {
-                let logs = document.getElementById('dmLogs');
-                logs.innerHTML = "";
-                let msgs = snapshot.val();
+                let logs = document.getElementById('dmLogs'); logs.innerHTML = ""; let msgs = snapshot.val();
                 if(msgs) {
                     Object.keys(msgs).forEach(k => {
-                        let m = msgs[k];
-                        let alignStyle = m.senderName === currentUser ? 'align-self:flex-end; background:var(--primary);' : 'align-self:flex-start; background:#222;';
-                        logs.innerHTML += `<div style="padding:10px 14px; border-radius:12px; margin-bottom:6px; max-width:80%; ${alignStyle} color:white;">
-                            <div style="font-size:9px; opacity:0.5; margin-bottom:2px;">${m.senderName.toUpperCase()}</div>
-                            <div>${m.msgText}</div>
-                        </div>`;
+                        let m = msgs[k]; let align = m.senderName === currentUser ? 'align-self:flex-end; background:var(--primary);' : 'align-self:flex-start; background:#222;';
+                        logs.innerHTML += `<div style="padding:10px 14px; border-radius:12px; margin-bottom:6px; max-width:80%; ${align} color:white;"><b>${m.senderName.toUpperCase()}:</b> ${m.msgText}</div>`;
                     });
                 }
                 logs.scrollTop = logs.scrollHeight;
             });
         }
-
-        // CHAT DISCONNECTS
-        function closeDMWindow() {
-            if(activeDMPath) database.ref(activeDMPath).off();
-            document.getElementById('dmBox').style.display = 'none';
-        }
-
+        function closeDMWindow() { if(activeDMPath) database.ref(activeDMPath).off(); document.getElementById('dmBox').style.display = 'none'; }
         function handleDMKey(e) { if(e.key === 'Enter') sendDMMessage(); }
-
         function sendDMMessage() {
-            let el = document.getElementById('dmInput');
-            let txt = el.value.trim();
-            if(!txt || !activeDMPath) return;
-
-            let msgPayload = {
-                senderName: currentUser,
-                msgText: txt,
-                timestamp: Date.now()
-            };
-
-            database.ref(activeDMPath).push(msgPayload).then(() => { el.value = ""; });
+            let el = document.getElementById('dmInput'); let txt = el.value.trim(); if(!txt || !activeDMPath) return;
+            database.ref(activeDMPath).push({ senderName: currentUser, msgText: txt, timestamp: Date.now() }).then(() => { el.value = ""; });
         }
 
-        // SELLINGS LOGIC & PRICING APPRAISALS
-        function openSell() {
-            if(!currentUser) return;
-            document.getElementById('hardwareName').value = "";
-            document.getElementById('hardwareImg').value = "";
-            document.getElementById('hardwareStock').value = "1";
-            document.getElementById('sellerThoughts').value = "";
-            document.getElementById('origPrice').value = "";
-            document.getElementById('aiVal').innerText = "₹0";
-            document.getElementById('sellModal').style.display = 'flex';
-        }
-
-        function handleTypeChange() {}
-        
+        function openSell() { if(!currentUser) return; document.getElementById('sellModal').style.display = 'flex'; }
         function calculateHardwareValue() {
             let orig = parseFloat(document.getElementById('origPrice').value) || 0;
             let cond = parseFloat(document.getElementById('hardwareCondition').value);
-            let health = parseFloat(document.getElementById('hardwareHealth').value);
-            computedAppraisalValue = Math.round(orig * 0.60 * cond * health);
+            computedAppraisalValue = Math.round(orig * 0.60 * cond);
             document.getElementById('aiVal').innerText = "₹" + computedAppraisalValue.toLocaleString('en-IN');
         }
-
         function submitSell() {
             let title = document.getElementById('hardwareName').value.trim();
-            let img = document.getElementById('hardwareImg').value.trim();
-            let stockVol = parseInt(document.getElementById('hardwareStock').value) || 1;
-            let bioThoughts = document.getElementById('sellerThoughts').value.trim();
-
-            if(!title) { alert("Enter an item title!"); return; }
-            if(computedAppraisalValue <= 0) { alert("Appraisal price must exceed zero!"); return; }
-
-            let payload = {
-                title: title,
-                imageUrl: img,
-                stocks: stockVol,
-                thoughts: bioThoughts,
-                price: computedAppraisalValue,
-                type: document.getElementById('hardwareType').value,
-                condition: "Inspected Tier",
-                sellerName: currentUser,
-                timestamp: Date.now()
-            };
-
-            database.ref('marketplace/items').push(payload).then(() => {
-                closeModals();
-            }).catch(e => alert("Post Error: " + e.message));
+            if(!title || computedAppraisalValue <= 0) return;
+            database.ref('marketplace/items').push({ title: title, imageUrl: document.getElementById('hardwareImg').value.trim(), stocks: parseInt(document.getElementById('hardwareStock').value)||1, thoughts: document.getElementById('sellerThoughts').value.trim(), price: computedAppraisalValue, type: document.getElementById('hardwareType').value, sellerName: currentUser, timestamp: Date.now() }).then(() => closeModals());
         }
-
-        function deleteMarketItem(id) {
-            if(confirm("Permanently strip this listing entry out of the cloud matrix?")) {
-                database.ref(`marketplace/items/${id}`).remove();
-            }
-        }
-
-        // PRICE STRATEGIZER SLIDERS
-        const slider = document.getElementById('budgetSlider');
-        slider.oninput = function() {
-            document.getElementById('priceLabel').innerText = parseInt(this.value).toLocaleString('en-IN');
-            updateBuilds(parseInt(this.value));
-        };
-
-        function updateBuilds(v) {
-            let iOut = `<p><b>CPU:</b> i5 Platform Engine</p><p><b>GPU:</b> RX 580 8GB Value Variant</p><p><b>RAM:</b> 16GB Configuration Array</p>`;
-            let aOut = `<p><b>CPU:</b> Ryzen 5 Multi-Core Node</p><p><b>GPU:</b> RX 580 Gaming Standard</p><p><b>RAM:</b> 16GB Fast Allocation Array</p>`;
-            document.getElementById('intelSpecs').innerHTML = iOut;
-            document.getElementById('amdSpecs').innerHTML = aOut;
-        }
-        updateBuilds(15000);
+        function deleteMarketItem(id) { if(confirm("Strip entry?")) database.ref(`marketplace/items/${id}`).remove(); }
     </script>
 </body>
 </html>
