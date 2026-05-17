@@ -78,6 +78,11 @@
         .app-view { display: none; max-width: 900px; margin: 0 auto 40px auto; padding: 0 20px; box-sizing: border-box; }
         .app-view.active { display: block; }
 
+        /* FILTER MENU ROW FOR MARKETPLACE */
+        .market-filter-row { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .filter-chip { background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 6px 16px; border-radius: 20px; font-size: 12px; cursor: pointer; font-weight: bold; }
+        .filter-chip.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
         /* COMMAND SIDEBAR CONTROLLER */
         .sidebar { position: fixed; top: 0; left: -300px; width: 280px; height: 100%; background: var(--card); border-right: 1px solid var(--border); transition: 0.4s; z-index: 2000; padding: 70px 20px; overflow-y: auto; box-sizing: border-box; visibility: hidden; }
         .sidebar.active { left: 0; visibility: visible; }
@@ -134,7 +139,8 @@
         .market-tag { font-size: 10px; padding: 3px 8px; border-radius: 4px; font-weight: bold; background: rgba(255,255,255,0.05); color: #aaa; }
         body.theme-minimalist .market-tag { background: #e5e5e7; color: #555; }
         .market-tag.prime { background: rgba(1, 148, 11, 0.15); color: var(--primary); }
-        body.theme-maximalist .market-tag.prime { background: #ff007f; color: #fff; }
+        body.theme-maximalist .market-tag.prime { background: #ff007f; color: #fff; border: 1px solid #00ffff; }
+        body.theme-maximalist .market-tag.game-tag { background: #00ffff; color: #000; font-style: italic; }
         .market-item-name { font-size: 16px; font-weight: bold; margin: 0; }
         .market-item-price { font-size: 18px; font-weight: 900; color: var(--primary); margin: 8px 0; }
         
@@ -218,15 +224,24 @@
                 <span>Total:</span>
                 <span id="cartTotalValue">₹0</span>
             </div>
-            <button class="checkout-btn" onclick="checkoutTerminal()">Verify & Buy Stocks</button>
+            <button class="checkout-btn" onclick="checkoutTerminal()">Verify & Secure Assets</button>
         </div>
     </div>
 
     <div class="app-view active" id="marketView">
         <div class="market-header">
             <h2 style="text-transform: uppercase; margin: 0; font-size: 24px;">Matrix Marketplace</h2>
-            <button onclick="openSell()" style="background:var(--primary); color:white; border:none; padding:10px 20px; border-radius:8px; font-weight:bold; cursor:pointer; text-transform:uppercase; font-size:12px;">+ Post an Ad</button>
+            <button onclick="openSell()" style="background:var(--primary); color:white; border:none; padding:10px 20px; border-radius:8px; font-weight:bold; cursor:pointer; text-transform:uppercase; font-size:12px;">+ Post Listing</button>
         </div>
+        
+        <div class="market-filter-row" id="marketFilterRow">
+            <button class="filter-chip active" onclick="filterMarketplace('all')">All Gear</button>
+            <button class="filter-chip" onclick="filterMarketplace('Component')">Components</button>
+            <button class="filter-chip" onclick="filterMarketplace('Full PC')">System Desktops</button>
+            <button class="filter-chip" onclick="filterMarketplace('Laptop')">Laptops</button>
+            <button class="filter-chip" style="border-color: #ffd700;" onclick="filterMarketplace('Game')">🕹️ Exclusive Games</button>
+        </div>
+
         <div id="terminal-ad-slot" style="background:rgba(0,0,0,0.3); border:1px dashed var(--primary); border-radius:12px; min-height:90px; margin-bottom:25px; display:flex; align-items:center; justify-content:center; color:#666; font-size:11px; text-transform:uppercase; letter-spacing:1px;">
             📡 Console Stream: Awaiting Ad Network Script Deployment Node...
         </div>
@@ -269,22 +284,12 @@
             </div>
 
             <div class="wizard-step" id="wizStep3">
-                <h3 style="text-transform: uppercase; color: var(--primary); margin-top: 0;">Step 3: Payment Node</h3>
-                <p style="font-size: 13px; color: #777;">Define alternative banking streams and apply treasure chest discount codes.</p>
-                <label>Billing Stream Route</label>
-                <select id="paymentMethodSelect" onchange="togglePaymentFields()">
-                    <option value="cod">Cash On Delivery (COD)</option>
-                    <option value="upi">Unified Payments Interface (UPI) / Cards</option>
+                <h3 style="text-transform: uppercase; color: var(--primary); margin-top: 0;">Step 3: Secure Gate</h3>
+                <p style="font-size: 13px; color: #777;">Verify alternative digital routing setups and redeem earned treasure coins.</p>
+                <label>Secure Payment Gateway Route</label>
+                <select id="paymentMethodSelect">
+                    <option value="upi">Direct Digital Payment Architecture (UPI/Cards)</option>
                 </select>
-                <div id="upiPaymentFields" style="display: none; background:rgba(0,0,0,0.2); padding:15px; border-radius:12px; border:1px solid var(--border); margin-bottom:15px;">
-                    <label>Select UPI Stream Method</label>
-                    <select id="upiProvider">
-                        <option value="gpay">Google Pay (GPay Direct Link)</option>
-                        <option value="card">Credit / Debit Card Interface</option>
-                    </select>
-                    <label>Card / Virtual Account ID Number String</label>
-                    <input type="text" id="paymentAccountString" placeholder="Enter card numbers or VPA routing handle">
-                </div>
                 <div class="treasure-box" id="treasureContainer">
                     <input type="checkbox" id="useTreasureCheckbox" style="width: auto; margin: 0;" onchange="calculateFinalWizardPrice()" disabled>
                     <div>
@@ -338,30 +343,35 @@
     <div class="modal" id="sellModal">
         <div class="modal-content">
             <h2 style="margin-top: 0; margin-bottom: 20px; font-size: 20px; text-transform: uppercase;">Post New Listing</h2>
-            <label>Hardware Classification</label>
-            <select id="hardwareType">
+            <label>Hardware/Asset Classification</label>
+            <select id="hardwareType" onchange="toggleGameFields()">
                 <option value="Component">Component (GPU, CPU, RAM, etc.)</option>
                 <option value="Full PC">Full Desktop PC Setup</option>
                 <option value="Laptop">Laptop Computer</option>
+                <option value="Game" id="gameAuthOption" style="display:none;">🕹️ Game Project (Admin Vault Exclusive)</option>
             </select>
             <label>Item Name / Model Title</label>
-            <input type="text" id="hardwareName" placeholder="e.g., RX 580 8GB, Core i5 Pack">
+            <input type="text" id="hardwareName" placeholder="e.g., RX 580 8GB, Cyber-Horror Maze Build">
             <label>Image Thumbnail Link (URL)</label>
             <input type="url" id="hardwareImg" placeholder="Paste image web URL">
             <label>Stock Supply Volume Available</label>
             <input type="number" id="hardwareStock" value="1" min="1">
-            <label>Seller Thoughts / Description Statement</label>
-            <textarea id="sellerThoughts" placeholder="Share condition status indicators..." rows="3"></textarea>
-            <label>Original Purchase Price</label>
-            <input type="number" id="origPrice" placeholder="Original price (₹)" oninput="calculateHardwareValue()">
-            <label>Physical Condition Check</label>
-            <select id="hardwareCondition" onchange="calculateHardwareValue()">
-                <option value="1.0">Mint / Like New (0% Drop)</option>
-                <option value="0.85">Good / Clean (15% Drop)</option>
-                <option value="0.65">Rough / Heavily Used (35% Drop)</option>
-            </select>
+            <label>Seller Thoughts / Project Description</label>
+            <textarea id="sellerThoughts" placeholder="Share condition status indicators or game launch info..." rows="3"></textarea>
+            
+            <div id="valuationMathBlock">
+                <label>Original Purchase Price</label>
+                <input type="number" id="origPrice" placeholder="Original price (₹)" oninput="calculateHardwareValue()">
+                <label>Physical Condition Check</label>
+                <select id="hardwareCondition" onchange="calculateHardwareValue()">
+                    <option value="1.0">Mint / Like New (0% Drop)</option>
+                    <option value="0.85">Good / Clean (15% Drop)</option>
+                    <option value="0.65">Rough / Heavily Used (35% Drop)</option>
+                </select>
+            </div>
+
             <div style="background:rgba(1,148,11,0.08); padding:18px; border-radius:15px; margin-bottom:20px; border:1px solid var(--primary);">
-                <span style="font-size: 11px; color: #888; display: block; margin-bottom: 4px; font-weight: bold;">LIVE VALUATION ESTIMATE</span>
+                <span id="valLabel" style="font-size: 11px; color: #888; display: block; margin-bottom: 4px; font-weight: bold;">LIVE VALUATION ESTIMATE</span>
                 <b id="aiVal" style="font-size: 26px; color: var(--primary);">₹0</b>
             </div>
             <button onclick="submitSell()" style="background:var(--primary); color:white; border:none; padding:15px; width:100%; border-radius:10px; font-weight:bold; cursor:pointer; text-transform: uppercase;">Confirm & Post Listing</button>
@@ -401,7 +411,7 @@
         const localAccounts = {
             "nafeez": "1234",
             "admin": "potato2026",
-            "opsmanager": "opspass2026", // Add your employee account details here!
+            "opsmanager": "opspass2026",
             "guest": "0000"
         };
 
@@ -410,6 +420,7 @@
         let activeDMPath = null;
         let currentUser = null; 
         let computedAppraisalValue = 0;
+        let currentFilterCategory = 'all';
         
         let selectedCategoryNode = 'gaming';
         let activeSelectedBudget = 15000;
@@ -445,6 +456,13 @@
             let savedTheme = localStorage.getItem('potato_terminal_theme') || 'matrix';
             applyCorporateTheme(savedTheme);
 
+            // EVALUATE EXCLUSIVE GATE CHANNELS FOR GAME SALES
+            if (username === 'nafeez' || username === 'admin') {
+                document.getElementById('gameAuthOption').style.display = 'block';
+            } else {
+                document.getElementById('gameAuthOption').style.display = 'none';
+            }
+
             // EVALUATE HIGH LEVEL ACCESS PRIVILEGES FOR OPERATIONS
             if (username === 'nafeez' || username === 'admin' || username === 'opsmanager') {
                 document.querySelectorAll('.admin-only-nav').forEach(el => el.style.display = 'block');
@@ -455,7 +473,6 @@
             }
         }
 
-        // 🚨 LIVE BACKGROUND AUDIO DESKTOP NOTIFICATION LISTENER
         function activateAdminOrderListener() {
             console.log("📡 Admin Order Tracking Stream Active with Audio Context...");
             const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -463,9 +480,8 @@
             database.ref('marketplace/orders').on('child_added', (snapshot) => {
                 let orderData = snapshot.val();
                 if (orderData && orderData.timestamp > (Date.now() - 10000)) {
-                    // Trigger double beep synth alarm frequency
-                    playNotificationBeep(audioCtx, 587.33, 0.1); // D5 Note
-                    setTimeout(() => playNotificationBeep(audioCtx, 659.25, 0.15), 120); // E5 Note
+                    playNotificationBeep(audioCtx, 587.33, 0.1); 
+                    setTimeout(() => playNotificationBeep(audioCtx, 659.25, 0.15), 120); 
 
                     alert(`🚨 NEW BUSINESS ORDER DEPLOYED! 🚨\n\n` +
                           `👤 User Node: ${orderData.buyerName.toUpperCase()}\n` +
@@ -489,7 +505,6 @@
             } catch(e) { console.log("Audio trigger pending interaction block."); }
         }
 
-        // LIVE PIPELINE MANAGER STORAGE VIEW ENGINE
         function syncOperationsPipeline() {
             database.ref('marketplace/orders').on('value', snapshot => {
                 let grid = document.getElementById('opsGrid');
@@ -510,7 +525,7 @@
 
                     grid.innerHTML += `
                         <div class="ops-order-card">
-                            <span class="ops-badge">${ord.chosenPayment || 'DIRECT'}</span>
+                            <span class="ops-badge">${ord.chosenPayment || 'DIGITAL GATEWAY'}</span>
                             <h4 style="margin:0 0 10px 0; text-transform:uppercase; color:var(--primary); font-size:15px;">Order Context: ${ord.orderType}</h4>
                             <p style="margin:4px 0; font-size:13px;">👤 <b>Account Handle:</b> ${ord.buyerName.toUpperCase()} at [${dateStr}]</p>
                             ${ord.categoryPreset ? `<p style="margin:4px 0; font-size:13px;">🖥️ <b>Preset Profile Allocation:</b> ${ord.categoryPreset.toUpperCase()} layout</p>` : ''}
@@ -534,7 +549,7 @@
         };
 
         function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
-        function closeModals() { document.getElementById('sellModal').style.display = 'none'; }
+        function closeModals() { document.getElementById('sellModal').style.display = 'none'; resetSellForm(); }
         function toggleCart() { document.getElementById('cartPanel').classList.toggle('active'); }
 
         function switchTab(viewId) {
@@ -544,6 +559,15 @@
             let btn = document.getElementById('btn-' + viewId);
             if(btn) btn.classList.add('active');
             if(document.getElementById('sidebar').classList.contains('active')) toggleSidebar();
+        }
+
+        function filterMarketplace(category) {
+            currentFilterCategory = category;
+            document.querySelectorAll('.filter-chip').forEach(chip => {
+                chip.classList.remove('active');
+                if(chip.getAttribute('onclick').includes(`'${category}'`)) chip.classList.add('active');
+            });
+            renderMarketGrid();
         }
 
         function syncBudgetInputs(source) {
@@ -646,11 +670,6 @@
             targetArea.innerHTML = out + `<div class="spec-line" style="color:var(--primary)"><b>Storage:</b> NVMe High Speed OS Drive Added</div>`;
         }
 
-        function togglePaymentFields() {
-            let choice = document.getElementById('paymentMethodSelect').value;
-            document.getElementById('upiPaymentFields').style.display = (choice === 'upi') ? 'block' : 'none';
-        }
-
         function calculateFinalWizardPrice() {
             let basePrice = activeSelectedBudget;
             let discount = 0;
@@ -670,13 +689,15 @@
 
             if (!addr || !city || !state || !pin) { alert("Please complete routing shipping targets!"); return; }
 
+            let finalCost = calculateFinalWizardPrice();
+
             let payload = {
                 orderType: "Custom Wizard Build",
                 buyerName: currentUser,
                 allocatedBudget: activeSelectedBudget,
                 categoryPreset: selectedCategoryNode,
-                chosenPayment: document.getElementById('paymentMethodSelect').value,
-                invoiceCost: calculateFinalWizardPrice(),
+                chosenPayment: "Direct UPI/Card Integration",
+                invoiceCost: finalCost,
                 shippingCoordinates: { address: addr, city: city, state: state, pincode: pin },
                 timestamp: Date.now()
             };
@@ -702,10 +723,18 @@
 
         function renderMarketGrid() {
             let grid = document.getElementById('marketGrid'); grid.innerHTML = "";
-            if (marketItems.length === 0) {
-                grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:#666; padding:40px;">No gear active.</div>`; return;
+            
+            // APPLY EXCLUSIVE CATEGORY FILTERING
+            let itemsToDisplay = marketItems;
+            if(currentFilterCategory !== 'all') {
+                itemsToDisplay = marketItems.filter(i => i.type === currentFilterCategory);
             }
-            marketItems.forEach(item => {
+
+            if (itemsToDisplay.length === 0) {
+                grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:#666; padding:40px;">No assets active in this channel node.</div>`; return;
+            }
+            
+            itemsToDisplay.forEach(item => {
                 let imgUrl = item.imageUrl ? item.imageUrl : "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=400";
                 let stockCount = parseInt(item.stocks) || 0;
                 let isOutOfStock = stockCount <= 0;
@@ -713,14 +742,19 @@
                     ? `<button disabled style="background:#333; color:#666; padding:8px; border-radius:6px; font-weight:bold;">SOLD OUT</button>`
                     : `<button onclick="addToCart('${item.id}', '${item.title}', ${item.price})" style="background:var(--primary); border:none; color:white; padding:8px 12px; border-radius:6px; cursor:pointer; font-weight:bold;">🛒 +</button>`;
                 let deleteBtn = (currentUser && item.sellerName === currentUser) ? `<button class="delete-listing-btn" onclick="deleteMarketItem('${item.id}')">✖</button>` : "";
+                
+                // STYLING CUSTOM ADJUSTMENTS FOR THE EXCLUSIVE GAME CLASSIFICATION
+                let typeBadgeClass = item.type === "Game" ? "market-tag prime game-tag" : "market-tag prime";
+                let titleColorStyle = item.type === "Game" ? "color: #ffd700; font-style: italic;" : "";
+
                 grid.innerHTML += `
-                    <div class="market-card">
+                    <div class="market-card" style="${item.type === 'Game' ? 'border: 1px dashed #ffd700;' : ''}">
                         ${deleteBtn}
                         <div class="market-img-container"><img src="${imgUrl}" class="market-img" onerror="this.src='https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=400'"></div>
                         <div class="market-details">
                             <div>
-                                <div class="market-item-name">${item.title}</div>
-                                <div class="market-tag-container"><span class="market-tag prime">${item.type}</span><span class="market-tag">Stock: ${stockCount}</span></div>
+                                <div class="market-item-name" style="${titleColorStyle}">HTML5 Game // ${item.title}</div>
+                                <div class="market-tag-container"><span class="${typeBadgeClass}">${item.type.toUpperCase()}</span><span class="market-tag">Stock: ${stockCount}</span></div>
                                 ${item.thoughts ? `<div class="seller-thoughts-box"><b>${item.sellerName}:</b> "${item.thoughts}"</div>` : ''}
                                 <div class="market-item-price">₹${item.price.toLocaleString('en-IN')}</div>
                             </div>
@@ -742,6 +776,7 @@
             document.getElementById('cartTotalValue').innerText = "₹" + total.toLocaleString('en-IN');
         }
 
+        // REMOVED ALL COD LOGIC MODULES — INSTANT DIRECT ESCROW SETUPS
         function checkoutTerminal() {
             if(cart.length === 0) return;
             let updates = {};
@@ -751,6 +786,7 @@
                 orderType: "Marketplace Checkout",
                 buyerName: currentUser,
                 invoiceCost: cart.reduce((acc, current) => acc + current.price, 0),
+                chosenPayment: "Direct UPI/Card Digital Gateway Connection",
                 timestamp: Date.now()
             };
             updates[`marketplace/orders/${orderId}`] = checkoutRecord;
@@ -761,7 +797,7 @@
             });
             
             database.ref().update(updates).then(() => { 
-                alert("Checked out successfully! Active customer node verified."); 
+                alert("Transaction Processed Successfully! Digital asset nodes secured."); 
                 cart = []; 
                 updateCartUI(); 
                 toggleCart(); 
@@ -791,18 +827,79 @@
             database.ref(activeDMPath).push({ senderName: currentUser, msgText: txt, timestamp: Date.now() }).then(() => { el.value = ""; });
         }
 
-        function openSell() { if(!currentUser) return; document.getElementById('sellModal').style.display = 'flex'; }
+        function openSell() { 
+            if(!currentUser) return; 
+            document.getElementById('sellModal').style.display = 'flex'; 
+            toggleGameFields();
+        }
+
+        // EXCLUSIVE ADMIN GAME VALUE CONTROLS
+        function toggleGameFields() {
+            let type = document.getElementById('hardwareType').value;
+            let mathBlock = document.getElementById('valuationMathBlock');
+            let valLabel = document.getElementById('valLabel');
+            let aiValDisplay = document.getElementById('aiVal');
+
+            if (type === "Game") {
+                // Completely hide used appraisal math for your games
+                mathBlock.style.display = 'none';
+                valLabel.innerText = "DIRECT EXCLUSIVE FIXED SALE PRICE";
+                
+                // Allow direct manual entry instead of algorithmic depreciation drops
+                let directPrice = prompt("Enter the precise fixed sale price for this game build (₹):", "499");
+                computedAppraisalValue = parseInt(directPrice) || 499;
+                aiValDisplay.innerText = "₹" + computedAppraisalValue.toLocaleString('en-IN');
+            } else {
+                mathBlock.style.display = 'block';
+                valLabel.innerText = "LIVE VALUATION ESTIMATE";
+                calculateHardwareValue();
+            }
+        }
+
         function calculateHardwareValue() {
+            if(document.getElementById('hardwareType').value === "Game") return;
             let orig = parseFloat(document.getElementById('origPrice').value) || 0;
             let cond = parseFloat(document.getElementById('hardwareCondition').value);
             computedAppraisalValue = Math.round(orig * 0.60 * cond);
             document.getElementById('aiVal').innerText = "₹" + computedAppraisalValue.toLocaleString('en-IN');
         }
+
+        function resetSellForm() {
+            document.getElementById('hardwareName').value = "";
+            document.getElementById('hardwareImg').value = "";
+            document.getElementById('hardwareStock').value = "1";
+            document.getElementById('sellerThoughts').value = "";
+            document.getElementById('origPrice').value = "";
+            document.getElementById('hardwareType').value = "Component";
+            computedAppraisalValue = 0;
+            document.getElementById('aiVal').innerText = "₹0";
+        }
+
         function submitSell() {
             let title = document.getElementById('hardwareName').value.trim();
+            let assetType = document.getElementById('hardwareType').value;
+            
             if(!title || computedAppraisalValue <= 0) return;
-            database.ref('marketplace/items').push({ title: title, imageUrl: document.getElementById('hardwareImg').value.trim(), stocks: parseInt(document.getElementById('hardwareStock').value)||1, thoughts: document.getElementById('sellerThoughts').value.trim(), price: computedAppraisalValue, type: document.getElementById('hardwareType').value, sellerName: currentUser, timestamp: Date.now() }).then(() => closeModals());
+            
+            // Hard security check block to prevent fraud spoof inputs
+            if (assetType === "Game" && currentUser !== 'nafeez' && currentUser !== 'admin') {
+                alert("SECURITY EXCEPTION DETECTED: Only authorized creator handles can publish assets to the Game Core pipeline!");
+                closeModals();
+                return;
+            }
+
+            database.ref('marketplace/items').push({ 
+                title: title, 
+                imageUrl: document.getElementById('hardwareImg').value.trim(), 
+                stocks: parseInt(document.getElementById('hardwareStock').value) || 1, 
+                thoughts: document.getElementById('sellerThoughts').value.trim(), 
+                price: computedAppraisalValue, 
+                type: assetType, 
+                sellerName: currentUser, 
+                timestamp: Date.now() 
+            }).then(() => closeModals());
         }
+
         function deleteMarketItem(id) { if(confirm("Strip entry?")) database.ref(`marketplace/items/${id}`).remove(); }
     </script>
 </body>
