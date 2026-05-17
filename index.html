@@ -515,7 +515,7 @@
             localStorage.setItem('potato_terminal_theme', themeName);
         }
 
-function handleTerminalLogin() {
+        function handleTerminalLogin() {
             let userField = document.getElementById('authUsername').value.trim().toLowerCase();
             let passField = document.getElementById('authPassword').value.trim();
 
@@ -524,7 +524,7 @@ function handleTerminalLogin() {
                 return;
             }
 
-            // 1. STRICT ADMIN CHECK: Only force local check if it's the core system admins
+            // 1. STRICT ADMIN CHECK: Handle core system admins right away
             if (userField === 'nafeez' || userField === 'admin' || userField === 'opsmanager') {
                 if (typeof localAccounts !== 'undefined' && localAccounts[userField] && localAccounts[userField].password === passField) {
                     loginSuccess(userField);
@@ -535,55 +535,30 @@ function handleTerminalLogin() {
                 }
             }
 
-            // 2. FOR ALL OTHER ACCOUNTS: Query the dynamic Firebase database roster
+            // 2. BACKUP GUEST CHECK: Let standard local accounts/guests through if they match your top list
+            if (typeof localAccounts !== 'undefined' && localAccounts[userField]) {
+                if (localAccounts[userField].password === passField) {
+                    loginSuccess(userField);
+                    return;
+                } else {
+                    alert("ACCESS DENIED: Invalid Local Credentials.");
+                    return;
+                }
+            }
+
+            // 3. DATABASE CHECK: If it's not a hardcoded account, check the live Firebase dynamic roster
             database.ref(`marketplace/users/${userField}`).once('value', snapshot => {
                 let dbUser = snapshot.val();
                 
                 if (dbUser && dbUser.password === passField) {
-                    // Firebase entry found and PIN matches perfectly!
                     loginSuccess(userField);
                 } else {
-                    // No database entry found, or PIN is incorrect
                     alert("ACCESS DENIED: Credentials not found in active squad array.");
                 }
             }).catch(error => {
                 console.error("Auth Matrix Interruption:", error);
                 alert("System connection error during authorization verification.");
             });
-        } // <-- Exactly ONE bracket here closes the function cleanly.
-
-        // Make sure your next tool starts right below it without any lone floating brackets!
-        function toggleSidebar() { let sb = document.getElementById('sidebar'); if(sb) sb.classList.toggle('active'); }
-        function loginSuccess(username) {
-            currentUser = username;
-            localStorage.setItem('potato_local_session', username);
-            
-            let authGateNode = document.getElementById('authGate');
-            if(authGateNode) authGateNode.style.display = 'none';
-            
-            let userTag = document.getElementById('userDisplayTag');
-            if(userTag) userTag.innerText = `USER: ${username.toUpperCase()}`;
-            
-            listenToMarketplace();
-            listenToGameVault();
-            syncUserPersonalOrders(username);
-            selectCategory('gaming');
-            
-            let savedTheme = localStorage.getItem('potato_terminal_theme') || 'matrix';
-            applyCorporateTheme(savedTheme);
-
-            if (username === 'nafeez' || username === 'admin') {
-                let devConsole = document.getElementById('developerGameConsole');
-                if(devConsole) devConsole.style.display = 'block';
-            }
-
-            if (username === 'nafeez' || username === 'admin' || username === 'opsmanager') {
-                document.querySelectorAll('.admin-only-nav').forEach(el => el.style.display = 'block');
-                syncOperationsPipeline();
-                syncHRApplications();
-                syncViolationReports();
-                syncViolationReports();                
-            }
         }
 
         function syncUserPersonalOrders(username) {
