@@ -1030,13 +1030,37 @@ function submitJobApplication() {
             });
         }
 
-        function terminateSquadMember(username) {
+function terminateSquadMember(username) {
             if (!confirm(`Are you completely sure you want to terminate ${username.toUpperCase()}? This immediately wipes their local system terminal access account credentials.`)) return;
             
             database.ref(`marketplace/users/${username}`).remove().then(() => {
                 alert(`❌ Node profile [${username.toUpperCase()}] has been terminated and scrubbed from the active squad roster array.`);
             });
+        } // <-- Added this missing bracket to fix the error!
+
+        function toggleSidebar() { let sb = document.getElementById('sidebar'); if(sb) sb.classList.toggle('active'); }
+        function closeModals() { let m = document.getElementById('sellModal'); if(m) m.style.display = 'none'; resetSellForm(); }
+        function resetSellForm() { document.getElementById('hardwareName').value = ""; document.getElementById('origPrice').value = ""; document.getElementById('aiVal').innerText = "₹0"; computedAppraisalValue = 0; }
+        function toggleCart() { let cp = document.getElementById('cartPanel'); if(cp) cp.classList.toggle('active'); }
+        function openSell() { if(currentUser) document.getElementById('sellModal').style.display = 'flex'; }
+        function closeDMWindow() { document.getElementById('dmBox').style.display = 'none'; }
+        function handleDMKey(e) { if(e.key === 'Enter') sendDMMessage(); }
+        function logoutTerminal() { currentUser = null; localStorage.removeItem('potato_local_session'); let ag = document.getElementById('authGate'); if(ag) ag.style.display = 'flex'; }
+
+        function switchTab(viewId) {
+            document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            let targetView = document.getElementById(viewId); if(targetView) targetView.classList.add('active');
+            let targetBtn = document.getElementById('btn-' + viewId); if(targetBtn) targetBtn.classList.add('active');
+            let sb = document.getElementById('sidebar'); if(sb && sb.classList.contains('active')) toggleSidebar();
         }
+
+        function filterMarketplace(category) { currentFilterCategory = category; document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active')); renderMarketGrid(); }
+
+        window.onload = function() {
+            let session = localStorage.getItem('potato_local_session');
+            if(session && localAccounts[session]) loginSuccess(session);
+        };
     </script>
 </body>
 </html>
