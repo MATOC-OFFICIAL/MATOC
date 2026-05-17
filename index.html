@@ -10,65 +10,59 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
 
-<style>
-    /* 🌊 IMMACULATE FRUTIGER AERO HEADER & NAVIGATION OVERHAUL */
-    body.theme-frutiger .header { 
-        background: rgba(255, 255, 255, 0.45); 
-        backdrop-filter: blur(25px) saturate(160%); 
-        -webkit-backdrop-filter: blur(25px) saturate(160%);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.6); 
-        box-shadow: 0 4px 30px rgba(0, 162, 255, 0.08), inset 0 1px 0 rgba(255,255,255,0.5);
-    }
+    <style>
+        /* 🎨 SYSTEM DESIGN GRAPHIC PROFILES */
+        :root { 
+            --primary: #01940b; 
+            --bg: #0b0b0b; 
+            --card: #151515; 
+            --text: #eee; 
+            --border: #222; 
+            --radius: 24px;
+            --font: 'Inter', sans-serif;
+            --shadow: none;
+            --backdrop: none;
+            --gradient-bg: none;
+        }
+        
+        body.theme-minimalist {
+            --primary: #000000;
+            --bg: #f5f5f7;
+            --card: #ffffff;
+            --text: #1d1d1f;
+            --border: #e5e5e7;
+            --radius: 12px;
+            --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --shadow: 0 4px 20px rgba(0,0,0,0.05);
+            --backdrop: none;
+            --gradient-bg: none;
+        }
 
-    body.theme-frutiger .tab-navigation {
-        display: flex;
-        justify-content: flex-start;
-        gap: 10px;
-        margin: 20px auto;
-        padding: 6px;
-        max-width: 900px;
-        overflow-x: auto; /* Allows smooth horizontal swipe on mobile phones */
-        scrollbar-width: none; /* Hide ugly scrollbars on Firefox */
-        -webkit-overflow-scrolling: touch;
-    }
-    body.theme-frutiger .tab-navigation::-webkit-scrollbar { display: none; } /* Hide scrollbars on Chrome/Safari */
+        body.theme-frutiger {
+            --primary: #00a2ff;
+            --bg: #e0f2fe;
+            --card: rgba(255, 255, 255, 0.45);
+            --text: #0f172a;
+            --border: rgba(255, 255, 255, 0.6);
+            --radius: 20px;
+            --font: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            --shadow: 0 8px 32px 0 rgba(0, 162, 255, 0.15), inset 0 1px 4px rgba(255,255,255,0.8);
+            --backdrop: blur(25px) saturate(160%);
+            --gradient-bg: linear-gradient(135deg, #00f2fe 0%, #4facfe 40%, #00a2ff 70%, #38ef7d 100%);
+        }
 
-    body.theme-frutiger .tab-btn {
-        background: rgba(255, 255, 255, 0.3);
-        border: 1px solid rgba(255, 255, 255, 0.5);
-        color: #0f172a;
-        padding: 10px 22px;
-        border-radius: 30px; /* Fully rounded sleek capsules */
-        font-size: 12px;
-        font-weight: 700;
-        letter-spacing: 0.3px;
-        white-space: nowrap; /* Prevents text from breaking into two lines on small screens */
-        box-shadow: 0 2px 10px rgba(0,0,0,0.02), inset 0 1px 2px rgba(255,255,255,0.6);
-        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    }
+        body { font-family: var(--font); background: var(--bg); color: var(--text); margin: 0; transition: all 0.4s ease; overflow-x: hidden; min-height: 100vh; }
+        
+        /* Frutiger Aero Vibrant Background Setup */
+        body.theme-frutiger::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--gradient-bg);
+            z-index: -1;
+            opacity: 0.85;
+        }
 
-    body.theme-frutiger .tab-btn:hover {
-        background: rgba(255, 255, 255, 0.6);
-        border-color: #00a2ff;
-        transform: translateY(-1px);
-    }
-
-    body.theme-frutiger .tab-btn.active {
-        background: linear-gradient(180deg, #ffffff 0%, #e0f2fe 100%);
-        color: #0284c7;
-        border: 1px solid #00a2ff;
-        box-shadow: 0 6px 16px rgba(0, 162, 255, 0.25), inset 0 1px 3px rgba(255,255,255,1);
-        text-shadow: 0 0 1px rgba(0, 162, 255, 0.1);
-    }
-</style>
-
-<div class="tab-navigation">
-    <button class="tab-btn active" id="btn-marketView" onclick="switchTab('marketView')">🛒 Marketplace</button>
-    <button class="tab-btn" id="btn-buildView" onclick="switchTab('buildView')">🖥️ PC Builder</button>
-    <button class="tab-btn" id="btn-gameVaultView" onclick="switchTab('gameVaultView')">🕹️ Game Vault</button>
-    <button class="tab-btn" id="btn-jobsView" onclick="switchTab('jobsView')">💼 Careers</button>
-    <button class="tab-btn admin-only-nav" id="btn-opsView" onclick="switchTab('opsView')">📊 HQ Pipeline</button>
-</div>
         /* THEME CONTROLLER INTERFACE */
         .theme-selector-bar { display: flex; justify-content: center; gap: 8px; background: rgba(0,0,0,0.2); padding: 8px; border-radius: 30px; border: 1px solid var(--border); width: fit-content; margin: 80px auto 10px auto; position: relative; z-index: 100; backdrop-filter: var(--backdrop); }
         body.theme-frutiger .theme-selector-bar { background: rgba(255, 255, 255, 0.3); box-shadow: var(--shadow); }
@@ -85,17 +79,21 @@
         /* MAIN APPLICATION NAVIGATION BAR HEADER */
         .header { position: fixed; top: 0; width: 100%; height: 60px; background: rgba(0,0,0,0.9); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; z-index: 1000; border-bottom: 1px solid var(--border); box-sizing: border-box; }
         body.theme-minimalist .header { background: rgba(255,255,255,0.8); backdrop-filter: blur(20px); }
-        body.theme-frutiger .header { background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.5); box-shadow: 0 2px 20px rgba(0,0,0,0.05); }
+        body.theme-frutiger .header { background: rgba(255, 255, 255, 0.45); backdrop-filter: blur(25px) saturate(160%); -webkit-backdrop-filter: blur(25px) saturate(160%); border-bottom: 1px solid rgba(255, 255, 255, 0.6); box-shadow: 0 4px 30px rgba(0, 162, 255, 0.08), inset 0 1px 0 rgba(255,255,255,0.5); }
         .cart-trigger { cursor: pointer; position: relative; font-weight: 900; color: var(--primary); padding: 5px 10px; }
         body.theme-frutiger .cart-trigger { color: #1d4ed8; }
         .cart-count { position: absolute; top: -5px; right: -8px; background: red; color: white; font-size: 10px; padding: 2px 6px; border-radius: 50%; font-weight: bold; }
 
         /* INTERACTION LAYOUT TABS */
+        body.theme-frutiger .tab-navigation { display: flex; justify-content: flex-start; gap: 10px; margin: 20px auto; padding: 6px; max-width: 900px; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+        body.theme-frutiger .tab-navigation::-webkit-scrollbar { display: none; }
         .tab-navigation { display: flex; justify-content: center; gap: 15px; margin-top: 10px; margin-bottom: 25px; position: relative; z-index: 50; }
         .tab-btn { background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 12px 30px; border-radius: var(--radius); font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; transition: 0.3s; box-shadow: var(--shadow); backdrop-filter: var(--backdrop); }
         .tab-btn.active { border-color: var(--primary); color: var(--primary); background: rgba(1, 148, 11, 0.05); }
         body.theme-minimalist .tab-btn.active { background: #000; color: #fff; }
-        body.theme-frutiger .tab-btn.active { background: linear-gradient(180deg, rgba(255,255,255,0.8), rgba(255,255,255,0.3)); color: #0284c7; border: 1px solid #00a2ff; box-shadow: 0 4px 15px rgba(0, 162, 255, 0.2); }
+        body.theme-frutiger .tab-btn { background: rgba(255, 255, 255, 0.3); border: 1px solid rgba(255, 255, 255, 0.5); color: #0f172a; padding: 10px 22px; border-radius: 30px; font-size: 12px; font-weight: 700; letter-spacing: 0.3px; white-space: nowrap; box-shadow: 0 2px 10px rgba(0,0,0,0.02), inset 0 1px 2px rgba(255,255,255,0.6); transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
+        body.theme-frutiger .tab-btn:hover { background: rgba(255, 255, 255, 0.6); border-color: #00a2ff; transform: translateY(-1px); }
+        body.theme-frutiger .tab-btn.active { background: linear-gradient(180deg, #ffffff 0%, #e0f2fe 100%); color: #0284c7; border: 1px solid #00a2ff; box-shadow: 0 6px 16px rgba(0, 162, 255, 0.25), inset 0 1px 3px rgba(255,255,255,1); text-shadow: 0 0 1px rgba(0, 162, 255, 0.1); }
 
         /* CONTAINER VIEWS */
         .app-view { display: none; max-width: 900px; margin: 0 auto 40px auto; padding: 0 20px; box-sizing: border-box; }
@@ -244,6 +242,7 @@
         <div class="nav-item" onclick="switchTab('marketView')">🛒 Browse Store</div>
         <div class="nav-item" onclick="switchTab('buildView')">🖥️ Strategic Configurator</div>
         <div class="nav-item" onclick="switchTab('gameVaultView')">🕹️ Game Vault</div>
+        <div class="nav-item" onclick="switchTab('jobsView')">💼 Career Openings</div>
         <div class="nav-item" onclick="openSell()">⚙️ Appraise & Sell Gear</div>
         <div class="nav-item admin-only-nav" id="adminSidebarLink" onclick="switchTab('opsView')">📊 Live Order Pipeline</div>
     </div>
@@ -251,7 +250,9 @@
     <div class="tab-navigation">
         <button class="tab-btn active" id="btn-marketView" onclick="switchTab('marketView')">🛒 Marketplace</button>
         <button class="tab-btn" id="btn-buildView" onclick="switchTab('buildView')">🖥️ PC Builder</button>
-        <button class="tab-btn admin-only-nav" id="btn-opsView" onclick="switchTab('opsView')">📊 Pipeline</button>
+        <button class="tab-btn" id="btn-gameVaultView" onclick="switchTab('gameVaultView')">🕹️ Game Vault</button>
+        <button class="tab-btn" id="btn-jobsView" onclick="switchTab('jobsView')">💼 Careers</button>
+        <button class="tab-btn admin-only-nav" id="btn-opsView" onclick="switchTab('opsView')">📊 HQ Pipeline</button>
     </div>
 
     <div class="cart-panel" id="cartPanel">
@@ -375,8 +376,15 @@
     <div class="app-view" id="opsView">
         <h2 style="text-transform: uppercase; margin: 0 0 5px 0; font-size: 24px;">Live Operations Pipeline</h2>
         <p style="font-size: 13px; color: #666; margin-bottom: 25px;">Real-time incoming client build data modules sync tracking dashboard.</p>
-        <div class="ops-grid" id="opsGrid">
+        
+        <h3 style="text-transform: uppercase; font-size:14px; color:#0284c7; margin-bottom:10px;">📦 Client Build Orders</h3>
+        <div class="ops-grid" id="opsGrid" style="margin-bottom: 40px;">
             <div style="text-align:center; color:#555; padding:40px;">Establishing background database sync connection node...</div>
+        </div>
+
+        <h3 style="text-transform: uppercase; font-size:14px; color:#11998e; margin-bottom:10px;">💼 Submitted Job Packets</h3>
+        <div class="ops-grid" id="hrOpsGrid">
+            <div style="text-align:center; color:#555; padding:40px;">No incoming applications found in data matrices.</div>
         </div>
     </div>
 
@@ -415,6 +423,34 @@
 
         <div class="market-grid" id="vaultGameGrid">
             <div style="text-align:center; color:#555; padding:40px; grid-column: 1/-1;">Syncing secure game deployment streams...</div>
+        </div>
+    </div>
+
+    <div class="app-view" id="jobsView">
+        <div class="wizard-container" style="max-width: 550px;">
+            <h2 style="text-transform: uppercase; color: #0284c7; margin-top:0; font-style: italic;">💼 Squad Recruitment Desk</h2>
+            <p style="font-size: 13px; color: #475569; margin-bottom: 20px;">Deploy your technical profile metrics directly into our core review registry.</p>
+            
+            <label>Target Operational Role</label>
+            <select id="jobRole">
+                <option value="Chief Executive Officer (CEO)">Chief Executive Officer (CEO) — Operations & Scale</option>
+                <option value="Lead Group Strategist">Lead Group Strategist — Campaign & Growth Blueprinting</option>
+                <option value="Advertising Idea Giver">Advertising Idea Giver — Creative Concepts & Hook Architect</option>
+                <option value="Social Media Manager">Social Media Manager — Community Growth & Content Distribution</option>
+                <option value="Godot Game Developer">Godot Game Systems Developer (3D Physics)</option>
+                <option value="PC Hardware Specialist">PC Rig Assembly & Repair Specialist</option>
+            </select>
+
+            <label>Portfolio / Github / Drive Repository Link</label>
+            <input type="url" id="jobPortfolio" placeholder="https://github.com/... or Google Drive URL">
+
+            <label>Expected Retainer Fee / Pay Scale (₹ / Project)</label>
+            <input type="number" id="jobPay" placeholder="Expected pricing node...">
+
+            <label>Core Technical Skillset & Hardware Experience</label>
+            <textarea id="jobSkills" placeholder="List your dev engines, frameworks, or past system configurations..." rows="3"></textarea>
+
+            <button onclick="submitJobApplication()" style="width:100%; background:linear-gradient(180deg, #60a5fa, #2563eb); color:white; border:none; padding:14px; border-radius:12px; font-weight:bold; cursor:pointer; text-transform:uppercase; box-shadow: 0 4px 12px rgba(37,99,235,0.2);">Submit Application Packet</button>
         </div>
     </div>
 
@@ -543,6 +579,7 @@
                 document.querySelectorAll('.admin-only-nav').forEach(el => el.style.display = 'block');
                 activateAdminOrderListener();
                 syncOperationsPipeline();
+                syncHRApplications();
             } else {
                 document.querySelectorAll('.admin-only-nav').forEach(el => el.style.display = 'none');
             }
@@ -896,6 +933,79 @@
         }
 
         function openSell() { if(!currentUser) return; document.getElementById('sellModal').style.display = 'flex'; }
+
+        // 💼 SUBMIT JOB APPLICATION TO BACKEND ARRAY
+        function submitJobApplication() {
+            let role = document.getElementById('jobRole').value;
+            let portfolio = document.getElementById('jobPortfolio').value.trim();
+            let pay = document.getElementById('jobPay').value.trim();
+            let skills = document.getElementById('jobSkills').value.trim();
+
+            if (!portfolio || !skills) { 
+                alert("Verification Error: Portfolio link and Skillset fields must be filled!"); 
+                return; 
+            }
+
+            database.ref('marketplace/job_applications').push({
+                applicantName: currentUser || "anonymous_node",
+                role: role,
+                portfolioUrl: portfolio,
+                expectedPay: pay ? parseInt(pay) : 0,
+                skillDescription: skills,
+                timestamp: Date.now()
+            }).then(() => {
+                document.getElementById('jobPortfolio').value = "";
+                document.getElementById('jobPay').value = "";
+                document.getElementById('jobSkills').value = "";
+                alert("🚀 Application packet successfully processed and deployed to HQ review boards!");
+                switchTab('marketView');
+            }).catch(e => alert("Database Network Error: " + e.message));
+        }
+
+        // 📡 MONITOR HR APPLICANTS (STREAM INTO PIPELINE PANELS)
+        function syncHRApplications() {
+            database.ref('marketplace/job_applications').on('value', snapshot => {
+                let hrGrid = document.getElementById('hrOpsGrid');
+                hrGrid.innerHTML = "";
+                let applications = snapshot.val();
+
+                if (!applications) {
+                    hrGrid.innerHTML = `<div style="text-align:center; color:#555; padding:40px;">No incoming job metrics listed in database.</div>`;
+                    return;
+                }
+
+                Object.keys(applications).reverse().forEach(key => {
+                    let app = applications[key];
+                    let appDate = new Date(app.timestamp).toLocaleDateString();
+
+                    hrGrid.innerHTML += `
+                        <div class="ops-order-card" style="border-left: 4px solid #38ef7d;">
+                            <button class="delete-listing-btn" onclick="purgeApplication('${key}')">✖</button>
+                            <span class="ops-badge" style="background:rgba(56,239,125,0.15); color:#11998e;">${appDate}</span>
+                            <h4 style="margin:0 0 8px 0; text-transform:uppercase; color:#0284c7; font-size:15px;">Role: ${app.role}</h4>
+                            <p style="margin:4px 0; font-size:13px;">👤 <b>Applicant:</b> ${app.applicantName.toUpperCase()}</p>
+                            <p style="margin:4px 0; font-size:13px;">💰 <b>Expected Pay:</b> ₹${parseInt(app.expectedPay).toLocaleString('en-IN')}</p>
+                            <p style="margin:8px 0; font-size:12px; background:rgba(255,255,255,0.4); padding:10px; border-radius:6px; color:#334155;">
+                                <b>Skills:</b> ${app.skillDescription}
+                            </p>
+                            <div style="display:flex; justify-content:flex-end; margin-top:10px;">
+                                <a href="${app.portfolioUrl}" target="_blank" style="text-decoration:none;">
+                                    <button style="background:#0284c7; color:white; border:none; padding:8px 12px; border-radius:6px; cursor:pointer; font-weight:bold; font-size:11px;">
+                                        📂 OPEN PORTFOLIO
+                                    </button>
+                                </a>
+                            </div>
+                        </div>`;
+                });
+            });
+        }
+
+        function purgeApplication(id) {
+            if (confirm("Permanently drop and archive this applicant's profile data module?")) {
+                database.ref(`marketplace/job_applications/${id}`).remove()
+                    .then(() => alert("Profile dropped successfully."));
+            }
+        }
 
         function calculateHardwareValue() {
             let orig = parseFloat(document.getElementById('origPrice').value) || 0;
