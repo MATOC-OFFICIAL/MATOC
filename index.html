@@ -842,7 +842,7 @@
             deployNotificationGui("Invoice deployed. Assets secured inside central operations pipeline.", "📦");
         }
 
-        function renderUserOrders(ordersBlock) {
+function renderUserOrders(ordersBlock) {
             const container = document.getElementById('userOrdersGrid');
             container.innerHTML = '';
             let currentSession = localStorage.getItem('potato_local_session');
@@ -854,6 +854,9 @@
                 count++;
 
                 let isBuyer = o.buyer === currentSession;
+                let targetContactHandle = isBuyer ? o.seller : o.buyer;
+                let contactLabel = isBuyer ? "Chat with Seller" : "Chat with Buyer";
+
                 let card = document.createElement('div');
                 card.className = 'ops-order-card';
                 card.style.background = 'rgba(255,255,255,0.01)';
@@ -861,11 +864,14 @@
                 card.innerHTML = `
                     <span class="ops-badge" style="background:${o.status === 'Completed' ? 'rgba(1,148,11,0.15)' : 'rgba(26,115,232,0.15)'}; color:${o.status === 'Completed' ? 'var(--primary)' : '#1a73e8'}">${o.status}</span>
                     <strong style="font-size:14px; display:block; margin-bottom:4px;">${o.itemTitle || 'Configurator Custom Build'}</strong>
-                    <div style="font-size:12px; color:#888;">
+                    <div style="font-size:12px; color:#888; margin-bottom: 10px;">
                         <span>Value: <strong>₹${parseInt(o.price).toLocaleString('en-IN')}</strong></span> | 
                         <span>Role: <strong>${isBuyer ? 'Buyer' : 'Seller'}</strong></span> |
                         <span>Date: ${o.date}</span>
                     </div>
+                    ${targetContactHandle !== 'LB_CENTRAL_HQ' && targetContactHandle !== currentSession ? `
+                        <button onclick="openDirectMessage('${targetContactHandle}', '${k}')" style="background: #1a73e8; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer;">💬 ${contactLabel} (@${targetContactHandle})</button>
+                    ` : ''}
                 `;
                 container.appendChild(card);
             });
@@ -875,6 +881,47 @@
             }
         }
 
+        function renderOperationsGrid(ordersBlock) {
+            const container = document.getElementById('opsGrid');
+            container.innerHTML = '';
+            let keys = Object.keys(ordersBlock);
+
+            if(keys.length === 0) {
+                container.innerHTML = '<div style="color:#666; font-size:13px; padding:20px; text-align:center;">No processing files found inside the operational queue.</div>';
+                return;
+            }
+
+            keys.forEach(k => {
+                let o = ordersBlock[k];
+                let card = document.createElement('div');
+                card.className = 'ops-order-card';
+                card.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                        <div>
+                            <strong style="font-size:15px; color:var(--text);">${o.itemTitle}</strong>
+                            <div style="font-size:12px; color:#888; margin-top:4px; margin-bottom: 8px;">
+                                <span>Total Node Value: <strong style="color:var(--primary)">₹${parseInt(o.price).toLocaleString('en-IN')}</strong></span> | 
+                                <span>Client Handle: <strong>@${o.buyer}</strong></span> |
+                                <span>Fulfillment Sector: <strong>${o.seller}</strong></span>
+                            </div>
+                            <button onclick="openDirectMessage('${o.buyer}', '${k}')" style="background: #0284c7; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; margin-bottom: 8px;">💬 Open Terminal Chat with Buyer</button>
+                            ${o.shippingCoordinates ? `<div style="font-size:11px; background:rgba(255,255,255,0.03); padding:6px; border-radius:4px; margin-top:4px; border-left:2px solid #1a73e8;">📍 Destination Vector: ${o.shippingCoordinates}</div>` : ''}
+                        </div>
+                        <div style="text-align:right; display:flex; flex-direction:column; gap:8px;">
+                            <select onchange="updatePipelineStatus('${k}', this.value)" style="margin:0; padding:6px; font-size:12px; background:#222; border-color:#444;">
+                                <option value="Processing Base" ${o.status === 'Processing Base' ? 'selected' : ''}>Processing Base</option>
+                                <option value="Assembling Hardware Components" ${o.status === 'Assembling Hardware Components' ? 'selected' : ''}>Assembling Node</option>
+                                <option value="Dispatched via Transit Fleet" ${o.status === 'Dispatched via Transit Fleet' ? 'selected' : ''}>Transit Fleet</option>
+                                <option value="Completed" ${o.status === 'Completed' ? 'selected' : ''}>Completed Node</option>
+                            </select>
+                            <button onclick="purgePipelineOrder('${k}')" style="background:none; border:none; color:#ff4444; font-size:11px; cursor:pointer; font-weight:bold;">Purge Record 🗑️</button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+        
         function checkUserTreasureAllowance(ordersBlock) {
             let currentSession = localStorage.getItem('potato_local_session');
             let completedCount = 0;
