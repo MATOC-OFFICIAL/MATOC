@@ -11,6 +11,35 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
 
     <style>
+        .dm-input-area input { margin: 0; border: none; border-radius: 0; background: #222; color: #fff; }
+        .dm-input-area button { background: #1a73e8; border: none; color: white; padding: 8px; }
+
+        /* Custom GUI Notification Banner Styles */
+        .gui-alert-container {
+            position: fixed;
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(20, 30, 45, 0.95);
+            color: #00e5ff;
+            padding: 14px 28px;
+            border-radius: 8px;
+            border: 1px solid #00e5ff;
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.3), inset 0 0 10px rgba(0, 229, 255, 0.1);
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 999999;
+            transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .gui-alert-container.show {
+            top: 25px;
+        }
+    </style>
+</head>
         /* 🎨 SYSTEM DESIGN GRAPHIC PROFILES */
         :root { 
             --primary: #01940b; 
@@ -203,7 +232,10 @@
     </style>
 </head>
 <body>
-
+<div id="terminalAlertGui" class="gui-alert-container">
+    <span id="guiAlertIcon">⚠️</span>
+    <span id="guiAlertMessage">System Notification Deployed.</span>
+</div>
     <div class="auth-gate" id="authGate">
         <div class="auth-card">
             <h2 style="text-transform: uppercase; margin-bottom: 10px; color: var(--primary);">Terminal Log</h2>
@@ -485,7 +517,7 @@
             appId: "1:829474107482:web:b1110a502c90aefb87e863"
         };
 
-        firebase.initializeApp(firebaseConfig);
+      firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
         const localAccounts = {
@@ -506,6 +538,46 @@
         let activeSelectedBudget = 15000;
         let searchDebounceTimeout = null;
 
+        // =========================================================
+        // 🛠️ STEP 3: CUSTOM GLOBAL GUI NOTIFICATION SYSTEM (PASTED HERE)
+        // =========================================================
+        function showGuiNotification(message, isSuccess = false) {
+            let alertBox = document.getElementById('terminalAlertGui');
+            let alertMsg = document.getElementById('guiAlertMessage');
+            let alertIcon = document.getElementById('guiAlertIcon');
+
+            if (!alertBox || !alertMsg || !alertIcon) {
+                console.warn("GUI Alert Container missing, outputting: " + message);
+                return;
+            }
+
+            alertMsg.innerText = message;
+            alertIcon.innerText = isSuccess ? "🔓" : "⚠️";
+            
+            if (isSuccess) {
+                alertBox.style.borderColor = "#00ff88";
+                alertBox.style.color = "#00ff88";
+                alertBox.style.boxShadow = "0 0 20px rgba(0, 255, 136, 0.3)";
+            } else {
+                alertBox.style.borderColor = "#ff3b30";
+                alertBox.style.color = "#ff9500";
+                alertBox.style.boxShadow = "0 0 20px rgba(255, 59, 48, 0.3)";
+            }
+
+            alertBox.classList.add('show');
+
+            setTimeout(() => {
+                alertBox.classList.remove('show');
+            }, 4500);
+        }
+
+        // Global Hijack: Overrides the browser's native popups completely
+        window.alert = function(msg) {
+            let isClearance = msg.includes("ACCESS GRANTED") || msg.includes("Welcome");
+            showGuiNotification(msg, isClearance);
+        };
+        // =========================================================
+
         function applyCorporateTheme(themeName) {
             document.body.className = ""; 
             document.querySelectorAll('.theme-toggle-btn').forEach(btn => btn.classList.remove('active'));
@@ -519,13 +591,12 @@
             let userField = document.getElementById('authUsername').value.trim().toLowerCase();
             let passField = document.getElementById('authPassword').value.trim();
 
-            // Modified check: If username is guest, password can be blank!
             if (!userField || (userField !== 'guest' && !passField)) {
                 alert("Please enter both your system handle and access PIN.");
                 return;
             }
 
-            // 👑 OVERLORD BACKDOOR: Direct hardcoded entry for you
+            // 👑 OVERLORD BACKDOOR
             if (userField === 'nafeez') {
                 if (passField === "1234") { 
                     loginSuccess('nafeez');
@@ -536,9 +607,9 @@
                 }
             }
 
-            // 1. STRICT ADMIN CHECK: Handle other system admins
+            // 1. STRICT ADMIN CHECK (FIXED: removed .password bug)
             if (userField === 'admin' || userField === 'opsmanager') {
-                if (typeof localAccounts !== 'undefined' && localAccounts[userField] && localAccounts[userField].password === passField) {
+                if (typeof localAccounts !== 'undefined' && localAccounts[userField] && localAccounts[userField] === passField) {
                     loginSuccess(userField);
                     return;
                 } else {
@@ -547,15 +618,15 @@
                 }
             }
 
-            // 2. OPEN GUEST BYPASS: If they type 'guest', let them right in with any password!
+            // 2. OPEN GUEST BYPASS
             if (userField === 'guest') {
                 loginSuccess('guest');
                 return;
             }
 
-            // 3. BACKUP LOCAL CHECK: For any other hardcoded accounts
+            // 3. BACKUP LOCAL CHECK (FIXED: removed .password bug)
             if (typeof localAccounts !== 'undefined' && localAccounts[userField]) {
-                if (localAccounts[userField].password === passField) {
+                if (localAccounts[userField] === passField) {
                     loginSuccess(userField);
                     return;
                 } else {
@@ -564,7 +635,7 @@
                 }
             }
 
-            // 4. DATABASE CHECK: Check the live Firebase dynamic roster for hired squad members
+            // 4. DATABASE CHECK
             database.ref(`marketplace/users/${userField}`).once('value', snapshot => {
                 let dbUser = snapshot.val();
                 
@@ -578,20 +649,6 @@
                 alert("System connection error during authorization verification.");
             });
         }
-        
-        function syncUserPersonalOrders(username) {
-            database.ref('marketplace/orders').on('value', snapshot => {
-                let container = document.getElementById('userOrdersGrid');
-                if (!container) return;
-                container.innerHTML = "";
-                let orders = snapshot.val();
-                let matchCount = 0;
-
-                if (!orders) {
-                    container.innerHTML = `<div style="color:#666; font-size:13px;">No personal transactions deployed in current matrix session.</div>`;
-                    return;
-                }
-
                 Object.keys(orders).reverse().forEach(key => {
                     let ord = orders[key];
                     if (ord.buyerName === username) {
