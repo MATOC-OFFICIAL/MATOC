@@ -3,25 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GBWNS Matrix Terminal Marketplace</title>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <title>Potato Builders | Authorized PC Marketplace</title>
     
+    <link rel="manifest" href="manifest.json">
+    
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+
     <style>
+        .dm-input-area input { margin: 0; border: none; border-radius: 0; background: #222; color: #fff; }
+        .dm-input-area button { background: #1a73e8; border: none; color: white; padding: 8px; }
+
+        /* Custom GUI Notification Banner Styles */
+        .gui-alert-container {
+            position: fixed;
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(20, 30, 45, 0.95);
+            color: #00e5ff;
+            padding: 14px 28px;
+            border-radius: 8px;
+            border: 1px solid #00e5ff;
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.3), inset 0 0 10px rgba(0, 229, 255, 0.1);
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 999999;
+            transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .gui-alert-container.show {
+            top: 25px;
+        }
+
         /* 🎨 SYSTEM DESIGN GRAPHIC PROFILES */
-        :root {
-            --primary: #01940b;
-            --bg: #0b0b0b;
-            --card: #151515;
-            --text: #eee;
-            --border: #222;
+        :root { 
+            --primary: #01940b; 
+            --bg: #0b0b0b; 
+            --card: #151515; 
+            --text: #eee; 
+            --border: #222; 
             --radius: 24px;
             --font: 'Inter', sans-serif;
             --shadow: none;
             --backdrop: none;
             --gradient-bg: none;
         }
-
+        
         body.theme-minimalist {
             --primary: #000000;
             --bg: #f5f5f7;
@@ -48,1496 +79,558 @@
             --gradient-bg: linear-gradient(135deg, #00f2fe 0%, #4facfe 40%, #00a2ff 70%, #38ef7d 100%);
         }
 
-        body {
-            font-family: var(--font);
-            background: var(--bg);
-            color: var(--text);
-            margin: 0;
-            transition: all 0.4s ease;
-            overflow-x: hidden;
-            min-height: 100vh;
-        }
-
-        /* Frutiger Aero Vibrant Background Setup */
+        body { font-family: var(--font); background: var(--bg); color: var(--text); margin: 0; transition: all 0.4s ease; overflow-x: hidden; min-height: 100vh; }
+        
         body.theme-frutiger::before {
             content: "";
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             background: var(--gradient-bg);
             z-index: -1;
             opacity: 0.85;
         }
 
-        /* THEME CONTROLLER INTERFACE */
-        .theme-selector-bar {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            background: rgba(0,0,0,0.2);
-            padding: 8px;
-            border-radius: 30px;
-            border: 1px solid var(--border);
-            width: fit-content;
-            margin: 80px auto 10px auto;
-            position: relative;
-            z-index: 100;
-            backdrop-filter: var(--backdrop);
-        }
-
-        body.theme-frutiger .theme-selector-bar {
-            background: rgba(255, 255, 255, 0.3);
-            box-shadow: var(--shadow);
-        }
-
-        .theme-toggle-btn {
-            background: transparent;
-            border: none;
-            color: var(--text);
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: bold;
-            cursor: pointer;
-            text-transform: uppercase;
-            transition: 0.2s;
-        }
-
-        .theme-toggle-btn.active {
-            background: var(--primary);
-            color: #fff;
-            box-shadow: var(--shadow);
-        }
-
-        body.theme-frutiger .theme-toggle-btn.active {
-            background: linear-gradient(180deg, #56ccf2, #2f80ed);
-            color: #fff;
-            box-shadow: 0 4px 10px rgba(47, 128, 237, 0.3);
-            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
-            border: 1px solid rgba(255,255,255,0.4);
-        }
-
-        /* SECURITY TERMINAL LOGIN PASS GATE */
-        .auth-gate {
-            position: fixed;
-            top:0;
-            left:0;
-            width:100%;
-            height:100%;
-            background:var(--bg);
-            z-index: 9999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        body.theme-frutiger .auth-gate {
-            background: var(--gradient-bg);
-        }
-
-        .auth-card {
-            background: var(--card);
-            padding: 40px;
-            border-radius: var(--radius);
-            border: 1px solid var(--border);
-            width: 100%;
-            max-width: 360px;
-            text-align: center;
-            box-shadow: var(--shadow);
-            backdrop-filter: var(--backdrop);
-        }
-
-        /* MAIN APPLICATION NAVIGATION BAR HEADER */
-        .header {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            height: 60px;
-            background: rgba(0,0,0,0.9);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 20px;
-            z-index: 1000;
-            border-bottom: 1px solid var(--border);
-            box-sizing: border-box;
-        }
-
-        body.theme-minimalist .header {
-            background: rgba(255,255,255,0.8);
-            backdrop-filter: blur(20px);
-        }
-
-        body.theme-frutiger .header {
-            background: rgba(255, 255, 255, 0.45);
-            backdrop-filter: blur(25px) saturate(160%);
-            -webkit-backdrop-filter: blur(25px) saturate(160%);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.6);
-            box-shadow: 0 4px 30px rgba(0, 162, 255, 0.08), inset 0 1px 0 rgba(255,255,255,0.5);
-        }
-
-        .cart-trigger {
-            cursor: pointer;
-            position: relative;
-            font-weight: 900;
-            color: var(--primary);
-            padding: 5px 10px;
-        }
-
-        body.theme-frutiger .cart-trigger {
-            color: #1d4ed8;
-        }
-
-        .cart-count {
-            position: absolute;
-            top: -5px;
-            right: -8px;
-            background: red;
-            color: white;
-            font-size: 10px;
-            padding: 2px 6px;
-            border-radius: 50%;
-            font-weight: bold;
-        }
-
-        /* INTERACTION LAYOUT TABS */
-        .tab-navigation {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 10px;
-            margin-bottom: 25px;
-            position: relative;
-            z-index: 50;
-        }
-
-        .tab-btn {
-            background: var(--card);
-            border: 1px solid var(--border);
-            color: var(--text);
-            padding: 12px 30px;
-            border-radius: var(--radius);
-            font-weight: bold;
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            transition: 0.3s;
-            box-shadow: var(--shadow);
-            backdrop-filter: var(--backdrop);
-        }
-
-        .tab-btn.active {
-            border-color: var(--primary);
-            color: var(--primary);
-            background: rgba(1, 148, 11, 0.05);
-        }
-
-        body.theme-minimalist .tab-btn.active {
-            background: #000;
-            color: #fff;
-            border-color: #000;
-        }
-
-        body.theme-frutiger .tab-btn {
-            background: rgba(255, 255, 255, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            color: #0f172a;
-            padding: 10px 22px;
-            border-radius: 30px;
-            font-size: 12px;
-            font-weight: 700;
-            letter-spacing: 0.3px;
-            white-space: nowrap;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.02), inset 0 1px 2px rgba(255,255,255,0.6);
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        body.theme-frutiger .tab-btn:hover {
-            background: rgba(255, 255, 255, 0.6);
-            border-color: #00a2ff;
-            transform: translateY(-1px);
-        }
-
-        body.theme-frutiger .tab-btn.active {
-            background: linear-gradient(180deg, #ffffff 0%, #e0f2fe 100%);
-            color: #0284c7;
-            border: 1px solid #00a2ff;
-            box-shadow: 0 6px 16px rgba(0, 162, 255, 0.25), inset 0 1px 3px rgba(255,255,255,1);
-            text-shadow: 0 0 1px rgba(0, 162, 255, 0.1);
-        }
-
-        /* CONTAINER VIEWS */
-        .app-view {
-            display: none;
-            max-width: 900px;
-            margin: 0 auto 40px auto;
-            padding: 0 20px;
-            box-sizing: border-box;
-        }
-
-        .app-view.active {
-            display: block;
-        }
-
-        /* FILTER MENU ROW FOR MARKETPLACE */
-        .market-filter-row {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .filter-chip {
-            background: var(--card);
-            border: 1px solid var(--border);
-            color: var(--text);
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 12px;
-            cursor: pointer;
-            font-weight: bold;
-            backdrop-filter: var(--backdrop);
-            box-shadow: var(--shadow);
-        }
-
-        .filter-chip.active {
-            background: var(--primary);
-            color: #fff;
-            border-color: var(--primary);
-        }
-
-        body.theme-frutiger .filter-chip.active {
-            background: linear-gradient(180deg, #00f2fe, #4facfe);
-            border-color: #4facfe;
-            color: white;
-        }
-
-        /* COMMAND SIDEBAR CONTROLLER */
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: -300px;
-            width: 280px;
-            height: 100%;
-            background: var(--card);
-            border-right: 1px solid var(--border);
-            transition: 0.4s;
-            z-index: 2000;
-            padding: 70px 20px;
-            overflow-y: auto;
-            box-sizing: border-box;
-            visibility: hidden;
-            backdrop-filter: var(--backdrop);
-        }
-
-        .sidebar.active {
-            left: 0;
-            visibility: visible;
-        }
-
-        .nav-item {
-            padding: 12px;
-            border-bottom: 1px solid var(--border);
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 13px;
-            text-transform: uppercase;
-        }
-
-        .nav-item:hover {
-            color: var(--primary);
-        }
-
-        .admin-only-nav {
-            display: none;
-            border-left: 3px solid #1a73e8;
-            padding-left: 8px;
-            color: #1a73e8;
-        }
-
-        body.theme-frutiger .admin-only-nav {
-            color: #1e3a8a;
-            border-left-color: #0284c7;
-        }
-
-        /* PC BUILDER STEP SYSTEM WIZARD */
-        .wizard-container {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 35px;
-            max-width: 600px;
-            margin: 0 auto;
-            box-sizing: border-box;
-            box-shadow: var(--shadow);
-            position: relative;
-            backdrop-filter: var(--backdrop);
-        }
-
-        .wizard-step {
-            display: none;
-        }
-
-        .wizard-step.active {
-            display: block;
-        }
-
-        .wizard-nav-row {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 30px;
-            gap: 10px;
-        }
-
-        .wiz-btn {
-            background: #222;
-            border: 1px solid #333;
-            color: white;
-            padding: 12px 24px;
-            border-radius: var(--radius);
-            font-weight: bold;
-            cursor: pointer;
-            text-transform: uppercase;
-        }
-
-        body.theme-frutiger .wiz-btn {
-            background: rgba(255,255,255,0.5);
-            color: #0f172a;
-            border: 1px solid rgba(255,255,255,0.6);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-
-        .wiz-btn.next {
-            background: var(--primary);
-            border: none;
-        }
-
-        body.theme-minimalist .wiz-btn.next {
-            background: #000;
-            color: #fff;
-        }
-
-        body.theme-frutiger .wiz-btn.next {
-            background: linear-gradient(180deg, #38ef7d, #11998e);
-            color: white;
-            border: 1px solid rgba(255,255,255,0.3);
-            text-shadow: 0 1px 1px rgba(0,0,0,0.1);
-        }
-
-        .category-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        @media (max-width: 450px) {
-            .category-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .category-card {
-            background: rgba(0,0,0,0.2);
-            border: 2px solid var(--border);
-            border-radius: var(--radius);
-            padding: 20px;
-            text-align: center;
-            cursor: pointer;
-            font-weight: bold;
-            transition: 0.2s;
-        }
-
-        body.theme-minimalist .category-card {
-            background: #f5f5f7;
-        }
-
-        body.theme-frutiger .category-card {
-            background: rgba(255,255,255,0.3);
-            border-color: rgba(255,255,255,0.5);
-        }
-
-        .category-card.selected {
-            border-color: var(--primary);
-            background: rgba(1, 148, 11, 0.05);
-            color: var(--primary);
-        }
-
-        body.theme-minimalist .category-card.selected {
-            background: #000;
-            color: #fff;
-            border-color: #000;
-        }
-
-        body.theme-frutiger .category-card.selected {
-            background: linear-gradient(135deg, rgba(255,255,255,0.8), rgba(0, 162, 255, 0.15));
-            border-color: #00a2ff;
-            color: #0284c7;
-            box-shadow: 0 4px 15px rgba(0,162,255,0.1);
-        }
-
-        .spec-output-box {
-            background: rgba(0,0,0,0.4);
-            border: 1px solid var(--border);
-            padding: 20px;
-            border-radius: var(--radius);
-            margin-top: 20px;
-        }
-
-        body.theme-minimalist .spec-output-box {
-            background: #fafafa;
-        }
-
-        body.theme-frutiger .spec-output-box {
-            background: rgba(255,255,255,0.4);
-            border-color: rgba(255,255,255,0.5);
-        }
-
-        .spec-line {
-            padding: 8px 0;
-            border-bottom: 1px dashed var(--border);
-            font-size: 14px;
-        }
-
-        .treasure-box {
-            background: rgba(255, 215, 0, 0.02);
-            border: 1px dashed #444;
-            padding: 15px;
-            border-radius: var(--radius);
-            margin-top: 20px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        body.theme-frutiger .treasure-box {
-            background: rgba(255,255,255,0.3);
-            border-color: rgba(255,255,255,0.6);
-        }
-
-        .treasure-box.unlocked {
-            border-color: #ffd700;
-            background: rgba(255, 215, 0, 0.05);
-        }
-
-        body.theme-frutiger .treasure-box.unlocked {
-            border-color: #eab308;
-            background: rgba(234, 179, 8, 0.1);
-        }
-
-        /* USER INTERFACE CART DRAWER PANEL */
-        .cart-panel {
-            position: fixed;
-            top: 0;
-            right: -350px;
-            width: 320px;
-            height: 100%;
-            background: var(--card);
-            border-left: 1px solid var(--border);
-            transition: 0.4s;
-            z-index: 2000;
-            padding: 70px 20px 20px 20px;
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-            visibility: hidden;
-            backdrop-filter: var(--backdrop);
-        }
-
-        .cart-panel.active {
-            right: 0;
-            visibility: visible;
-        }
-
-        .cart-header-title {
-            font-size: 18px;
-            font-weight: 900;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 10px;
-            margin-bottom: 15px;
-            text-transform: uppercase;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .cart-items-container {
-            flex: 1;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .cart-item-card {
-            background: rgba(255,255,255,0.02);
-            border: 1px solid var(--border);
-            padding: 12px;
-            border-radius: 10px;
-            position: relative;
-        }
-
-        body.theme-frutiger .cart-item-card {
-            background: rgba(255,255,255,0.4);
-            border-color: rgba(255,255,255,0.5);
-        }
-
-        .remove-item-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: none;
-            border: none;
-            color: #ff4444;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .cart-footer {
-            border-top: 1px solid var(--border);
-            padding-top: 15px;
-            margin-top: 15px;
-        }
-
-        .checkout-btn {
-            width: 100%;
-            background: var(--primary);
-            border: none;
-            color: white;
-            padding: 12px;
-            border-radius: var(--radius);
-            font-weight: bold;
-            cursor: pointer;
-            text-transform: uppercase;
-        }
-
-        body.theme-frutiger .checkout-btn {
-            background: linear-gradient(180deg, #38ef7d, #11998e);
-            box-shadow: 0 4px 12px rgba(17, 153, 142, 0.2);
-        }
-
-        /* MARKETPLACE GRID SYSTEM */
-        .market-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-        }
-
-        .market-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-        }
-
-        .market-card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            transition: all 0.3s ease;
-            position: relative;
-            box-shadow: var(--shadow);
-            backdrop-filter: var(--backdrop);
-        }
-
-        .market-card:hover {
-            border-color: var(--primary);
-            transform: translateY(-2px);
-        }
-
-        body.theme-frutiger .market-card {
-            border-color: rgba(255,255,255,0.5);
-        }
-
-        body.theme-frutiger .market-card:hover {
-            border-color: #00a2ff;
-            box-shadow: 0 12px 40px rgba(0, 162, 255, 0.25);
-        }
-
-        .market-img-container {
-            width: 100%;
-            height: 160px;
-            background: #222;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        body.theme-frutiger .market-img-container {
-            background: rgba(255,255,255,0.2);
-            border-bottom: 1px solid rgba(255,255,255,0.4);
-        }
-
-        .market-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .market-details {
-            padding: 16px;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .market-action-row {
-            display: flex;
-            gap: 8px;
-            margin-top: 10px;
-        }
-
-        .chat-seller-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #1a73e8;
-            color: white;
-            border: none;
-            padding: 8px;
-            border-radius: 6px;
-            font-weight: bold;
-            font-size: 13px;
-            flex: 1;
-            cursor: pointer;
-        }
-
-        body.theme-frutiger .chat-seller-btn {
-            background: linear-gradient(180deg, #60a5fa, #2563eb);
-        }
-
-        .delete-listing-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(255, 0, 0, 0.85);
-            color: white;
-            border: none;
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            font-weight: bold;
-            cursor: pointer;
-            z-index: 10;
-        }
-
-        .market-tag-container {
-            display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
-            margin: 8px 0;
-        }
-
-        .market-tag {
-            font-size: 10px;
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-weight: bold;
-            background: rgba(255,255,255,0.05);
-            color: #aaa;
-        }
-
-        body.theme-minimalist .market-tag {
-            background: #e5e5e7;
-            color: #555;
-        }
-
-        body.theme-frutiger .market-tag {
-            background: rgba(255,255,255,0.6);
-            color: #334155;
-        }
-
-        .market-tag.prime {
-            background: rgba(1, 148, 11, 0.15);
-            color: var(--primary);
-        }
-
-        body.theme-frutiger .market-tag.prime {
-            background: rgba(0, 162, 255, 0.15);
-            color: #0284c7;
-        }
-
-        .seller-thoughts-box {
-            font-size: 12px;
-            color: #888;
-            font-style: italic;
-            background: rgba(255,255,255,0.02);
-            padding: 8px 12px;
-            border-radius: 6px;
-            margin-bottom: 12px;
-            border-left: 2px solid var(--primary);
-        }
-
-        body.theme-frutiger .seller-thoughts-box {
-            background: rgba(255,255,255,0.5);
-            color: #475569;
-            border-left-color: #00a2ff;
-        }
-
-        /* LIVE ORDER OPS TRACKING PANELS */
-        .ops-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .ops-order-card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 20px;
-            position: relative;
-            backdrop-filter: var(--backdrop);
-            box-shadow: var(--shadow);
-        }
-
-        .ops-badge {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(26, 115, 232, 0.15);
-            color: #1a73e8;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
-
-        /* POST MODAL INPUT POPUPS */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.85);
-            z-index: 3000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        body.theme-frutiger .modal {
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(8px);
-        }
-
-        .modal-content {
-            background: var(--card);
-            width: 90%;
-            max-width: 440px;
-            padding: 30px;
-            border-radius: var(--radius);
-            border: 1px solid var(--primary);
-            max-height: 90vh;
-            overflow-y: auto;
-            box-sizing: border-box;
-            text-align: left;
-            backdrop-filter: var(--backdrop);
-            box-shadow: var(--shadow);
-        }
-
-        body.theme-frutiger .modal-content {
-            border-color: rgba(255,255,255,0.6);
-        }
-
-        input, select, textarea {
-            width: 100%;
-            padding: 12px;
-            background: rgba(0,0,0,0.5);
-            border: 1px solid var(--border);
-            color: var(--text);
-            border-radius: 8px;
-            margin-bottom: 16px;
-            box-sizing: border-box;
-            font-size: 14px;
-            font-family: inherit;
-        }
-
-        body.theme-minimalist input, body.theme-minimalist select, body.theme-minimalist textarea {
-            background: #fff;
-            color: #000;
-            border-color: #ccc;
-        }
-
-        body.theme-frutiger input, body.theme-frutiger select, body.theme-frutiger textarea {
-            background: rgba(255,255,255,0.7);
-            color: #0f172a;
-            border-color: rgba(255,255,255,0.8);
-        }
-
-        /* REALTIME MESSAGING DRAWER BOX */
-        .dm-box {
-            display: none;
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 360px;
-            height: 480px;
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            z-index: 4000;
-            flex-direction: column;
-            overflow: hidden;
-            backdrop-filter: var(--backdrop);
-        }
-
-        .dm-header {
-            background: #1a73e8;
-            color: white;
-            padding: 15px;
-            font-weight: bold;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        body.theme-minimalist .dm-header {
-            background: #000;
-        }
-
-        body.theme-frutiger .dm-header {
-            background: linear-gradient(90deg, #4facfe, #00a2ff);
-            color: white;
-        }
-
-        .dm-logs {
-            flex: 1;
-            padding: 15px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            font-size: 13px;
-        }
-
-        .dm-input-area {
-            display: flex;
-            border-top: 1px solid var(--border);
-            background: rgba(0,0,0,0.5);
-        }
-
-        .dm-input-area input {
-            margin: 0;
-            border: none;
-            border-radius: 0;
-            background: transparent;
-            padding: 15px;
-            color: var(--text);
-            flex: 1;
-        }
-
-        .dm-input-area button {
-            background: #1a73e8;
-            border: none;
-            color: white;
-            padding: 0 20px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        /* Custom GUI Notification Layout Profiles */
-        .gui-alert-container {
-            position: fixed;
-            top: -100px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #151515;
-            color: #01940b;
-            padding: 14px 28px;
-            border-radius: 24px;
-            border: 1px solid #01940b;
-            box-shadow: 0 4px 20px rgba(1, 148, 11, 0.2);
-            font-family: 'Inter', sans-serif;
-            font-size: 13px;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            z-index: 999999;
-            transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .gui-alert-container.show {
-            top: 25px;
-        }
-
-        body.theme-minimalist .gui-alert-container {
-            background: #ffffff;
-            color: #1d1d1f;
-            border: 1px solid #e5e5e7;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-        }
-
-        body.theme-frutiger .gui-alert-container {
-            background: rgba(255, 255, 255, 0.6);
-            color: #0284c7;
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(20px) saturate(160%);
-            -webkit-backdrop-filter: blur(20px) saturate(160%);
-            box-shadow: 0 12px 40px rgba(0, 162, 255, 0.2), inset 0 1px 2px rgba(255,255,255,0.8);
-            border-radius: 30px;
-        }
+        .theme-selector-bar { display: flex; justify-content: center; gap: 8px; background: rgba(0,0,0,0.2); padding: 8px; border-radius: 30px; border: 1px solid var(--border); width: fit-content; margin: 80px auto 10px auto; position: relative; z-index: 100; backdrop-filter: var(--backdrop); }
+        body.theme-frutiger .theme-selector-bar { background: rgba(255, 255, 255, 0.3); box-shadow: var(--shadow); }
+        
+        .theme-toggle-btn { background: transparent; border: none; color: var(--text); padding: 6px 16px; border-radius: 20px; font-size: 11px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.2s; }
+        .theme-toggle-btn.active { background: var(--primary); color: #fff; box-shadow: var(--shadow); }
+        body.theme-frutiger .theme-toggle-btn.active { background: linear-gradient(180deg, #56ccf2, #2f80ed); color: #fff; box-shadow: 0 4px 10px rgba(47, 128, 237, 0.3); text-shadow: 0 1px 2px rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.4); }
+
+        .auth-gate { position: fixed; top:0; left:0; width:100%; height:100%; background:var(--bg); z-index: 9999; display: flex; align-items: center; justify-content: center; }
+        body.theme-frutiger .auth-gate { background: var(--gradient-bg); }
+        .auth-card { background: var(--card); padding: 40px; border-radius: var(--radius); border: 1px solid var(--border); width: 100%; max-width: 360px; text-align: center; box-shadow: var(--shadow); backdrop-filter: var(--backdrop); }
+
+        .header { position: fixed; top: 0; width: 100%; height: 60px; background: rgba(0,0,0,0.9); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; z-index: 1000; border-bottom: 1px solid var(--border); box-sizing: border-box; }
+        body.theme-minimalist .header { background: rgba(255,255,255,0.8); backdrop-filter: blur(20px); }
+        body.theme-frutiger .header { background: rgba(255, 255, 255, 0.45); backdrop-filter: blur(25px) saturate(160%); border-bottom: 1px solid rgba(255, 255, 255, 0.6); box-shadow: 0 4px 30px rgba(0, 162, 255, 0.08), inset 0 1px 0 rgba(255,255,255,0.5); }
+        
+        .cart-trigger { cursor: pointer; position: relative; font-weight: 900; color: var(--primary); padding: 5px 10px; }
+        body.theme-frutiger .cart-trigger { color: #1d4ed8; }
+        .cart-count { position: absolute; top: -5px; right: -8px; background: red; color: white; font-size: 10px; padding: 2px 6px; border-radius: 50%; font-weight: bold; }
+
+        .tab-navigation { display: flex; justify-content: center; gap: 15px; margin-top: 10px; margin-bottom: 25px; position: relative; z-index: 50; }
+        .tab-btn { background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 12px 30px; border-radius: var(--radius); font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; transition: 0.3s; box-shadow: var(--shadow); backdrop-filter: var(--backdrop); }
+        .tab-btn.active { border-color: var(--primary); color: var(--primary); background: rgba(1, 148, 11, 0.05); }
+        body.theme-minimalist .tab-btn.active { background: #000; color: #fff; border-color: #000; }
+        body.theme-frutiger .tab-btn { background: rgba(255, 255, 255, 0.3); border: 1px solid rgba(255, 255, 255, 0.5); color: #0f172a; padding: 10px 22px; border-radius: 30px; font-size: 12px; font-weight: 700; letter-spacing: 0.3px; white-space: nowrap; box-shadow: 0 2px 10px rgba(0,0,0,0.02), inset 0 1px 2px rgba(255,255,255,0.6); transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
+        body.theme-frutiger .tab-btn:hover { background: rgba(255, 255, 255, 0.6); border-color: #00a2ff; transform: translateY(-1px); }
+        body.theme-frutiger .tab-btn.active { background: linear-gradient(180deg, #ffffff 0%, #e0f2fe 100%); color: #0284c7; border: 1px solid #00a2ff; box-shadow: 0 6px 16px rgba(0, 162, 255, 0.25), inset 0 1px 3px rgba(255,255,255,1); }
+
+        .app-view { display: none; max-width: 900px; margin: 0 auto 40px auto; padding: 0 20px; box-sizing: border-box; }
+        .app-view.active { display: block; }
+
+        .market-filter-row { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .filter-chip { background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 6px 16px; border-radius: 20px; font-size: 12px; cursor: pointer; font-weight: bold; backdrop-filter: var(--backdrop); box-shadow: var(--shadow); }
+        .filter-chip.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+        body.theme-frutiger .filter-chip.active { background: linear-gradient(180deg, #00f2fe, #4facfe); border-color: #4facfe; color: white; }
+
+        .sidebar { position: fixed; top: 0; left: -300px; width: 280px; height: 100%; background: var(--card); border-right: 1px solid var(--border); transition: 0.4s; z-index: 2000; padding: 70px 20px; overflow-y: auto; box-sizing: border-box; visibility: hidden; backdrop-filter: var(--backdrop); }
+        .sidebar.active { left: 0; visibility: visible; }
+        .nav-item { padding: 12px; border-bottom: 1px solid var(--border); cursor: pointer; font-weight: bold; font-size: 13px; text-transform: uppercase; }
+        .nav-item:hover { color: var(--primary); }
+        .admin-only-nav { display: none; border-left: 3px solid #1a73e8; padding-left: 8px; color: #1a73e8; }
+        body.theme-frutiger .admin-only-nav { color: #1e3a8a; border-left-color: #0284c7; }
+
+        .wizard-container { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 35px; max-width: 600px; margin: 0 auto; box-sizing: border-box; box-shadow: var(--shadow); position: relative; backdrop-filter: var(--backdrop); }
+        .wizard-step { display: none; }
+        .wizard-step.active { display: block; }
+        .wizard-nav-row { display: flex; justify-content: space-between; margin-top: 30px; gap: 10px; }
+        .wiz-btn { background: #222; border: 1px solid #333; color: white; padding: 12px 24px; border-radius: var(--radius); font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        body.theme-frutiger .wiz-btn { background: rgba(255,255,255,0.5); color: #0f172a; border: 1px solid rgba(255,255,255,0.6); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .wiz-btn.next { background: var(--primary); border: none; }
+        body.theme-minimalist .wiz-btn.next { background: #000; color: #fff; }
+        body.theme-frutiger .wiz-btn.next { background: linear-gradient(180deg, #38ef7d, #11998e); color: white; border: 1px solid rgba(255,255,255,0.3); }
+
+        .category-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        @media (max-width: 450px) { .category-grid { grid-template-columns: 1fr; } }
+        .category-card { background: rgba(0,0,0,0.2); border: 2px solid var(--border); border-radius: var(--radius); padding: 20px; text-align: center; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        body.theme-minimalist .category-card { background: #f5f5f7; }
+        body.theme-frutiger .category-card { background: rgba(255,255,255,0.3); border-color: rgba(255,255,255,0.5); }
+        .category-card.selected { border-color: var(--primary); background: rgba(1, 148, 11, 0.05); color: var(--primary); }
+        body.theme-minimalist .category-card.selected { background: #000; color: #fff; border-color: #000; }
+        body.theme-frutiger .category-card.selected { background: linear-gradient(135deg, rgba(255,255,255,0.8), rgba(0, 162, 255, 0.15)); border-color: #00a2ff; color: #0284c7; }
+
+        .spec-output-box { background: rgba(0,0,0,0.4); border: 1px solid var(--border); padding: 20px; border-radius: var(--radius); margin-top: 20px; }
+        body.theme-minimalist .spec-output-box { background: #fafafa; }
+        body.theme-frutiger .spec-output-box { background: rgba(255,255,255,0.4); border-color: rgba(255,255,255,0.5); }
+        .spec-line { padding: 8px 0; border-bottom: 1px dashed var(--border); font-size: 14px; }
+        
+        .treasure-box { background: rgba(255, 215, 0, 0.02); border: 1px dashed #444; padding: 15px; border-radius: var(--radius); margin-top: 20px; display: flex; align-items: center; gap: 12px; }
+        .treasure-box.unlocked { border-color: #ffd700; background: rgba(255, 215, 0, 0.05); }
+
+        .cart-panel { position: fixed; top: 0; right: -350px; width: 320px; height: 100%; background: var(--card); border-left: 1px solid var(--border); transition: 0.4s; z-index: 2000; padding: 70px 20px 20px 20px; box-sizing: border-box; display: flex; flex-direction: column; visibility: hidden; backdrop-filter: var(--backdrop); }
+        .cart-panel.active { right: 0; visibility: visible; }
+        .cart-header-title { font-size: 18px; font-weight: 900; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 15px; text-transform: uppercase; display: flex; justify-content: space-between; align-items: center; }
+        .cart-items-container { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+        .cart-item-card { background: rgba(255,255,255,0.02); border: 1px solid var(--border); padding: 12px; border-radius: 10px; position: relative; }
+        body.theme-frutiger .cart-item-card { background: rgba(255,255,255,0.4); border-color: rgba(255,255,255,0.5); }
+        .remove-item-btn { position: absolute; top: 10px; right: 10px; background: none; border: none; color: #ff4444; cursor: pointer; font-weight: bold; }
+        .cart-footer { border-top: 1px solid var(--border); padding-top: 15px; margin-top: 15px; }
+        .checkout-btn { width: 100%; background: var(--primary); border: none; color: white; padding: 12px; border-radius: var(--radius); font-weight: bold; cursor: pointer; text-transform: uppercase; }
+
+        .market-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .market-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        .market-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.3s ease; position: relative; box-shadow: var(--shadow); backdrop-filter: var(--backdrop); }
+        .market-card:hover { border-color: var(--primary); transform: translateY(-2px); }
+        .market-img-container { width: 100%; height: 160px; background: #222; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        .market-img { width: 100%; height: 100%; object-fit: cover; }
+        .market-details { padding: 16px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        .market-action-row { display: flex; gap: 8px; margin-top: 10px; }
+        .chat-seller-btn { display: flex; align-items: center; justify-content: center; background: #1a73e8; color: white; border: none; padding: 8px; border-radius: 6px; font-weight: bold; font-size: 13px; flex: 1; cursor: pointer; }
+        .delete-listing-btn { position: absolute; top: 10px; right: 10px; background: rgba(255, 0, 0, 0.85); color: white; border: none; width: 28px; height: 28px; border-radius: 50%; font-weight: bold; cursor: pointer; z-index: 10; }
+        .market-tag-container { display: flex; gap: 6px; flex-wrap: wrap; margin: 8px 0; }
+        .market-tag { font-size: 10px; padding: 3px 8px; border-radius: 4px; font-weight: bold; background: rgba(255,255,255,0.05); color: #aaa; }
+        .market-tag.prime { background: rgba(1, 148, 11, 0.15); color: var(--primary); }
+        .seller-thoughts-box { font-size: 12px; color: #888; font-style: italic; background: rgba(255,255,255,0.02); padding: 8px 12px; border-radius: 6px; margin-bottom: 12px; border-left: 2px solid var(--primary); }
+
+        .ops-grid { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; }
+        .ops-order-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; position: relative; backdrop-filter: var(--backdrop); box-shadow: var(--shadow); }
+        .ops-badge { position: absolute; top: 20px; right: 20px; background: rgba(26, 115, 232, 0.15); color: #1a73e8; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
+
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 3000; justify-content: center; align-items: center; }
+        .modal-content { background: var(--card); width: 90%; max-width: 440px; padding: 30px; border-radius: var(--radius); border: 1px solid var(--primary); max-height: 90vh; overflow-y: auto; box-sizing: border-box; text-align: left; }
+        input, select, textarea { width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid var(--border); color: var(--text); border-radius: 8px; margin-bottom: 16px; box-sizing: border-box; font-size: 14px; font-family: inherit; }
+
+        .dm-box { display: none; position: fixed; bottom: 20px; right: 20px; width: 360px; height: 480px; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); z-index: 4000; flex-direction: column; overflow: hidden; backdrop-filter: var(--backdrop); }
+        .dm-header { background: #1a73e8; color: white; padding: 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+        .dm-logs { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; font-size: 13px; }
+        .dm-input-area { display: flex; border-top: 1px solid var(--border); background: rgba(0,0,0,0.5); }
+        .dm-input-area input { margin: 0; border: none; border-radius: 0; background: transparent; padding: 15px; color: var(--text); flex: 1; }
+        .dm-input-area button { background: #1a73e8; border: none; color: white; padding: 0 20px; cursor: pointer; font-weight: bold; }
     </style>
 </head>
-<body class="theme-minimalist">
-
+<body>
     <div id="terminalAlertGui" class="gui-alert-container">
         <span id="guiAlertIcon">⚠️</span>
-        <span id="guiAlertMessage">System Operation Notification Engine Active</span>
+        <span id="guiAlertMessage">System Notification Deployed.</span>
     </div>
-
-    <audio id="storeBackgroundMusic" loop>
-        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-    </audio>
 
     <div class="auth-gate" id="authGate">
         <div class="auth-card">
-            <h1 style="font-size: 24px; font-weight: 900; letter-spacing: -1px; margin-bottom: 5px;">POTATO SECURITY</h1>
-            <p style="font-size: 12px; color: #666; margin-bottom: 25px;">Provide authorization parameters to view server index.</p>
-            <input type="text" id="authUsername" placeholder="System Handle / Call Sign" autocomplete="off">
-            <input type="password" id="authPassword" placeholder="Access PIN Passphrase">
-            <button class="checkout-btn" onclick="handleTerminalLogin()" style="margin-top: 10px;">Request Clearance Link</button>
+            <h2 style="text-transform: uppercase; margin-bottom: 10px; color: var(--primary);">Terminal Log</h2>
+            <p style="font-size: 12px; color: #666; margin-bottom: 25px;">Enter your assigned handle credentials to bypass system security.</p>
+            <input type="text" id="authUsername" placeholder="Enter Username">
+            <input type="password" id="authPassword" placeholder="Enter Password">
+            <button onclick="handleTerminalLogin()" style="background:var(--primary); color:white; border:none; padding:14px; width:100%; border-radius:8px; font-weight:bold; cursor:pointer; text-transform:uppercase;">Connect Terminal</button>
         </div>
     </div>
 
     <div class="header">
-        <div style="display: flex; align-items: center; gap: 15px;">
-            <div onclick="toggleSidebarMenu()" style="cursor: pointer; font-size: 18px; font-weight: bold;">⚡ MENU</div>
-            <div style="font-weight: 900; font-size: 16px; letter-spacing: -0.5px; text-transform: uppercase;">Potato Terminal</div>
+        <div onclick="toggleSidebar()" style="cursor:pointer; font-size: 24px; padding: 5px 10px;">☰</div>
+        <div style="display: flex; align-items: center; gap: 10px; font-weight: 900; letter-spacing: -1px;">
+            <div style="width: 26px; height: 26px; background: var(--primary); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 13px; font-family: monospace; font-weight: bold;">LB</div>
+            <span>LBPC <span style="color:var(--primary)">TERMINAL</span></span>
         </div>
-        <div style="display: flex; align-items: center; gap: 20px;">
-            <div id="userDisplayTag" style="font-size:11px; color:#666;">Not Logged In</div>
+        <div style="display:flex; gap:20px; align-items:center;">
+            <div id="terminalUserHandle" style="font-size:11px; color:#666;">Not Logged In</div>
             <div onclick="logoutTerminal()" style="cursor:pointer; font-size: 11px; font-weight: bold; color: #ff4444;">🚪 EXIT</div>
             <div class="cart-trigger" onclick="toggleCart()">🛒 <span class="cart-count" id="cartCount">0</span></div>
         </div>
     </div>
 
     <div class="theme-selector-bar">
-        <button id="theme-btn-minimalist" class="theme-toggle-btn" onclick="applyCorporateTheme('minimalist')">Minimalist</button>
-        <button id="theme-btn-matrix" class="theme-toggle-btn" onclick="applyCorporateTheme('matrix')">Matrix</button>
-        <button id="theme-btn-frutiger" class="theme-toggle-btn" onclick="applyCorporateTheme('frutiger')">Frutiger Aero</button>
+        <button class="theme-toggle-btn active" id="theme-btn-matrix" onclick="applyCorporateTheme('matrix')">📟 Matrix</button>
+        <button class="theme-toggle-btn" id="theme-btn-minimalist" onclick="applyCorporateTheme('minimalist')">🕊️ Minimalist</button>
+        <button class="theme-toggle-btn" id="theme-btn-frutiger" onclick="applyCorporateTheme('frutiger')">🌊 Frutiger Aero</button>
+    </div>
+
+    <div class="sidebar" id="sidebar">
+        <div class="nav-item" onclick="switchTab('marketView')">🛒 Browse Store</div>
+        <div class="nav-item" onclick="switchTab('buildView')">🖥️ Strategic Configurator</div>
+        <div class="nav-item" onclick="switchTab('gameVaultView')">🕹️ Game Vault</div>
+        <div class="nav-item" onclick="switchTab('jobsView')">💼 Career Openings</div>
+        <div class="nav-item" onclick="openSell()">⚙️ Appraise & Sell Gear</div>
+        <div class="nav-item admin-only-nav" id="adminSidebarLink" onclick="switchTab('opsView')">📊 Live Order Pipeline</div>
     </div>
 
     <div class="tab-navigation">
-        <button id="tab-btn-market" class="tab-btn" onclick="switchActiveView('market')">Marketplace</button>
-        <button id="tab-btn-builder" class="tab-btn" onclick="switchActiveView('builder')">PC Spec Architect</button>
-        <button id="tab-btn-orders" class="tab-btn" onclick="switchActiveView('orders')">Live Ops Tracking</button>
+        <button class="tab-btn active" id="btn-marketView" onclick="switchTab('marketView')">🛒 Marketplace</button>
+        <button class="tab-btn" id="btn-buildView" onclick="switchTab('buildView')">🖥️ PC Builder</button>
+        <button class="tab-btn" id="btn-gameVaultView" onclick="switchTab('gameVaultView')">🕹️ Game Vault</button>
+        <button class="tab-btn" id="btn-jobsView" onclick="switchTab('jobsView')">💼 Careers</button>
+        <button class="tab-btn admin-only-nav" id="btn-opsView" onclick="switchTab('opsView')">📊 HQ Pipeline</button>
     </div>
 
-    <div class="sidebar" id="sidebarMenu">
-        <h2 style="font-size: 14px; text-transform: uppercase; letter-spacing: 1px; color: #666; margin-bottom: 20px;">Core Array Links</h2>
-        <div class="nav-item" onclick="switchActiveView('market'); toggleSidebarMenu();">Market Catalog</div>
-        <div class="nav-item" onclick="switchActiveView('builder'); toggleSidebarMenu();">PC Wizard Architect</div>
-        <div class="nav-item" onclick="openCreateListingModal(); toggleSidebarMenu();" style="color: var(--primary);">+ Deploy Item Listing</div>
-        <div class="nav-item admin-only-nav" id="sidebarAdminNav" onclick="switchActiveView('orders'); toggleSidebarMenu();">HQ Ops Control Deck</div>
-    </div>
-
-    <div class="cart-panel" id="cartDrawer">
+    <div class="cart-panel" id="cartPanel">
         <div class="cart-header-title">
-            <span>Procurement Array</span>
-            <span onclick="toggleCart()" style="cursor: pointer; font-size: 13px; color: #999;">[CLOSE]</span>
+            <span>Terminal Cart</span>
+            <span style="cursor:pointer; color:#666;" onclick="toggleCart()">✖</span>
         </div>
-        <div class="cart-items-container" id="cartItemsList"></div>
+        <div class="cart-items-container" id="cartItemsContainer"></div>
         <div class="cart-footer">
-            <div style="display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 15px; font-size: 14px;">
-                <span>Total Budget Allocation:</span>
-                <span id="cartTotalPriceValue">₹0</span>
+            <div style="display:flex; justify-content:space-between; font-weight:bold; margin-bottom:15px;">
+                <span>Total:</span>
+                <span id="cartTotalValue">₹0</span>
             </div>
-            <button class="checkout-btn" onclick="executeCartCheckoutProcess()">Deploy Order Tickets</button>
+            <button class="checkout-btn" onclick="checkoutTerminal()">Verify & Secure Assets</button>
         </div>
     </div>
 
-    <div class="app-view" id="view-market">
+    <div class="app-view active" id="marketView">
         <div class="market-header">
-            <h2 style="font-size: 20px; font-weight: 900; letter-spacing: -0.5px; margin: 0;">MARKET ENGINE LOGS</h2>
-            <button class="wiz-btn next" onclick="openCreateListingModal()" style="font-size: 11px; padding: 8px 16px;">Deploy New Item</button>
+            <h2 style="text-transform: uppercase; margin: 0; font-size: 24px;">Matrix Marketplace</h2>
+            <button onclick="openSell()" style="background:var(--primary); color:white; border:none; padding:10px 20px; border-radius:8px; font-weight:bold; cursor:pointer; text-transform:uppercase; font-size:12px;">+ Post Listing</button>
         </div>
-        <div class="market-filter-row">
-            <button class="filter-chip active" id="chip-all" onclick="filterMarketCategory('all')">All Components</button>
-            <button class="filter-chip" id="chip-gpu" onclick="filterMarketCategory('gpu')">Graphics Cards</button>
-            <button class="filter-chip" id="chip-cpu" onclick="filterMarketCategory('cpu')">Processors</button>
-            <button class="filter-chip" id="chip-ram" onclick="filterMarketCategory('ram')">Memory Modules</button>
-            <button class="filter-chip" id="chip-storage" onclick="filterMarketCategory('storage')">Solid State / Storage</button>
-            <button class="filter-chip" id="chip-complete" onclick="filterMarketCategory('complete')">Prebuilt Systems</button>
+        
+        <div class="search-container" style="margin-bottom: 20px;">
+            <input type="text" id="marketSearchInput" placeholder="🔍 Search hardware archive..." oninput="handleSearchInput(event)" style="margin-bottom: 0;">
         </div>
-        <div class="market-grid" id="marketplaceMasterGrid"></div>
+        
+        <div class="market-filter-row" id="marketFilterRow">
+            <button class="filter-chip active" onclick="filterMarketplace('all')">All Gear</button>
+            <button class="filter-chip" onclick="filterMarketplace('Component')">Components</button>
+            <button class="filter-chip" onclick="filterMarketplace('Full PC')">System Desktops</button>
+            <button class="filter-chip" onclick="filterMarketplace('Laptop')">Laptops</button>
+        </div>
+
+        <div class="market-grid" id="marketGrid"></div>
+
+        <div style="margin-top: 40px; border-top: 1px dashed var(--border); padding-top: 30px;">
+            <h3 style="text-transform: uppercase; font-size:16px; color:var(--primary); margin-bottom:15px;">📋 My Active Orders & Shipments</h3>
+            <div id="userOrdersGrid" style="display: flex; flex-direction: column; gap: 12px;">
+                <div style="color:#666; font-size:13px;">No personal transactions deployed in current matrix session.</div>
+            </div>
+        </div>
     </div>
 
-    <div class="app-view" id="view-builder">
+    <div class="app-view" id="buildView">
         <div class="wizard-container">
-            <h2 style="font-size: 20px; font-weight: 900; letter-spacing: -0.5px; text-align: center; margin-top: 0;">PC ARCHITECT CONFIGURATOR</h2>
-            <p style="font-size: 12px; color:#666; text-align: center; margin-bottom: 30px;">Algorithmic profile alignment matching systems against hardware arrays.</p>
+            <div class="wizard-step active" id="wizStep1">
+                <h3 style="text-transform: uppercase; color: var(--primary); margin-top: 0;">Step 1: Set Target Budget</h3>
+                <div style="font-size: 44px; font-weight: 900; color: var(--text); text-align: center; margin: 20px 0;">
+                    ₹<span id="wizPriceDisplay">15,000</span>
+                </div>
+                <input type="range" id="wizBudgetSlider" min="15000" max="400000" step="1000" value="15000" oninput="syncBudgetInputs('slider')">
+                <input type="number" id="wizBudgetManual" min="15000" max="400000" value="15000" oninput="syncBudgetInputs('manual')">
+                <div class="wizard-nav-row" style="justify-content: flex-end;">
+                    <button class="wiz-btn next" onclick="changeWizardStep(2)">Next Range ➔</button>
+                </div>
+            </div>
 
-            <div class="wizard-step active" id="wizStep-1">
-                <h3 style="font-size: 14px; text-transform: uppercase;">[Step 01] Select Deployment Priority Target</h3>
+            <div class="wizard-step" id="wizStep2">
+                <h3 style="text-transform: uppercase; color: var(--primary); margin-top: 0;">Step 2: Choose Classification</h3>
                 <div class="category-grid">
-                    <div class="category-card selected" id="node-gaming" onclick="selectWizardTargetNode('gaming', 15000)">
-                        <div style="font-size: 24px; margin-bottom: 5px;">🎮</div>
-                        <div>High FPS Gaming Array</div>
-                    </div>
-                    <div class="category-card" id="node-office" onclick="selectWizardTargetNode('office', 5000)">
-                        <div style="font-size: 24px; margin-bottom: 5px;">💼</div>
-                        <div>Production Workflow Desk</div>
-                    </div>
+                    <div class="category-card" id="cat-gaming" onclick="selectCategory('gaming')">🎮 Gaming</div>
+                    <div class="category-card" id="cat-editing" onclick="selectCategory('editing')">🎬 Video Editing</div>
+                    <div class="category-card" id="cat-school" onclick="selectCategory('school')">📚 School Purpose</div>
+                    <div class="category-card" id="cat-modelling" onclick="selectCategory('modelling')">🧊 3D Modelling</div>
+                </div>
+                <div class="spec-output-box">
+                    <h4 style="margin: 0 0 10px 0; color: var(--primary); text-transform: uppercase; font-size: 12px;">Generated Matrix Configuration</h4>
+                    <div id="generatedSpecsArea">Select a category node to display optimization specs.</div>
                 </div>
                 <div class="wizard-nav-row">
-                    <div></div>
-                    <button class="wiz-btn next" onclick="advanceWizardStep(2)">Proceed Allocation</button>
+                    <button class="wiz-btn" onclick="changeWizardStep(1)">⬅ Back</button>
+                    <button class="wiz-btn next" onclick="goToStep3()">Next Stage ➔</button>
                 </div>
             </div>
 
-            <div class="wizard-step" id="wizStep-2">
-                <h3 style="font-size: 14px; text-transform: uppercase;">[Step 02] Budget Parameter Constellation</h3>
-                <p style="font-size: 13px; color: #888;">Slide target metrics to allocate monetary resources:</p>
-                <input type="range" id="budgetSliderRange" min="4000" max="60000" step="500" value="15000" oninput="updateBudgetSliderLabelValue(this.value)">
-                <div style="text-align: center; font-size: 22px; font-weight: 900; margin: 20px 0; color: var(--primary);" id="budgetValueIndicator">₹15,000</div>
+            <div class="wizard-step" id="wizStep3">
+                <h3 style="text-transform: uppercase; color: var(--primary); margin-top: 0;">Step 3: Secure Gate</h3>
+                <select id="paymentMethodSelect">
+                    <option value="upi">Direct Digital Payment Architecture (UPI/Cards)</option>
+                </select>
+                <div class="treasure-box" id="treasureContainer">
+                    <input type="checkbox" id="useTreasureCheckbox" style="width: auto; margin: 0;" onchange="calculateFinalWizardPrice()" disabled>
+                    <div>
+                        <strong style="color: #666; font-size: 14px;" id="treasureTitle">🧰 Treasure Coins Locked</strong>
+                        <span style="font-size: 12px; display: block; color: #666;" id="treasureDesc">Checking database files... Only users with previous completed checkout orders can use coins.</span>
+                    </div>
+                </div>
+                <div style="margin-top: 25px; padding-top: 15px; border-top: 1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-weight:bold; font-size:14px;">Adjusted Invoice Cost:</span>
+                    <strong style="font-size:24px; color:var(--primary);" id="wizardInvoiceTotal">₹0</strong>
+                </div>
                 <div class="wizard-nav-row">
-                    <button class="wiz-btn" onclick="advanceWizardStep(1)">Back Link</button>
-                    <button class="wiz-btn next" onclick="triggerHardwareAppraisalEngine()">Generate Component Formula</button>
+                    <button class="wiz-btn" onclick="changeWizardStep(2)">⬅ Back</button>
+                    <button class="wiz-btn next" onclick="changeWizardStep(4)">Next Stage ➔</button>
                 </div>
             </div>
 
-            <div class="wizard-step" id="wizStep-3">
-                <h3 style="font-size: 14px; text-transform: uppercase;">[Step 03] Synthesized Spec Formula</h3>
-                <div class="spec-output-box" id="appraisalOutputSpecsGrid"></div>
-                <div class="treasure-box" id="secretVaultBox">
-                    <div style="font-size: 20px;" id="vaultBoxEmoji">🔒</div>
-                    <div style="font-size: 12px; color: #aaa;" id="vaultBoxMessage">Easter Egg Array locked. Upgrade budget cap values beyond ₹35,000 threshold to break security protocols.</div>
+            <div class="wizard-step" id="wizStep4">
+                <h3 style="text-transform: uppercase; color: var(--primary); margin-top: 0;">Step 4: Delivery Destination</h3>
+                <input type="text" id="shipAddress" placeholder="Apartment building number, Street Name...">
+                <input type="text" id="shipCity" placeholder="e.g., Chennai, Nagercoil, Mumbai">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <input type="text" id="shipState" placeholder="e.g., Tamil Nadu">
+                    <input type="text" id="shipPincode" placeholder="e.g., 629177" maxlength="6">
                 </div>
                 <div class="wizard-nav-row">
-                    <button class="wiz-btn" onclick="advanceWizardStep(2)">Adjust Metrics</button>
-                    <button class="wiz-btn next" onclick="resetWizardToStartingNode()">Deploy Another Profile</button>
+                    <button class="wiz-btn" onclick="changeWizardStep(3)">⬅ Back</button>
+                    <button class="wiz-btn next" style="background:#1a73e8;" onclick="finalizeWizardBuildOrder()">Deploy Build Order 🛠️</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="app-view" id="view-orders">
-        <h2 style="font-size: 20px; font-weight: 900; letter-spacing: -0.5px; margin-bottom: 5px;">LIVE LOGISTICS QUEUE</h2>
-        <p style="font-size: 12px; color: #666; margin-bottom: 25px;">Realtime deployment state arrays synced straight from live Firebase databases.</p>
-        <div class="ops-grid" id="userOrdersGrid"></div>
+    <div class="app-view" id="opsView">
+        <h2 style="text-transform: uppercase; margin: 0 0 5px 0; font-size: 24px;">Live Operations Pipeline</h2>
+        <h3 style="text-transform: uppercase; font-size:14px; color:#0284c7; margin-bottom:10px;">📦 Client Build Orders</h3>
+        <div class="ops-grid" id="opsGrid" style="margin-bottom: 40px;"></div>
+        <h3 style="text-transform: uppercase; font-size:14px; color:#11998e; margin-bottom:10px;">💼 Submitted Job Packets</h3>
+        <div class="ops-grid" id="hrOpsGrid"></div>
+        <h3 style="text-transform: uppercase; font-size:14px; color:#ff4444; margin-top: 40px; margin-bottom:10px;">🚩 Security Violation Reports</h3>
+        <div class="ops-grid" id="reportsOpsGrid">
+            <div style="text-align:center; color:#555; padding:40px;">No incident packets found in security log matrices.</div>
+        </div>
     </div>
 
-    <div class="modal" id="newListingModal">
-        <div class="modal-content">
-            <h3 style="font-size: 16px; text-transform: uppercase; margin-top: 0; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">Deploy New Market Component</h3>
-            <input type="text" id="postItemTitle" placeholder="Component Name (e.g., RX 580, i5 3470)" autocomplete="off">
-            <select id="postItemCategory">
-                <option value="gpu">Graphics Card (GPU)</option>
-                <option value="cpu">Processor (CPU)</option>
-                <option value="ram">System Memory (RAM)</option>
-                <option value="storage">Storage Array (SSD/HDD)</option>
-                <option value="complete">Prebuilt / Full Rig</option>
-            </select>
-            <input type="number" id="postItemPrice" placeholder="Price Valuation (INR)">
-            <input type="text" id="postItemImage" placeholder="Image File Link Web URL" autocomplete="off">
-            <textarea id="postItemThoughts" placeholder="Operational comments, wear metrics, or benchmarks details..." rows="3"></textarea>
-            <div style="display: flex; gap: 10px; margin-top: 10px;">
-                <button class="wiz-btn" style="flex: 1;" onclick="closeCreateListingModal()">Abort Link</button>
-                <button class="wiz-btn next" style="flex: 1;" onclick="submitNewListingToFirebase()">Transmit Live</button>
+    <div class="app-view" id="gameVaultView">
+        <h2 style="text-transform: uppercase; margin: 0; font-size: 24px; color: #0284c7; font-style: italic;">🕹️ Arcade Game Vault</h2>
+        <div id="developerGameConsole" style="display: none; background: rgba(0, 162, 255, 0.05); border: 1px dashed #00a2ff; padding: 25px; border-radius: var(--radius); margin-bottom: 30px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                <input type="text" id="vaultGameName" placeholder="e.g., Silent Shadow: Level 1-5">
+                <input type="url" id="vaultGameUrl" placeholder="https://drive.google.com/...">
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <input type="number" id="vaultGamePrice" placeholder="Price (₹)" value="0">
+                <input type="url" id="vaultGameImg" placeholder="Paste image web address URL">
+            </div>
+            <textarea id="vaultGameDesc" placeholder="Write level constraints, control mappings..." rows="2"></textarea>
+            <button onclick="submitGameToVault()" style="background:#00a2ff; color:#fff; border:none; padding:12px 24px; border-radius:8px; font-weight:bold; cursor:pointer; text-transform:uppercase;">Submit Title Node</button>
+        </div>
+        <div class="market-grid" id="vaultGameGrid"></div>
+    </div>
+
+    <div class="app-view" id="jobsView">
+        <div class="wizard-container" style="max-width: 680px;">
+            <h2 style="text-transform: uppercase; margin: 0 0 5px 0; font-size: 24px;">Potato Builders Careers</h2>
+            <p style="font-size:12px; color:#666; margin-bottom:25px;">Apply to enlist your technical skills in our matrix workforce pool.</p>
+            
+            <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 12px; padding: 25px; margin-bottom: 25px;">
+                <h3 style="margin-top:0; color: var(--primary);">NODE ASSIGNMENT: Hardware Assembly Strategist</h3>
+                <p style="font-size:14px; color:#aaa; line-height: 1.5;">Tasks include system debugging, mapping GPU configurations, balancing processing thermals, and managing localized fulfillment streams.</p>
+                
+                <hr style="border-color: var(--border); margin: 20px 0;">
+                
+                <h4 style="text-transform: uppercase; font-size:12px; color:var(--primary); margin-bottom:12px;">Deploy Personnel Matrix</h4>
+                <input type="text" id="jobApplicantName" placeholder="Your Full Operator Name">
+                <input type="text" id="jobApplicantSkills" placeholder="Core Proficiencies (e.g., Hardware Repair, Godot Engine, Benchmarking)">
+                <textarea id="jobApplicantCover" placeholder="State past operational experience or assembly milestones..." rows="4"></textarea>
+                
+                <button onclick="submitJobApplicationPacket()" style="background: var(--primary); color: white; border: none; padding: 14px; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; width: 100%;">Transmit Application Profile 📁</button>
             </div>
         </div>
     </div>
 
-    <div class="dm-box" id="directMessageFrame">
+    <div class="dm-box" id="dmBox">
         <div class="dm-header">
-            <span id="dmTargetTitleNode">SECURE LINE CHANNEL</span>
-            <span onclick="closeDirectMessageFrame()" style="cursor: pointer; font-size: 13px; opacity: 0.7;">[X]</span>
+            <span id="dmTargetTitle">Channel Secure Matrix</span>
+            <span style="cursor:pointer;" onclick="closeDirectMessageMatrix()">✖</span>
         </div>
-        <div class="dm-logs" id="dmChatLogsContainer"></div>
+        <div class="dm-logs" id="dmLogs"></div>
         <div class="dm-input-area">
-            <input type="text" id="dmRawInputField" placeholder="Transmit secure packet payload..." onkeydown="if(event.key === 'Enter') dispatchDirectMessagePacket()">
-            <button onclick="dispatchDirectMessagePacket()">SEND</button>
+            <input type="text" id="dmRawInput" placeholder="Secure signal transmit..." onkeydown="if(event.key==='Enter') transmitDirectMessageSignal()">
+            <button onclick="transmitDirectMessageSignal()">SEND</button>
+        </div>
+    </div>
+
+    <div id="sellModal" class="modal">
+        <div class="modal-content">
+            <h3 style="text-transform: uppercase; margin-top: 0; color: var(--primary);">Deploy New Hardware Packet</h3>
+            <input type="text" id="sellItemTitle" placeholder="Component Name (e.g., Core i5 Processor)">
+            <select id="sellItemCategory">
+                <option value="Component">Component / Spare Gear</option>
+                <option value="Full PC">System Desktop Build</option>
+                <option value="Laptop">Mobile Laptop Unit</option>
+            </select>
+            <input type="number" id="sellItemPrice" placeholder="Target Evaluation Price (₹)">
+            <input type="text" id="sellItemImg" placeholder="Image Asset URL Link">
+            <textarea id="sellItemThoughts" placeholder="Seller Spec Notes..."></textarea>
+            
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button onclick="closeSell()" style="background:#333; color:white; border:none; padding:10px 20px; border-radius:6px; cursor:pointer;">ABORT</button>
+                <button onclick="transmitHardwareListing()" style="background:var(--primary); color:white; border:none; padding:10px 20px; border-radius:6px; font-weight:bold; cursor:pointer;">TRANSMIT LISTING ➔</button>
+            </div>
         </div>
     </div>
 
     <script>
-        // Paste your exact unique Firebase Project Configuration here inside this object block:
+        // 1. Initialize Firebase Matrix Realtime Cluster
         const firebaseConfig = {
-            apiKey: "AIzaSyD-YOUR-API-KEY-HERE",
-            authDomain: "YOUR-PROJECT-ID.firebaseapp.com",
-            databaseURL: "https://YOUR-PROJECT-ID-default-rtdb.firebaseio.com",
-            projectId: "YOUR-PROJECT-ID",
-            storageBucket: "YOUR-PROJECT-ID.appspot.com",
-            messagingSenderId: "YOUR-MESSAGING-ID",
-            appId: "YOUR-APP-ID"
+            databaseURL: "https://potatobuilders-default-rtdb.firebaseio.com"
         };
-
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        const localAccounts = {
-            "nafeez": "1234",
-            "admin": "potato2026",
-            "opsmanager": "opspass2026",
-            "guest": "0000"
+        let currentActiveUserNode = null;
+        let globalCartArray = [];
+        let globalMarketplaceCollection = {};
+        let activeMarketplaceFilterKey = 'all';
+        let activeDirectMessageChannelId = null;
+        let activeWizardSelectedCategory = null;
+
+        const hardcodedLocalAccounts = {
+            'nafeez': 'nafeez123',
+            'admin': 'admin777',
+            'guest': 'guest'
         };
+        const privilegeAdminAccessNodes = ['admin', 'nafeez'];
 
-        let cart = [];
-        let marketItems = []; 
-        let activeDMPath = null;
-        let currentUser = null; 
-        let computedAppraisalValue = 0;
-        let currentFilterCategory = 'all';
-        let searchQueryString = '';
-        let selectedCategoryNode = 'gaming';
-        let activeSelectedBudget = 15000;
-        let searchDebounceTimeout = null;
-
-        // =========================================================
-        // 🛠️ CUSTOM GLOBAL GUI NOTIFICATION SYSTEM 
-        // =========================================================
-        function showGuiNotification(message, isSuccess = false) {
-            let alertBox = document.getElementById('terminalAlertGui');
-            let alertMsg = document.getElementById('guiAlertMessage');
-            let alertIcon = document.getElementById('guiAlertIcon');
-
-            if (!alertBox || !alertMsg || !alertIcon) {
-                console.warn("GUI Alert Container missing, outputting: " + message);
-                return;
-            }
-
-            alertMsg.innerText = message;
-            alertIcon.innerText = isSuccess ? "🔓" : "⚠️";
-            
-            if (isSuccess) {
-                alertBox.style.borderColor = "#00ff88";
-                alertBox.style.color = "#00ff88";
-                alertBox.style.boxShadow = "0 0 20px rgba(0, 255, 136, 0.3)";
-            } else {
-                alertBox.style.borderColor = "#ff3b30";
-                alertBox.style.color = "#ff9500";
-                alertBox.style.boxShadow = "0 0 20px rgba(255, 59, 48, 0.3)";
-            }
-
-            alertBox.classList.add('show');
-
-            setTimeout(() => {
-                alertBox.classList.remove('show');
-            }, 4500);
-        }
-
-        // Global Hijack: Overrides the browser's native popups completely
-        window.alert = function(msg) {
-            let isClearance = msg.includes("ACCESS GRANTED") || msg.includes("Welcome");
-            showGuiNotification(msg, isClearance);
-        };
-        // =========================================================
-
-        function applyCorporateTheme(themeName) {
-            document.body.className = ""; 
-            document.querySelectorAll('.theme-toggle-btn').forEach(btn => btn.classList.remove('active'));
-            if (themeName !== 'matrix') document.body.classList.add('theme-' + themeName);
-            let themeBtn = document.getElementById('theme-btn-' + themeName);
-            if(themeBtn) themeBtn.classList.add('active');
-            localStorage.setItem('potato_terminal_theme', themeName);
+        function showGuiNotification(msg, type = 'alert') {
+            const container = document.getElementById('terminalAlertGui');
+            const messageSlot = document.getElementById('guiAlertMessage');
+            const iconSlot = document.getElementById('guiAlertIcon');
+            iconSlot.innerText = type === 'success' ? '✅' : '⚠️';
+            messageSlot.innerText = msg;
+            container.classList.add('show');
+            setTimeout(() => container.classList.remove('show'), 4000);
         }
 
         function handleTerminalLogin() {
-            let userField = document.getElementById('authUsername').value.trim().toLowerCase();
-            let passField = document.getElementById('authPassword').value.trim();
-
-            if (!userField || (userField !== 'guest' && !passField)) {
-                alert("Please enter both your system handle and access PIN.");
-                return;
+            let u = document.getElementById('authUsername').value.trim().toLowerCase();
+            let p = document.getElementById('authPassword').value;
+            if(!u) return showGuiNotification("Username parameters undefined.");
+            
+            if(hardcodedLocalAccounts[u] && hardcodedLocalAccounts[u] === p) {
+                loginSuccess(u);
+            } else {
+                showGuiNotification("Access Denied. Credentials mismatch.");
             }
-
-            // 👑 OVERLORD BACKDOOR
-            if (userField === 'nafeez') {
-                if (passField === "1234") { 
-                    loginSuccess('nafeez');
-                    return;
-                } else {
-                    alert("ACCESS DENIED: Invalid System Architect Passphrase.");
-                    return;
-                }
-            }
-
-            // 1. STRICT ADMIN CHECK (FIXED: removed .password bug)
-            if (userField === 'admin' || userField === 'opsmanager') {
-                if (typeof localAccounts !== 'undefined' && localAccounts[userField] && localAccounts[userField] === passField) {
-                    loginSuccess(userField);
-                    return;
-                } else {
-                    alert("ACCESS DENIED: Invalid Administrative Credentials.");
-                    return;
-                }
-            }
-
-            // 2. OPEN GUEST BYPASS
-            if (userField === 'guest') {
-                loginSuccess('guest');
-                return;
-            }
-
-            // 3. BACKUP LOCAL CHECK (FIXED: removed .password bug)
-            if (typeof localAccounts !== 'undefined' && localAccounts[userField]) {
-                if (localAccounts[userField] === passField) {
-                    loginSuccess(userField);
-                    return;
-                } else {
-                    alert("ACCESS DENIED: Invalid Local Credentials.");
-                    return;
-                }
-            }
-
-            // 4. DATABASE CHECK
-            database.ref(`marketplace/users/${userField}`).once('value', snapshot => {
-                let dbUser = snapshot.val();
-                
-                if (dbUser && dbUser.password === passField) {
-                    loginSuccess(userField);
-                } else {
-                    alert("ACCESS DENIED: Credentials not found in active squad array.");
-                }
-            }).catch(error => {
-                console.error("Auth Matrix Interruption:", error);
-                alert("System connection error during authorization verification.");
-            });
-        }
-        
-        function syncUserPersonalOrders(username) {
-            database.ref('marketplace/orders').on('value', snapshot => {
-                let container = document.getElementById('userOrdersGrid');
-                if (!container) return;
-                container.innerHTML = "";
-                let orders = snapshot.val();
-                let matchCount = 0;
-
-                if (!orders) {
-                    container.innerHTML = `<div style="color:#666; font-size:13px;">No personal transactions deployed in current matrix session.</div>`;
-                    return;
-                }
-
-                for (let orderId in orders) {
-                    let order = orders[orderId];
-                    if (username === 'admin' || username === 'opsmanager' || order.buyer === username) {
-                        matchCount++;
-                        let card = document.createElement('div');
-                        card.className = "ops-order-card";
-                        
-                        let itemDetailsHtml = "";
-                        if(order.items && Array.isArray(order.items)){
-                            itemDetailsHtml = order.items.map(i => `<div style="font-size:13px; margin:4px 0; font-weight:bold;">• ${i.title} (₹${i.price})</div>`).join('');
-                        } else {
-                            itemDetailsHtml = `<div style="font-size:13px; color:#888;">Custom Configuration Spec Build Request Ticket</div>`;
-                        }
-
-                        card.innerHTML = `
-                            <div class="ops-badge">${order.status || 'deployed'}</div>
-                            <div style="font-size: 11px; color: var(--primary); font-weight: bold; margin-bottom: 5px;">ID: ${orderId}</div>
-                            <div style="font-size: 14px; font-weight: 900; margin-bottom: 10px;">Buyer: ${order.buyer ? order.buyer.toUpperCase() : 'UNKNOWN'}</div>
-                            <div style="border-left: 2px solid var(--border); padding-left: 10px; margin: 10px 0;">${itemDetailsHtml}</div>
-                            <div style="font-size: 15px; font-weight: bold; margin-top: 10px; color: var(--primary);">Valuation: ₹${order.totalPrice || order.budget || 0}</div>
-                        `;
-                        container.appendChild(card);
-                    }
-                }
-
-                if (matchCount === 0) {
-                    container.innerHTML = `<div style="color:#666; font-size:13px;">No personal transactions deployed in current matrix session.</div>`;
-                }
-            });
         }
 
-        function loginSuccess(username) {
-            currentUser = username;
-            localStorage.setItem('potato_local_session', username);
+        function loginSuccess(user) {
+            currentActiveUserNode = user;
+            localStorage.setItem('potato_local_session', user);
+            document.getElementById('authGate').style.style.display = 'none';
+            document.getElementById('terminalUserHandle').innerText = `@${user.toUpperCase()}`;
             
-            let authGate = document.getElementById('authGate');
-            if (authGate) authGate.style.display = 'none';
-            
-            // 🎵 START STORE AMBIENCE MUSIC SMOOTHLY
-            let bgMusic = document.getElementById('storeBackgroundMusic');
-            if (bgMusic) {
-                bgMusic.volume = 0.20; 
-                bgMusic.play().catch(err => console.log("Audio play deferred:", err));
+            if(privilegeAdminAccessNodes.includes(user)) {
+                document.querySelectorAll('.admin-only-nav').forEach(el => el.style.style.display = 'block');
+                document.getElementById('developerGameConsole').style.style.display = 'block';
             }
-            
-            // 🎯 FIXED TRACKING HOOK
-            let displayHandle = document.getElementById('userDisplayTag');
-            if (displayHandle) {
-                displayHandle.innerText = username.toUpperCase();
-            }
-            
-            if (username === 'admin' || username === 'opsmanager') {
-                let adminNav = document.getElementById('sidebarAdminNav');
-                if (adminNav) adminNav.style.display = 'block';
-            }
-
-            alert(`🔓 ACCESS GRANTED: Welcome back to the terminal, ${username.toUpperCase()}.`);
-            
-            syncUserPersonalOrders(username);
-            listenMarketplaceStream();
-            syncActiveCartDisplay();
+            showGuiNotification(`Welcome back to the terminal, @${user.toUpperCase()}`, 'success');
+            initializeRealtimeStreamListeners();
         }
 
         function logoutTerminal() {
-            currentUser = null;
             localStorage.removeItem('potato_local_session');
-            
-            // Stop music on system logout
-            let bgMusic = document.getElementById('storeBackgroundMusic');
-            if (bgMusic) {
-                bgMusic.pause();
-                bgMusic.currentTime = 0; 
-            }
-
-            let displayHandle = document.getElementById('userDisplayTag');
-            if (displayHandle) displayHandle.innerText = "Not Logged In";
-
-            let adminNav = document.getElementById('sidebarAdminNav');
-            if (adminNav) adminNav.style.display = 'none';
-
-            let authGate = document.getElementById('authGate');
-            if (authGate) authGate.style.display = 'flex';
-            
-            document.getElementById('authUsername').value = "";
-            document.getElementById('authPassword').value = "";
+            window.location.reload();
         }
 
-        function switchActiveView(viewName) {
-            document.querySelectorAll('.app-view').forEach(view => view.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
+        function toggleCart() { document.getElementById('cartPanel').classList.toggle('active'); }
+        function openSell() { document.getElementById('sellModal').style.style.display = 'flex'; toggleSidebar(); }
+        function closeSell() { document.getElementById('sellModal').style.style.display = 'none'; }
 
-            let activeView = document.getElementById('view-' + viewName);
-            let activeTab = document.getElementById('tab-btn-' + viewName);
-
-            if (activeView) activeView.classList.add('active');
-            if (activeTab) activeTab.classList.add('active');
+        function switchTab(tabId) {
+            document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            let targetView = document.getElementById(tabId);
+            if(targetView) targetView.classList.add('active');
+            let targetBtn = document.getElementById(`btn-${tabId}`);
+            if(targetBtn) targetBtn.classList.add('active');
+            document.getElementById('sidebar').classList.remove('active');
         }
 
-        function toggleSidebarMenu() {
-            let sidebar = document.getElementById('sidebarMenu');
-            if (!sidebar) return;
-            if (sidebar.classList.contains('active')) {
-                sidebar.classList.remove('active');
-            } else {
-                sidebar.classList.add('active');
-            }
+        function applyCorporateTheme(themeName) {
+            document.body.className = '';
+            if(themeName !== 'matrix') document.body.classList.add(`theme-${themeName}`);
+            document.querySelectorAll('.theme-toggle-btn').forEach(btn => btn.classList.remove('active'));
+            let targetBtn = document.getElementById(`theme-btn-${themeName}`);
+            if(targetBtn) targetBtn.classList.add('active');
         }
 
-        function toggleCart() {
-            let cartPanel = document.getElementById('cartDrawer');
-            if (!cartPanel) return;
-            if (cartPanel.classList.contains('active')) {
-                cartPanel.classList.remove('active');
-            } else {
-                cartPanel.classList.add('active');
-            }
-        }
-
-        function openCreateListingModal() {
-            let modal = document.getElementById('newListingModal');
-            if (modal) modal.style.display = 'flex';
-        }
-
-        function closeCreateListingModal() {
-            let modal = document.getElementById('newListingModal');
-            if (modal) modal.style.display = 'none';
-        }
-
-        function submitNewListingToFirebase() {
-            let title = document.getElementById('postItemTitle').value.trim();
-            let category = document.getElementById('postItemCategory').value;
-            let price = parseInt(document.getElementById('postItemPrice').value);
-            let image = document.getElementById('postItemImage').value.trim();
-            let thoughts = document.getElementById('postItemThoughts').value.trim();
-
-            if (!title || !price) {
-                alert("Please fill out the component specifications and value criteria.");
-                return;
-            }
-
-            let payload = {
-                title: title,
-                category: category,
-                price: price,
-                image: image || "https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?w=500",
-                seller: currentUser || 'anonymous',
-                thoughts: thoughts || 'No alternative descriptions offered.',
-                timestamp: Date.now()
-            };
-
-            database.ref('marketplace/items').push(payload).then(() => {
-                alert("Component deployed successfully to live network grid.");
-                closeCreateListingModal();
-                document.getElementById('postItemTitle').value = "";
-                document.getElementById('postItemPrice').value = "";
-                document.getElementById('postItemImage').value = "";
-                document.getElementById('postItemThoughts').value = "";
-            }).catch(err => {
-                alert("Transmission dropped: Database write protection constraint.");
-            });
-        }
-
-        function listenMarketplaceStream() {
-            database.ref('marketplace/items').on('value', snapshot => {
-                marketItems = [];
-                let data = snapshot.val();
-                for (let id in data) {
-                    let item = data[id];
-                    item.id = id;
-                    marketItems.push(item);
-                }
+        // 2. Realtime Streams and Transmit Systems
+        function initializeRealtimeStreamListeners() {
+            database.ref('marketplace/listings').on('value', snap => {
+                globalMarketplaceCollection = snap.val() || {};
                 renderMarketGrid();
             });
+            database.ref('marketplace/orders').on('value', snap => {
+                renderPipelineAndOrders(snap.val() || {});
+            });
+            database.ref('marketplace/careers').on('value', snap => {
+                renderCareerPipeline(snap.val() || {});
+            });
+            database.ref('marketplace/games').on('value', snap => {
+                renderGameVaultGrid(snap.val() || {});
+            });
         }
 
-        function renderMarketGrid() {
-            let container = document.getElementById('marketplaceMasterGrid');
-            if (!container) return;
-            container.innerHTML = "";
+        function transmitHardwareListing() {
+            let title = document.getElementById('sellItemTitle').value.trim();
+            let cat = document.getElementById('sellItemCategory').value;
+            let price = parseInt(document.getElementById('sellItemPrice').value);
+            let img = document.getElementById('sellItemImg').value.trim() || "https://via.placeholder.com/300";
+            let notes = document.getElementById('sellItemThoughts').value.trim();
 
-            let filtered = marketItems.filter(item => {
-                if (currentFilterCategory !== 'all' && item.category !== currentFilterCategory) return false;
-                return true;
+            if(!title || !price) return showGuiNotification("Complete required parameters first.");
+
+            database.ref('marketplace/listings').push({
+                title, category: cat, price, img, thoughts: notes, seller: currentActiveUserNode, timestamp: Date.now()
+            }).then(() => {
+                closeSell();
+                showGuiNotification("Hardware configuration packet pushed to database stream.", "success");
             });
+        }
 
-            if (filtered.length === 0) {
-                container.innerHTML = `<div style="grid-column: 1/-1; text-align:center; color:#666; padding:40px; font-size:14px;">No components deployed in this category cell matrix.</div>`;
-                return;
-            }
+        function deleteMarketListing(listingId) {
+            database.ref(`marketplace/listings/${listingId}`).remove().then(() => {
+                showGuiNotification("Listing purged successfully.", "success");
+            });
+        }
 
-            filtered.forEach(item => {
+        function submitJobApplicationPacket() {
+            let name = document.getElementById('jobApplicantName').value.trim();
+            let skills = document.getElementById('jobApplicantSkills').value.trim();
+            let cover = document.getElementById('jobApplicantCover').value.trim();
+
+            if(!name || !skills) return showGuiNotification("Please populate deployment vectors.");
+
+            database.ref('marketplace/careers').push({
+                applicant: name, proficiencies: skills, coverStatement: cover, handle: currentActiveUserNode, timestamp: Date.now()
+            }).then(() => {
+                document.getElementById('jobApplicantName').value = '';
+                document.getElementById('jobApplicantSkills').value = '';
+                document.getElementById('jobApplicantCover').value = '';
+                showGuiNotification("Application transmission complete.", "success");
+            });
+        }
+
+        function submitGameToVault() {
+            let name = document.getElementById('vaultGameName').value.trim();
+            let url = document.getElementById('vaultGameUrl').value.trim();
+            let price = parseInt(document.getElementById('vaultGamePrice').value) || 0;
+            let img = document.getElementById('vaultGameImg').value.trim() || "https://via.placeholder.com/300";
+            let desc = document.getElementById('vaultGameDesc').value.trim();
+
+            if(!name || !url) return showGuiNotification("Game node definitions missing.");
+
+            database.ref('marketplace/games').push({
+                title: name, downloadUrl: url, price, imageAsset: img, documentation: desc, publisher: currentActiveUserNode
+            }).then(() => {
+                showGuiNotification("Title node compiled into Arcade Vault Matrix.", "success");
+            });
+        }
+
+        // 3. UI Matrix Mapping Generators
+        function renderMarketGrid() {
+            const container = document.getElementById('marketGrid');
+            container.innerHTML = '';
+            let searchKeyword = document.getElementById('marketSearchInput').value.toLowerCase();
+
+            Object.keys(globalMarketplaceCollection).forEach(id => {
+                let item = globalMarketplaceCollection[id];
+                if(activeMarketplaceFilterKey !== 'all' && item.category !== activeMarketplaceFilterKey) return;
+                if(searchKeyword && !item.title.toLowerCase().includes(searchKeyword)) return;
+
+                let isOwner = item.seller === currentActiveUserNode;
                 let card = document.createElement('div');
-                card.className = "market-card";
-
-                let isOwner = (currentUser === 'admin' || currentUser === 'opsmanager' || item.seller === currentUser);
-                let deleteButtonHtml = isOwner ? `<button class="delete-listing-btn" onclick="removeMarketListing('${item.id}')">×</button>` : '';
-
+                card.className = 'market-card';
                 card.innerHTML = `
-                    ${deleteButtonHtml}
-                    <div class="market-img-container">
-                        <img class="market-img" src="${item.image}" alt="hardware">
-                    </div>
+                    ${isOwner ? `<button class="delete-listing-btn" onclick="deleteMarketListing('${id}')">✖</button>` : ''}
+                    <div class="market-img-container"><img class="market-img" src="${item.img}"></div>
                     <div class="market-details">
-                        <div>
-                            <div style="font-size: 15px; font-weight: 900; letter-spacing:-0.3px; margin-bottom: 4px;">${item.title}</div>
-                            <div class="market-tag-container">
-                                <span class="market-tag">${item.category.toUpperCase()}</span>
-                                <span class="market-tag prime">@${item.seller.toUpperCase()}</span>
-                            </div>
-                            <div class="seller-thoughts-box">"${item.thoughts}"</div>
-                        </div>
-                        <div>
-                            <div style="font-size: 18px; font-weight: 900; color: var(--primary); margin: 8px 0;">₹${item.price.toLocaleString('en-IN')}</div>
+                        <div style="font-weight:900; font-size:16px;">${item.title}</div>
+                        <div class="market-tag-container"><span class="market-tag">${item.category.toUpperCase()}</span></div>
+                        ${item.thoughts ? `<div class="seller-thoughts-box">"${item.thoughts}"</div>` : ''}
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
+                            <span style="font-size:20px; font-weight:900; color:var(--primary);">₹${item.price.toLocaleString()}</span>
                             <div class="market-action-row">
-                                <button class="wiz-btn next" style="padding: 8px; font-size:12px; flex:1;" onclick="addItemToCartArray('${item.id}')">Procure</button>
-                                <button class="chat-seller-btn" onclick="openSecureDirectMessage('${item.seller}', '${item.id}')">💬</button>
+                                ${!isOwner ? `<button class="chat-seller-btn" onclick="openDirectMessageMatrix('${item.seller}')">💬</button>` : ''}
+                                <button onclick="addItemToCartMatrix('${id}')" style="background:var(--text); color:var(--bg); border:none; padding:8px 12px; border-radius:6px; font-weight:bold; font-size:12px; cursor:pointer;">ADD TO NODE</button>
                             </div>
                         </div>
                     </div>
@@ -1546,266 +639,263 @@
             });
         }
 
-        function filterMarketCategory(category) {
-            currentFilterCategory = category;
-            document.querySelectorAll('.filter-chip').forEach(chip => chip.classList.remove('active'));
-            let activeChip = document.getElementById('chip-' + category);
-            if (activeChip) activeChip.classList.add('active');
+        function filterMarketplace(category) {
+            activeMarketplaceFilterKey = category;
+            document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+            event.target.classList.add('active');
             renderMarketGrid();
         }
 
-        function removeMarketListing(id) {
-            if (confirm("Are you sure you want to scrub this component record completely from the database array?")) {
-                database.ref(`marketplace/items/${id}`).remove().then(() => {
-                    alert("Record purged successfully.");
-                });
-            }
-        }
+        function handleSearchInput() { renderMarketGrid(); }
 
-        function addItemToCartArray(id) {
-            let target = marketItems.find(i => i.id === id);
-            if (!target) return;
-            cart.push(target);
-            syncActiveCartDisplay();
-            showGuiNotification(`Added ${target.title} to Procurement Array.`, true);
-        }
-
-        function removeItemFromCartArray(index) {
-            cart.splice(index, 1);
-            syncActiveCartDisplay();
-        }
-
-        function syncActiveCartDisplay() {
-            let countNode = document.getElementById('cartCount');
-            if (countNode) countNode.innerText = cart.length;
-
-            let container = document.getElementById('cartItemsList');
-            if (!container) return;
-            container.innerHTML = "";
-
-            let total = 0;
-            cart.forEach((item, index) => {
-                total += item.price;
+        function renderGameVaultGrid(gamesData) {
+            const container = document.getElementById('vaultGameGrid');
+            container.innerHTML = '';
+            Object.keys(gamesData).forEach(id => {
+                let g = gamesData[id];
                 let div = document.createElement('div');
-                div.className = "cart-item-card";
+                div.className = 'market-card';
                 div.innerHTML = `
-                    <button class="remove-item-btn" onclick="removeItemFromCartArray(${index})">×</button>
-                    <div style="font-weight: bold; font-size: 13px; max-width: 85%;">${item.title}</div>
-                    <div style="color: var(--primary); font-weight: bold; font-size: 13px; margin-top: 5px;">₹${item.price}</div>
+                    <div class="market-img-container"><img class="market-img" src="${g.imageAsset}"></div>
+                    <div class="market-details">
+                        <div style="font-weight:bold; font-size:16px;">${g.title}</div>
+                        <p style="font-size:12px; color:#777; margin:5px 0;">${g.documentation}</p>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
+                            <span style="font-weight:bold; color:var(--primary);">${g.price === 0 ? 'FREEWARE' : '₹'+g.price}</span>
+                            <a href="${g.downloadUrl}" target="_blank" style="background:#0284c7; color:white; text-decoration:none; padding:8px 16px; font-size:12px; font-weight:bold; border-radius:6px;">FETCH BINARY</a>
+                        </div>
+                    </div>
                 `;
                 container.appendChild(div);
             });
-
-            let priceNode = document.getElementById('cartTotalPriceValue');
-            if (priceNode) priceNode.innerText = "₹" + total.toLocaleString('en-IN');
         }
 
-        function executeCartCheckoutProcess() {
-            if (cart.length === 0) {
-                alert("Your deployment matrix array container is currently empty.");
-                return;
+        function renderPipelineAndOrders(ordersData) {
+            const pipeline = document.getElementById('opsGrid');
+            const personal = document.getElementById('userOrdersGrid');
+            pipeline.innerHTML = '';
+            personal.innerHTML = '';
+
+            let hasPersonal = false;
+
+            Object.keys(ordersData).forEach(id => {
+                let o = ordersData[id];
+                let isMine = o.buyer === currentActiveUserNode;
+                
+                let markup = `
+                    <div class="ops-order-card">
+                        <span class="ops-badge">${o.status || 'PROVISIONING'}</span>
+                        <div style="font-weight:bold;">ORDER CODE: ${id.substring(1,8).toUpperCase()}</div>
+                        <div style="font-size:13px; color:#aaa; margin-top:5px;">Config: ${o.summary || 'Custom Hardware Component Bundle'}</div>
+                        <div style="font-weight:900; color:var(--primary); margin-top:10px;">₹${o.invoiceCost}</div>
+                    </div>
+                `;
+
+                pipeline.innerHTML += markup;
+                if(isMine) {
+                    personal.innerHTML += markup;
+                    hasPersonal = true;
+                }
+            });
+
+            if(!hasPersonal) {
+                personal.innerHTML = `<div style="color:#666; font-size:13px;">No personal transactions deployed in current matrix session.</div>`;
             }
+        }
 
-            let total = cart.reduce((sum, i) => sum + i.price, 0);
-            let orderPayload = {
-                buyer: currentUser || 'anonymous',
-                items: cart.map(i => ({title: i.title, price: i.price, id: i.id})),
-                totalPrice: total,
-                status: "pending allocation",
-                timestamp: Date.now()
-            };
-
-            database.ref('marketplace/orders').push(orderPayload).then(() => {
-                alert("Procurement logs logged into the master squad frame. Systems synced.");
-                cart = [];
-                syncActiveCartDisplay();
-                toggleCart();
-            }).catch(() => {
-                alert("Transmission error mapping operational order payloads.");
+        function renderCareerPipeline(hrData) {
+            const container = document.getElementById('hrOpsGrid');
+            container.innerHTML = '';
+            Object.keys(hrData).forEach(id => {
+                let r = hrData[id];
+                container.innerHTML += `
+                    <div class="ops-order-card">
+                        <div style="font-weight:bold; color:var(--primary);">${r.applicant} (@${r.handle.toUpperCase()})</div>
+                        <div style="font-size:13px; color:#eee; margin:8px 0;">Skills: ${r.proficiencies}</div>
+                        <div style="font-size:12px; color:#777; font-style:italic;">"${r.coverStatement}"</div>
+                    </div>
+                `;
             });
         }
 
-        function selectWizardTargetNode(nodeName, defaultBudget) {
-            selectedCategoryNode = nodeName;
-            document.querySelectorAll('.category-card').forEach(c => c.classList.remove('selected'));
-            let activeCard = document.getElementById('node-' + nodeName);
-            if (activeCard) activeCard.classList.add('selected');
+        // 4. Cart Logic Matrices
+        function addItemToCartMatrix(id) {
+            let item = globalMarketplaceCollection[id];
+            if(!item) return;
+            globalCartArray.push(item);
+            syncCartInterface();
+            showGuiNotification(`${item.title} linked to terminal session cart grid.`, "success");
+        }
+
+        function removeCartItem(idx) {
+            globalCartArray.splice(idx, 1);
+            syncCartInterface();
+        }
+
+        function syncCartInterface() {
+            document.getElementById('cartCount').innerText = globalCartArray.length;
+            const container = document.getElementById('cartItemsContainer');
+            container.innerHTML = '';
+            let total = 0;
+
+            globalCartArray.forEach((item, idx) => {
+                total += item.price;
+                container.innerHTML += `
+                    <div class="cart-item-card">
+                        <button class="remove-item-btn" onclick="removeCartItem(${idx})">✖</button>
+                        <div style="font-weight:bold; font-size:13px; padding-right:15px;">${item.title}</div>
+                        <div style="color:var(--primary); font-weight:bold; margin-top:4px;">₹${item.price.toLocaleString()}</div>
+                    </div>
+                `;
+            });
+            document.getElementById('cartTotalValue').innerText = `₹${total.toLocaleString()}`;
+        }
+
+        function checkoutTerminal() {
+            if(globalCartArray.length === 0) return showGuiNotification("Session cart container holds no data objects.");
+            let total = globalCartArray.reduce((acc, curr) => acc + curr.price, 0);
             
-            document.getElementById('budgetSliderRange').value = defaultBudget;
-            updateBudgetSliderLabelValue(defaultBudget);
+            database.ref('marketplace/orders').push({
+                buyer: currentActiveUserNode,
+                invoiceCost: total,
+                summary: globalCartArray.map(i => i.title).join(', '),
+                status: 'PROVISIONING',
+                timestamp: Date.now()
+            }).then(() => {
+                globalCartArray = [];
+                syncCartInterface();
+                toggleCart();
+                showGuiNotification("Transaction successfully deployed down the pipeline chain.", "success");
+            });
         }
 
-        function updateBudgetSliderLabelValue(val) {
-            activeSelectedBudget = parseInt(val);
-            let indicator = document.getElementById('budgetValueIndicator');
-            if (indicator) indicator.innerText = "₹" + activeSelectedBudget.toLocaleString('en-IN');
-        }
+        // 5. Strategic Configurator Wizard Core Nodes
+        function syncBudgetInputs(origin) {
+            const slider = document.getElementById('wizBudgetSlider');
+            const manual = document.getElementById('wizBudgetManual');
+            const display = document.getElementById('wizPriceDisplay');
 
-        function advanceWizardStep(stepNum) {
-            document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('active'));
-            let activeStep = document.getElementById('wizStep-' + stepNum);
-            if (activeStep) activeStep.classList.add('active');
-        }
-
-        function triggerHardwareAppraisalEngine() {
-            advanceWizardStep(3);
-            let output = document.getElementById('appraisalOutputSpecsGrid');
-            if (!output) return;
-            output.innerHTML = "";
-
-            let gpu = "Integrated Silicon Core Array";
-            let cpu = "Intel Core i3 Legacy Processor";
-            let ram = "8GB System Module Allocation";
-            let storage = "256GB SATA Flash Drive";
-
-            if (selectedCategoryNode === 'gaming') {
-                if (activeSelectedBudget >= 4000 && activeSelectedBudget < 10000) {
-                    cpu = "Intel Core i5-3470 Generation 3 Core";
-                    ram = "8GB Dual-Channel Architecture Module";
-                    gpu = "Intel Embedded Graphics Array Asset";
-                    storage = "500GB Mechanical HDD System File Box";
-                } else if (activeSelectedBudget >= 10000 && activeSelectedBudget < 20000) {
-                    cpu = "Intel Core i5-4590 Processor Engine";
-                    ram = "12GB Mixed Sync DDR3 Array Node";
-                    gpu = "AMD Radeon RX 580 8GB Graphics Core Component";
-                    storage = "256GB Solid State Flash Drive Array M.2 Node";
-                } else if (activeSelectedBudget >= 20000 && activeSelectedBudget < 35000) {
-                    cpu = "Intel Core i7-6700 Processor Core Element";
-                    ram = "16GB Speed Synchronized DDR4 Memory Asset";
-                    gpu = "NVIDIA GeForce GTX 1660 Super Graphics Cluster";
-                    storage = "512GB NVMe High-Velocity Flash Subsystem";
-                } else {
-                    cpu = "AMD Ryzen 5 5600X HyperThread Core Assembly";
-                    ram = "32GB High Frequency Performance Framework Units";
-                    gpu = "NVIDIA GeForce RTX 3060 Titanium Output Device";
-                    storage = "1TB Gen4 Ultra-Speed NVMe Storage Matrix Module";
-                }
+            if(origin === 'slider') {
+                manual.value = slider.value;
             } else {
-                if (activeSelectedBudget < 12000) {
-                    cpu = "Intel Core i3 Legacy Series Processor";
-                    ram = "8GB Basic Workspace Operational Module";
-                    gpu = "Integrated Intel HD Graphics Node Link";
-                    storage = "128GB Flash Disk Storage Asset Core";
-                } else {
-                    cpu = "Intel Core i5 Contemporary Workspace Module";
-                    ram = "16GB Business Operations Synchronized Memory";
-                    gpu = "Intel Iris Xe Integrated Processing Array Asset";
-                    storage = "512GB Solid State Deployment Device Storage Grid";
-                }
+                slider.value = manual.value;
             }
+            display.innerText = parseInt(slider.value).toLocaleString();
+            if(activeWizardSelectedCategory) calculateSpecsMatrixOutput();
+        }
 
-            output.innerHTML = `
-                <div class="spec-line">🧠 <strong>Central Core System:</strong> ${cpu}</div>
-                <div class="spec-line">🖼️ <strong>Graphics Processing:</strong> ${gpu}</div>
-                <div class="spec-line">⚡ <strong>Memory Allocation:</strong> ${ram}</div>
-                <div class="spec-line">💾 <strong>Storage Component Array:</strong> ${storage}</div>
-                <div style="text-align:center; font-weight:900; font-size:16px; margin-top:15px; color:var(--primary);">Target Formula Match Metric Confirmed</div>
+        function changeWizardStep(stepNum) {
+            document.querySelectorAll('.wizard-step').forEach(step => step.classList.remove('active'));
+            document.getElementById(`wizStep${stepNum}`).classList.add('active');
+        }
+
+        function selectCategory(catKey) {
+            activeWizardSelectedCategory = catKey;
+            document.querySelectorAll('.category-card').forEach(c => c.classList.remove('active', 'selected'));
+            document.getElementById(`cat-${catKey}`).classList.add('selected');
+            calculateSpecsMatrixOutput();
+        }
+
+        function calculateSpecsMatrixOutput() {
+            let budget = parseInt(document.getElementById('wizBudgetSlider').value);
+            const outNode = document.getElementById('generatedSpecsArea');
+            outNode.innerHTML = '';
+
+            let cpu = budget > 80000 ? "Intel Core i7-14700K Processing Frame" : "Intel Core i5 Balanced Compute Core";
+            let gpu = budget > 150000 ? "RTX 4070 Ti Hyper-Graphics System" : (budget > 45000 ? "RX 580 Sapphire 8GB Video Node" : "Integrated Graphics Processing Architecture");
+            let ram = budget > 100000 ? "32GB High Frequency Dual-Channel Array" : "16GB Operational Cache RAM";
+            let storage = budget > 60000 ? "1TB High-Speed NVMe Solid State Layer" : "512GB M.2 Flash Media Storage Block";
+
+            outNode.innerHTML = `
+                <div class="spec-line">💾 Processor Architecture: <strong>${cpu}</strong></div>
+                <div class="spec-line">⚡ Graphical Compute Array: <strong>${gpu}</strong></div>
+                <div class="spec-line">🔲 Cache Memory Array: <strong>${ram}</strong></div>
+                <div class="spec-line">💿 Storage Media Unit: <strong>${storage}</strong></div>
             `;
-
-            let vault = document.getElementById('secretVaultBox');
-            let emoji = document.getElementById('vaultBoxEmoji');
-            let msg = document.getElementById('vaultBoxMessage');
-
-            if (activeSelectedBudget > 35000) {
-                if (vault) vault.classList.add('unlocked');
-                if (emoji) emoji.innerText = "🔓";
-                if (msg) msg.innerHTML = `<strong>EASTER EGG CELL CRACKED:</strong> Greetings Architect! Welcome to the upper-echelon tier layer grid framework. Your profile has bypassed basic allocation limits!`;
-            } else {
-                if (vault) vault.classList.remove('unlocked');
-                if (emoji) emoji.innerText = "🔒";
-                if (msg) msg.innerText = "Easter Egg Array locked. Upgrade budget cap values beyond ₹35,000 threshold to break security protocols.";
-            }
         }
 
-        function resetWizardToStartingNode() {
-            advanceWizardStep(1);
+        function goToStep3() {
+            if(!activeWizardSelectedCategory) return showGuiNotification("A classification track node must be assigned first.");
+            let cost = parseInt(document.getElementById('wizBudgetSlider').value);
+            document.getElementById('wizardInvoiceTotal').innerText = `₹${cost.toLocaleString()}`;
+            changeWizardStep(3);
         }
 
-        function openSecureDirectMessage(sellerName, itemId) {
-            if (!currentUser) {
-                alert("Please authenticate inside the access gate to establish chat paths.");
-                return;
-            }
-            if (currentUser === sellerName) {
-                alert("Loopback Warning: You cannot establish a communication string with yourself.");
-                return;
-            }
+        function finalizeWizardBuildOrder() {
+            let address = document.getElementById('shipAddress').value.trim();
+            let city = document.getElementById('shipCity').value.trim();
+            let cost = parseInt(document.getElementById('wizBudgetSlider').value);
 
-            let frame = document.getElementById('directMessageFrame');
-            if (frame) frame.style.display = 'flex';
+            if(!address || !city) return showGuiNotification("Destination geographic telemetry arrays incomplete.");
 
-            let participants = [currentUser, sellerName].sort();
-            activeDMPath = `marketplace/chats/${participants[0]}_AND_${participants[1]}`;
+            database.ref('marketplace/orders').push({
+                buyer: currentActiveUserNode,
+                invoiceCost: cost,
+                summary: `Custom Setup: [Budget: ₹${cost}, Target Profile: ${activeWizardSelectedCategory.toUpperCase()}]`,
+                status: 'PROVISIONING',
+                address: `${address}, ${city}`,
+                timestamp: Date.now()
+            }).then(() => {
+                changeWizardStep(1);
+                switchTab('marketView');
+                showGuiNotification("Custom Strategic Configuration Order Deployed Successfully.", "success");
+            });
+        }
 
-            let displayTitle = document.getElementById('dmTargetTitleNode');
-            if (displayTitle) displayTitle.innerText = "CHANNEL TO: " + sellerName.toUpperCase();
+        // 6. Messaging Arrays Channels Logic
+        function openDirectMessageMatrix(sellerUsername) {
+            activeDirectMessageChannelId = [currentActiveUserNode, sellerUsername].sort().join('_ch_');
+            document.getElementById('dmTargetTitle').innerText = `CHANNEL ID: @${sellerUsername.toUpperCase()}`;
+            document.getElementById('dmBox').style.style.display = 'flex';
 
-            database.ref(activeDMPath).on('value', snapshot => {
-                let logs = document.getElementById('dmChatLogsContainer');
-                if (!logs) return;
-                logs.innerHTML = "";
-                let messages = snapshot.val();
-
-                for (let key in messages) {
-                    let msg = messages[key];
-                    let bubble = document.createElement('div');
-                    let itsMe = msg.sender === currentUser;
-                    
-                    bubble.style.padding = "8px 12px";
-                    bubble.style.borderRadius = "12px";
-                    bubble.style.maxWidth = "75%";
-                    bubble.style.fontSize = "12px";
-                    bubble.style.lineHeight = "1.4";
-                    
-                    if (itsMe) {
-                        bubble.style.alignSelf = "flex-end";
-                        bubble.style.background = "var(--primary)";
-                        bubble.style.color = "#fff";
-                    } else {
-                        bubble.style.alignSelf = "flex-start";
-                        bubble.style.background = "rgba(255,255,255,0.05)";
-                        bubble.style.border = "1px solid var(--border)";
-                        bubble.style.color = "var(--text)";
-                    }
-                    
-                    bubble.innerText = msg.text;
-                    logs.appendChild(bubble);
-                }
+            database.ref(`marketplace/chats/${activeDirectMessageChannelId}`).on('value', snap => {
+                const logs = document.getElementById('dmLogs');
+                logs.innerHTML = '';
+                let data = snap.val() || {};
+                Object.keys(data).forEach(mId => {
+                    let m = data[mId];
+                    let alignment = m.sender === currentActiveUserNode ? 'text-align:right;' : 'text-align:left;';
+                    let bubbleBg = m.sender === currentActiveUserNode ? 'background:rgba(1, 148, 11, 0.2);' : 'background:rgba(255,255,255,0.05);';
+                    logs.innerHTML += `
+                        <div style="${alignment} margin-bottom:5px;">
+                            <div style="display:inline-block; padding:8px 12px; border-radius:8px; max-width:80%; ${bubbleBg}">
+                                <strong style="font-size:10px; display:block; color:#777;">@${m.sender.toUpperCase()}</strong>
+                                <span>${m.message}</span>
+                            </div>
+                        </div>
+                    `;
+                });
                 logs.scrollTop = logs.scrollHeight;
             });
         }
 
-        function closeDirectMessageFrame() {
-            let frame = document.getElementById('directMessageFrame');
-            if (frame) frame.style.display = 'none';
-            if (activeDMPath) {
-                database.ref(activeDMPath).off();
-                activeDMPath = null;
-            }
+        function closeDirectMessageMatrix() {
+            if(activeDirectMessageChannelId) database.ref(`marketplace/chats/${activeDirectMessageChannelId}`).off();
+            document.getElementById('dmBox').style.style.display = 'none';
         }
 
-        function dispatchDirectMessagePacket() {
-            let field = document.getElementById('dmRawInputField');
-            if (!field || !field.value.trim() || !activeDMPath) return;
+        function transmitDirectMessageSignal() {
+            let text = document.getElementById('dmRawInput').value.trim();
+            if(!text || !activeDirectMessageChannelId) return;
 
-            let payload = {
-                sender: currentUser,
-                text: field.value.trim(),
+            database.ref(`marketplace/chats/${activeDirectMessageChannelId}`).push({
+                sender: currentActiveUserNode,
+                message: text,
                 timestamp: Date.now()
-            };
-
-            database.ref(activeDMPath).push(payload).then(() => {
-                field.value = "";
+            }).then(() => {
+                document.getElementById('dmRawInput').value = '';
             });
         }
 
+        // 7. Session Validation Autoload Initialization Row Engine
         window.onload = function() {
-            let savedTheme = localStorage.getItem('potato_terminal_theme') || 'minimalist';
-            applyCorporateTheme(savedTheme);
+            let savedSessionToken = localStorage.getItem('potato_local_session');
+            if(!savedSessionToken) return;
 
-            let storedUser = localStorage.getItem('potato_local_session');
-            if (storedUser) {
-                loginSuccess(storedUser);
+            if(hardcodedLocalAccounts[savedSessionToken]) {
+                loginSuccess(savedSessionToken);
+            } else {
+                localStorage.removeItem('potato_local_session');
             }
         };
     </script>
