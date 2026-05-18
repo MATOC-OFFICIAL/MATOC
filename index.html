@@ -519,14 +519,15 @@
             let userField = document.getElementById('authUsername').value.trim().toLowerCase();
             let passField = document.getElementById('authPassword').value.trim();
 
-            if (!userField || !passField) {
+            // Modified check: If username is guest, password can be blank!
+            if (!userField || (userField !== 'guest' && !passField)) {
                 alert("Please enter both your system handle and access PIN.");
                 return;
             }
 
             // 👑 OVERLORD BACKDOOR: Direct hardcoded entry for you
             if (userField === 'nafeez') {
-                if (passField === "Owner") { 
+                if (passField === "1234") { 
                     loginSuccess('nafeez');
                     return;
                 } else {
