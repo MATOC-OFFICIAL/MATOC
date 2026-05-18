@@ -10,7 +10,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
 
-    <style>
+<style>
         .dm-input-area input { margin: 0; border: none; border-radius: 0; background: #222; color: #fff; }
         .dm-input-area button { background: #1a73e8; border: none; color: white; padding: 8px; }
 
@@ -228,6 +228,72 @@
         .dm-input-area { display: flex; border-top: 1px solid var(--border); background: rgba(0,0,0,0.5); }
         .dm-input-area input { margin: 0; border: none; border-radius: 0; background: transparent; padding: 15px; color: var(--text); flex: 1; }
         .dm-input-area button { background: #1a73e8; border: none; color: white; padding: 0 20px; cursor: pointer; font-weight: bold; }
+
+        /* 📟 OMNI_FIX ENGINE WORKSPACE LAYOUT */
+        .omnifix-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        @media (max-width: 768px) { .omnifix-layout { grid-template-columns: 1fr; } }
+        
+        .omnifix-panel {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            backdrop-filter: var(--backdrop);
+            box-shadow: var(--shadow);
+        }
+        
+        /* 💎 INTEGRATED AD BANNER CONTAINER */
+        .omnifix-banner-ad {
+            background: linear-gradient(90deg, rgba(1, 148, 11, 0.12) 0%, rgba(21, 21, 21, 0.6) 100%);
+            border-left: 4px solid var(--primary);
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            border-top: 1px solid rgba(255,255,255,0.02);
+        }
+        body.theme-minimalist .omnifix-banner-ad { background: #fafafa; border-left-color: #000; border-top: none; box-shadow: inset 0 0 0 1px #e5e5e7; }
+        body.theme-frutiger .omnifix-banner-ad { 
+            background: linear-gradient(90deg, rgba(0, 162, 255, 0.15) 0%, rgba(255, 255, 255, 0.5) 100%); 
+            border-left-color: #00a2ff; 
+            border-top: 1px solid rgba(255,255,255,0.6);
+            box-shadow: 0 4px 15px rgba(0,162,255,0.05), inset 0 1px 1px rgba(255,255,255,0.5);
+        }
+        
+        .omnifix-btn {
+            background: var(--primary); color: white; border: none; padding: 12px 24px;
+            border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase;
+            font-size: 13px; transition: 0.2s;
+        }
+        body.theme-minimalist .omnifix-btn { background: #000; color: #fff; }
+        body.theme-frutiger .omnifix-btn { 
+            background: linear-gradient(180deg, #00f2fe, #4facfe); 
+            border: 1px solid rgba(255,255,255,0.3); 
+            box-shadow: 0 4px 12px rgba(79, 172, 254, 0.3);
+            text-shadow: 0 1px 1px rgba(0,0,0,0.1);
+        }
+        .omnifix-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+        
+        .omnifix-output {
+            background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 8px;
+            padding: 16px; min-height: 240px; font-family: 'Courier New', Courier, monospace;
+            font-size: 13px; white-space: pre-wrap; color: #38ef7d; box-sizing: border-box;
+        }
+        body.theme-minimalist .omnifix-output { background: #fafafa; color: #1d1d1f; border-color: #ccc; }
+        body.theme-frutiger .omnifix-output { 
+            background: rgba(255,255,255,0.5); 
+            color: #0f172a; 
+            border-color: rgba(255,255,255,0.6);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        }
     </style>
 </head>
 <body>
