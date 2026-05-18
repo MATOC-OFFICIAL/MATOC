@@ -38,7 +38,7 @@
         .gui-alert-container.show {
             top: 25px;
         }
-        
+
         /* 🎨 SYSTEM DESIGN GRAPHIC PROFILES */
         :root { 
             --primary: #01940b; 
@@ -228,12 +228,13 @@
         .dm-input-area { display: flex; border-top: 1px solid var(--border); background: rgba(0,0,0,0.5); }
         .dm-input-area input { margin: 0; border: none; border-radius: 0; background: transparent; padding: 15px; color: var(--text); flex: 1; }
         .dm-input-area button { background: #1a73e8; border: none; color: white; padding: 0 20px; cursor: pointer; font-weight: bold; }
-    </style> </head> <body>
-    <div id="terminalAlertGui" class="gui-alert-container">
-        <span id="guiAlertIcon">⚠️</span>
-        <span id="guiAlertMessage">System Notification Deployed.</span>
-    </div>
-
+    </style>
+</head>
+<body>
+<div id="terminalAlertGui" class="gui-alert-container">
+    <span id="guiAlertIcon">⚠️</span>
+    <span id="guiAlertMessage">System Notification Deployed.</span>
+</div>
     <div class="auth-gate" id="authGate">
         <div class="auth-card">
             <h2 style="text-transform: uppercase; margin-bottom: 10px; color: var(--primary);">Terminal Log</h2>
@@ -396,8 +397,10 @@
         <h2 style="text-transform: uppercase; margin: 0 0 5px 0; font-size: 24px;">Live Operations Pipeline</h2>
         <h3 style="text-transform: uppercase; font-size:14px; color:#0284c7; margin-bottom:10px;">📦 Client Build Orders</h3>
         <div class="ops-grid" id="opsGrid" style="margin-bottom: 40px;"></div>
+        
         <h3 style="text-transform: uppercase; font-size:14px; color:#11998e; margin-bottom:10px;">💼 Submitted Job Packets</h3>
         <div class="ops-grid" id="hrOpsGrid"></div>
+        
         <h3 style="text-transform: uppercase; font-size:14px; color:#ff4444; margin-top: 40px; margin-bottom:10px;">🚩 Security Violation Reports</h3>
         <div class="ops-grid" id="reportsOpsGrid">
             <div style="text-align:center; color:#555; padding:40px;">No incident packets found in security log matrices.</div>
@@ -416,250 +419,702 @@
                 <input type="url" id="vaultGameImg" placeholder="Paste image web address URL">
             </div>
             <textarea id="vaultGameDesc" placeholder="Write level constraints, control mappings..." rows="2"></textarea>
-            <button onclick="submitGameToVault()" style="background:#00a2ff; color:#fff; border:none; padding:12px 24px; border-radius:8px; font-weight:bold; cursor:pointer; text-transform:uppercase;">Submit Title Node</button>
+            <button onclick="submitGameToVault()" style="background:#00a2ff; color:#fff; border:none; padding:12px 24px; border-radius:8px; font-weight:bold; font-size:12px; cursor:pointer; text-transform:uppercase; margin-top:10px;">Deploy Game Build Node</button>
         </div>
-        <div class="market-grid" id="vaultGameGrid"></div>
+        <div class="market-grid" id="vaultGamesGrid"></div>
     </div>
 
     <div class="app-view" id="jobsView">
-        <div class="wizard-container" style="max-width: 680px;">
-            <h2 style="text-transform: uppercase; margin: 0 0 5px 0; font-size: 24px;">Potato Builders Careers</h2>
-            <p style="font-size:12px; color:#666; margin-bottom:25px;">Apply to enlist your technical skills in our matrix workforce pool.</p>
+        <h2 style="text-transform: uppercase; margin: 0 0 5px 0; font-size: 24px;">Career Openings</h2>
+        <p style="font-size:13px; color:#666; margin-bottom:25px;">Apply to help expand Potato Builders processing grids across the sub-continent.</p>
+        <div class="ops-grid" id="publicJobsContainer"></div>
+    </div>
+
+    <div class="modal" id="sellModal">
+        <div class="modal-content">
+            <h3 style="text-transform: uppercase; margin-top: 0; color: var(--primary);" id="modalFormTitle">Post Marketplace Node</h3>
+            <input type="text" id="postTitle" placeholder="Item Name (e.g., RX 580 8GB, i5 3rd Gen)">
+            <input type="number" id="postPrice" placeholder="Price (₹)">
+            <select id="postCategory">
+                <option value="Component">Hardware Component</option>
+                <option value="Full PC">System Desktop</option>
+                <option value="Laptop">Laptop Device</option>
+            </select>
+            <input type="url" id="postImage" placeholder="Paste direct image web link URL">
+            <textarea id="postThoughts" placeholder="Seller Remarks / Diagnostic Condition notes..." rows="3"></textarea>
             
-            <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 12px; padding: 25px; margin-bottom: 25px;">
-                <h3 style="margin-top:0; color: var(--primary);">NODE ASSIGNMENT: Hardware Assembly Strategist</h3>
-                <p style="font-size:14px; color:#aaa; line-height: 1.5;">Tasks include system debugging, mapping GPU configurations, balancing processing thermals, and managing localized fulfillment streams.</p>
-                
-                <hr style="border-color: var(--border); margin: 20px 0;">
-                
-                <h4 style="text-transform: uppercase; font-size:12px; color:var(--primary); margin-bottom:12px;">Deploy Personnel Matrix</h4>
-                <input type="text" id="jobApplicantName" placeholder="Your Full Operator Name">
-                <input type="text" id="jobApplicantSkills" placeholder="Core Proficiencies (e.g., Hardware Repair, Godot Engine, Benchmarking)">
-                <textarea id="jobApplicantCover" placeholder="State past operational experience or assembly milestones..." rows="4"></textarea>
-                
-                <button onclick="submitJobApplicationPacket()" style="background: var(--primary); color: white; border: none; padding: 14px; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; width: 100%;">Transmit Application Profile 📁</button>
+            <div style="display: flex; gap: 10px;">
+                <button onclick="closeSell()" style="background:#222; color:white; border:1px solid #333; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer; flex:1;">Cancel</button>
+                <button id="postSubmitBtn" onclick="submitHardwareListing()" style="background:var(--primary); color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer; flex:2;">Deploy Node</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="jobApplyModal">
+        <div class="modal-content">
+            <h3 style="text-transform: uppercase; margin-top: 0; color: #1a73e8;" id="jobModalTitle">Apply For Listing</h3>
+            <input type="text" id="jobAppPhone" placeholder="Contact Mobile Core Identifier">
+            <textarea id="jobAppPitch" placeholder="Briefly detail past assembly expertise or hardware diagnostic background..." rows="4"></textarea>
+            
+            <div style="display: flex; gap: 10px;">
+                <button onclick="closeJobModal()" style="background:#222; color:white; border:1px solid #333; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer; flex:1;">Cancel</button>
+                <button onclick="submitJobApplication()" style="background:#1a73e8; color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer; flex:2;">Transmit Packet</button>
             </div>
         </div>
     </div>
 
     <div class="dm-box" id="dmBox">
         <div class="dm-header">
-            <span id="dmTargetTitle">Channel Secure Matrix</span>
-            <span style="cursor:pointer;" onclick="closeDirectMessageMatrix()">✖</span>
+            <span id="dmTargetTitle">Channel Secure Link</span>
+            <span style="cursor: pointer;" onclick="closeDM()">✖</span>
         </div>
         <div class="dm-logs" id="dmLogs"></div>
         <div class="dm-input-area">
-            <input type="text" id="dmRawInput" placeholder="Secure signal transmit..." onkeydown="if(event.key==='Enter') transmitDirectMessageSignal()">
-            <button onclick="transmitDirectMessageSignal()">SEND</button>
-        </div>
-    </div>
-
-    <div id="sellModal" class="modal">
-        <div class="modal-content">
-            <h3 style="text-transform: uppercase; margin-top: 0; color: var(--primary);">Deploy New Hardware Packet</h3>
-            <input type="text" id="sellItemTitle" placeholder="Component Name (e.g., Core i5 Processor)">
-            <select id="sellItemCategory">
-                <option value="Component">Component / Spare Gear</option>
-                <option value="Full PC">System Desktop Build</option>
-                <option value="Laptop">Mobile Laptop Unit</option>
-            </select>
-            <input type="number" id="sellItemPrice" placeholder="Target Evaluation Price (₹)">
-            <input type="text" id="sellItemImg" placeholder="Image Asset URL Link">
-            <textarea id="sellItemThoughts" placeholder="Seller Spec Notes..."></textarea>
-            
-            <div style="display: flex; gap: 10px; justify-content: flex-end;">
-                <button onclick="closeSell()" style="background:#333; color:white; border:none; padding:10px 20px; border-radius:6px; cursor:pointer;">ABORT</button>
-                <button onclick="transmitHardwareListing()" style="background:var(--primary); color:white; border:none; padding:10px 20px; border-radius:6px; font-weight:bold; cursor:pointer;">TRANSMIT LISTING ➔</button>
-            </div>
+            <input type="text" id="dmInputField" placeholder="Type data stream payload..." onkeypress="if(event.key === 'Enter') sendDMMessage()">
+            <button onclick="sendDMMessage()">Send</button>
         </div>
     </div>
 
     <script>
-        // 1. Initialize Firebase Matrix Realtime Cluster
+        // FIREBASE DEPLOYMENT HARDWARE TARGET LINKS
         const firebaseConfig = {
-            databaseURL: "https://potatobuilders-default-rtdb.firebaseio.com"
+            databaseURL: "https://potato-builders-default-rtdb.firebaseio.com"
         };
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
+        
+        // Initialize Firebase Compat Pipeline
+        let app, database;
+        try {
+            app = firebase.initializeApp(firebaseConfig);
+            database = firebase.database();
+        } catch (e) {
+            console.error("Matrix Database Initialization Halt:", e);
+        }
 
-        let currentActiveUserNode = null;
-        let globalCartArray = [];
-        let globalMarketplaceCollection = {};
-        let activeMarketplaceFilterKey = 'all';
-        let activeDirectMessageChannelId = null;
-        let activeWizardSelectedCategory = null;
-
-        const hardcodedLocalAccounts = {
-            'nafeez': 'nafeez123',
-            'admin': 'admin777',
-            'guest': 'guest'
+        // 🔐 STATIC AUTHAUTHORIZED ACCESS HANDLES
+        const localAccounts = {
+            "nafeez": { role: "ceo", name: "Nafeez (El Buitre)" },
+            "slith": { role: "ceo", name: "Slith (CEO)" },
+            "nuff": { role: "ceo", name: "Nuff (CEO)" },
+            "admin": { role: "admin", name: "System Administrator" }
         };
-        const privilegeAdminAccessNodes = ['admin', 'nafeez'];
 
-        function showGuiNotification(msg, type = 'alert') {
-            const container = document.getElementById('terminalAlertGui');
-            const messageSlot = document.getElementById('guiAlertMessage');
-            const iconSlot = document.getElementById('guiAlertIcon');
-            iconSlot.innerText = type === 'success' ? '✅' : '⚠️';
-            messageSlot.innerText = msg;
-            container.classList.add('show');
-            setTimeout(() => container.classList.remove('show'), 4000);
-        }
+        let currentActiveUser = null;
+        let globalMarketData = {};
+        let activeFilterNode = 'all';
+        let terminalCart = [];
+        let currentWizCategory = null;
+        let userTreasureBalance = 0;
+        let activeDMChannelId = null;
+        let editingListingKey = null;
+        let activeJobIdApplying = null;
 
-        function handleTerminalLogin() {
-            let u = document.getElementById('authUsername').value.trim().toLowerCase();
-            let p = document.getElementById('authPassword').value;
-            if(!u) return showGuiNotification("Username parameters undefined.");
-            
-            if(hardcodedLocalAccounts[u] && hardcodedLocalAccounts[u] === p) {
-                loginSuccess(u);
-            } else {
-                showGuiNotification("Access Denied. Credentials mismatch.");
-            }
-        }
-
-        function loginSuccess(user) {
-            currentActiveUserNode = user;
-            localStorage.setItem('potato_local_session', user);
-            document.getElementById('authGate').style.style.display = 'none';
-            document.getElementById('terminalUserHandle').innerText = `@${user.toUpperCase()}`;
-            
-            if(privilegeAdminAccessNodes.includes(user)) {
-                document.querySelectorAll('.admin-only-nav').forEach(el => el.style.style.display = 'block');
-                document.getElementById('developerGameConsole').style.style.display = 'block';
-            }
-            showGuiNotification(`Welcome back to the terminal, @${user.toUpperCase()}`, 'success');
-            initializeRealtimeStreamListeners();
-        }
-
-        function logoutTerminal() {
-            localStorage.removeItem('potato_local_session');
-            window.location.reload();
-        }
-
-        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
-        function toggleCart() { document.getElementById('cartPanel').classList.toggle('active'); }
-        function openSell() { document.getElementById('sellModal').style.style.display = 'flex'; toggleSidebar(); }
-        function closeSell() { document.getElementById('sellModal').style.style.display = 'none'; }
-
-        function switchTab(tabId) {
-            document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            let targetView = document.getElementById(tabId);
-            if(targetView) targetView.classList.add('active');
-            let targetBtn = document.getElementById(`btn-${tabId}`);
-            if(targetBtn) targetBtn.classList.add('active');
-            document.getElementById('sidebar').classList.remove('active');
+        function deployNotificationGui(msg, icon = "⚠️") {
+            const banner = document.getElementById('terminalAlertGui');
+            document.getElementById('guiAlertIcon').innerText = icon;
+            document.getElementById('guiAlertMessage').innerText = msg;
+            banner.classList.add('show');
+            setTimeout(() => banner.classList.remove('show'), 4000);
         }
 
         function applyCorporateTheme(themeName) {
             document.body.className = '';
-            if(themeName !== 'matrix') document.body.classList.add(`theme-${themeName}`);
-            document.querySelectorAll('.theme-toggle-btn').forEach(btn => btn.classList.remove('active'));
-            let targetBtn = document.getElementById(`theme-btn-${themeName}`);
-            if(targetBtn) targetBtn.classList.add('active');
+            document.getElementById('theme-btn-matrix').classList.remove('active');
+            document.getElementById('theme-btn-minimalist').classList.remove('active');
+            document.getElementById('theme-btn-frutiger').classList.remove('active');
+
+            if (themeName === 'minimalist') {
+                document.body.classList.add('theme-minimalist');
+                document.getElementById('theme-btn-minimalist').classList.add('active');
+            } else if (themeName === 'frutiger') {
+                document.body.classList.add('theme-frutiger');
+                document.getElementById('theme-btn-frutiger').classList.add('active');
+            } else {
+                document.getElementById('theme-btn-matrix').classList.add('active');
+            }
         }
 
-        // 2. Realtime Streams and Transmit Systems
-        function initializeRealtimeStreamListeners() {
-            database.ref('marketplace/listings').on('value', snap => {
-                globalMarketplaceCollection = snap.val() || {};
+        function handleTerminalLogin() {
+            let u = document.getElementById('authUsername').value.trim().toLowerCase();
+            if (!u) return deployNotificationGui("Access Denied. Identity entry block empty.");
+
+            if (localAccounts[u]) {
+                localStorage.setItem('potato_local_session', u);
+                loginSuccess(u);
+                deployNotificationGui(`Clearance Verified. Welcome back, ${localAccounts[u].name}`, "🚀");
+            } else {
+                deployNotificationGui("Access Denied. Credentials mismatch.");
+            }
+        }
+
+        function loginSuccess(sessionHandle) {
+            currentActiveUser = localAccounts[sessionHandle] || { role: "user", name: sessionHandle };
+            document.getElementById('authGate').style.display = 'none';
+            document.getElementById('terminalUserHandle').innerText = `@${sessionHandle} (${currentActiveUser.role.toUpperCase()})`;
+
+            if (currentActiveUser.role === 'ceo' || currentActiveUser.role === 'admin') {
+                document.querySelectorAll('.admin-only-nav').forEach(el => el.style.display = 'block');
+                document.getElementById('developerGameConsole').style.display = 'block';
+            } else {
+                document.querySelectorAll('.admin-only-nav').forEach(el => el.style.display = 'none');
+                document.getElementById('developerGameConsole').style.display = 'none';
+            }
+
+            initializeRealtimeDataMappers();
+        }
+
+        function logoutTerminal() {
+            localStorage.removeItem('potato_local_session');
+            location.reload();
+        }
+
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
+        function toggleCart() { document.getElementById('cartPanel').classList.toggle('active'); }
+        function closeSell() { document.getElementById('sellModal').style.display = 'none'; editingListingKey = null; }
+        function closeJobModal() { document.getElementById('jobApplyModal').style.display = 'none'; activeJobIdApplying = null; }
+        function closeDM() { document.getElementById('dmBox').style.display = 'none'; activeDMChannelId = null; }
+
+        function switchTab(viewId) {
+            document.querySelectorAll('.app-view').forEach(view => view.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            
+            const targetView = document.getElementById(viewId);
+            if (targetView) targetView.classList.add('active');
+            
+            const targetBtn = document.getElementById(`btn-${viewId}`);
+            if (targetBtn) targetBtn.classList.add('active');
+            
+            document.getElementById('sidebar').classList.remove('active');
+        }
+
+        function initializeRealtimeDataMappers() {
+            if (!database) return;
+
+            // 1. Marketplace Stream
+            database.ref('marketplace/listings').on('value', snapshot => {
+                globalMarketData = snapshot.val() || {};
                 renderMarketGrid();
             });
-            database.ref('marketplace/orders').on('value', snap => {
-                renderPipelineAndOrders(snap.val() || {});
-            });
-            database.ref('marketplace/careers').on('value', snap => {
-                renderCareerPipeline(snap.val() || {});
-            });
-            database.ref('marketplace/games').on('value', snap => {
-                renderGameVaultGrid(snap.val() || {});
-            });
-        }
 
-        function transmitHardwareListing() {
-            let title = document.getElementById('sellItemTitle').value.trim();
-            let cat = document.getElementById('sellItemCategory').value;
-            let price = parseInt(document.getElementById('sellItemPrice').value);
-            let img = document.getElementById('sellItemImg').value.trim() || "https://via.placeholder.com/300";
-            let notes = document.getElementById('sellItemThoughts').value.trim();
+            // 2. Client Orders Stream
+            database.ref('marketplace/orders').on('value', snapshot => {
+                const orders = snapshot.val() || {};
+                renderOperationsGrid(orders);
+                renderUserOrders(orders);
+                checkUserTreasureAllowance(orders);
+            });
 
-            if(!title || !price) return showGuiNotification("Complete required parameters first.");
+            // 3. Arcade Vault Stream
+            database.ref('marketplace/games').on('value', snapshot => {
+                renderGameVaultGrid(snapshot.val() || {});
+            });
 
-            database.ref('marketplace/listings').push({
-                title, category: cat, price, img, thoughts: notes, seller: currentActiveUserNode, timestamp: Date.now()
-            }).then(() => {
-                closeSell();
-                showGuiNotification("Hardware configuration packet pushed to database stream.", "success");
+            // 4. Job Boards Stream
+            database.ref('marketplace/jobs').on('value', snapshot => {
+                const jobs = snapshot.val() || {};
+                renderPublicJobBoard(jobs);
+                renderHrPipeline(jobs);
             });
         }
 
-        function deleteMarketListing(listingId) {
-            database.ref(`marketplace/listings/${listingId}`).remove().then(() => {
-                showGuiNotification("Listing purged successfully.", "success");
-            });
-        }
-
-        function submitJobApplicationPacket() {
-            let name = document.getElementById('jobApplicantName').value.trim();
-            let skills = document.getElementById('jobApplicantSkills').value.trim();
-            let cover = document.getElementById('jobApplicantCover').value.trim();
-
-            if(!name || !skills) return showGuiNotification("Please populate deployment vectors.");
-
-            database.ref('marketplace/careers').push({
-                applicant: name, proficiencies: skills, coverStatement: cover, handle: currentActiveUserNode, timestamp: Date.now()
-            }).then(() => {
-                document.getElementById('jobApplicantName').value = '';
-                document.getElementById('jobApplicantSkills').value = '';
-                document.getElementById('jobApplicantCover').value = '';
-                showGuiNotification("Application transmission complete.", "success");
-            });
-        }
-
-        function submitGameToVault() {
-            let name = document.getElementById('vaultGameName').value.trim();
-            let url = document.getElementById('vaultGameUrl').value.trim();
-            let price = parseInt(document.getElementById('vaultGamePrice').value) || 0;
-            let img = document.getElementById('vaultGameImg').value.trim() || "https://via.placeholder.com/300";
-            let desc = document.getElementById('vaultGameDesc').value.trim();
-
-            if(!name || !url) return showGuiNotification("Game node definitions missing.");
-
-            database.ref('marketplace/games').push({
-                title: name, downloadUrl: url, price, imageAsset: img, documentation: desc, publisher: currentActiveUserNode
-            }).then(() => {
-                showGuiNotification("Title node compiled into Arcade Vault Matrix.", "success");
-            });
-        }
-
-        // 3. UI Matrix Mapping Generators
         function renderMarketGrid() {
-            const container = document.getElementById('marketGrid');
-            container.innerHTML = '';
-            let searchKeyword = document.getElementById('marketSearchInput').value.toLowerCase();
+            const grid = document.getElementById('marketGrid');
+            grid.innerHTML = '';
+            
+            let keys = Object.keys(globalMarketData);
+            if(keys.length === 0) {
+                grid.innerHTML = '<div style="color:#666; font-size:14px;">No equipment available in current market sector.</div>';
+                return;
+            }
 
-            Object.keys(globalMarketplaceCollection).forEach(id => {
-                let item = globalMarketplaceCollection[id];
-                if(activeMarketplaceFilterKey !== 'all' && item.category !== activeMarketplaceFilterKey) return;
-                if(searchKeyword && !item.title.toLowerCase().includes(searchKeyword)) return;
+            keys.forEach(k => {
+                let item = globalMarketData[k];
+                if (activeFilterNode !== 'all' && item.category !== activeFilterNode) return;
 
-                let isOwner = item.seller === currentActiveUserNode;
+                let isOwner = item.owner === localStorage.getItem('potato_local_session');
+                let isAdmin = currentActiveUser.role === 'admin' || currentActiveUser.role === 'ceo';
+
                 let card = document.createElement('div');
                 card.className = 'market-card';
                 card.innerHTML = `
-                    ${isOwner ? `<button class="delete-listing-btn" onclick="deleteMarketListing('${id}')">✖</button>` : ''}
-                    <div class="market-img-container"><img class="market-img" src="${item.img}"></div>
+                    ${(isOwner || isAdmin) ? `<button class="delete-listing-btn" onclick="deleteListingNode('${k}', event)">✕</button>` : ''}
+                    <div class="market-img-container">
+                        <img class="market-img" src="${item.image || 'https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=500'}" alt="Gear">
+                    </div>
                     <div class="market-details">
-                        <div style="font-weight:900; font-size:16px;">${item.title}</div>
-                        <div class="market-tag-container"><span class="market-tag">${item.category.toUpperCase()}</span></div>
-                        ${item.thoughts ? `<div class="seller-thoughts-box">"${item.thoughts}"</div>` : ''}
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
-                            <span style="font-size:20px; font-weight:900; color:var(--primary);">₹${item.price.toLocaleString()}</span>
-                            <div class="market-action-row">
-                                ${!isOwner ? `<button class="chat-seller-btn" onclick="openDirectMessageMatrix('${item.seller}')">💬</button>` : ''}
-                                <button onclick="addItemToCartMatrix('${id}')" style="background:var(--text); color:var(--bg); border:none; padding:8px 12px; border-radius:6px; font-weight:bold; font-size:12px; cursor:pointer;">ADD TO NODE</button>
+                        <div>
+                            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                                <strong style="font-size:16px;">${item.title}</strong>
+                                <span style="color:var(--primary); font-weight:900;">₹${parseInt(item.price).toLocaleString('en-IN')}</span>
                             </div>
+                            <div class="market-tag-container">
+                                <span class="market-tag">${item.category}</span>
+                                <span class="market-tag prime">@${item.owner}</span>
+                            </div>
+                            ${item.thoughts ? `<div class="seller-thoughts-box">"${item.thoughts}"</div>` : ''}
+                        </div>
+                        <div class="market-action-row">
+                            ${isOwner ? `
+                                <button onclick="openEditListing('${k}')" style="background:#ff9900; color:white; border:none; padding:8px; border-radius:6px; font-weight:bold; font-size:13px; flex:1; cursor:pointer;">✏️ Edit</button>
+                            ` : `
+                                <button class="chat-seller-btn" onclick="openDirectMessage('${item.owner}', '${k}')">💬 Chat</button>
+                                <button onclick="addEquipmentToCart('${k}')" style="background:var(--primary); color:white; border:none; padding:8px; border-radius:6px; font-weight:bold; font-size:13px; flex:1; cursor:pointer;">🛒 Buy</button>
+                            `}
+                        </div>
+                    </div>
+                `;
+                grid.innerHTML += card.outerHTML;
+            });
+        }
+
+        function filterMarketplace(category) {
+            activeFilterNode = category;
+            document.querySelectorAll('.filter-chip').forEach(btn => {
+                btn.classList.remove('active');
+                if(btn.innerText.toLowerCase().includes(category.toLowerCase()) || (category === 'all' && btn.innerText.includes('All'))) {
+                    btn.classList.add('active');
+                }
+            });
+            renderMarketGrid();
+        }
+
+        function handleSearchInput(e) {
+            const query = e.target.value.toLowerCase().trim();
+            const cards = document.querySelectorAll('#marketGrid .market-card');
+            
+            cards.forEach(card => {
+                const title = card.querySelector('strong').innerText.toLowerCase();
+                const tags = card.querySelector('.market-tag-container').innerText.toLowerCase();
+                if (title.includes(query) || tags.includes(query)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        function openSell() {
+            editingListingKey = null;
+            document.getElementById('modalFormTitle').innerText = "Post Marketplace Node";
+            document.getElementById('postSubmitBtn').innerText = "Deploy Node";
+            document.getElementById('postTitle').value = '';
+            document.getElementById('postPrice').value = '';
+            document.getElementById('postImage').value = '';
+            document.getElementById('postThoughts').value = '';
+            document.getElementById('sellModal').style.display = 'flex';
+        }
+
+        function openEditListing(key) {
+            let item = globalMarketData[key];
+            if (!item) return;
+            editingListingKey = key;
+            document.getElementById('modalFormTitle').innerText = "Modify Marketplace Node";
+            document.getElementById('postSubmitBtn').innerText = "Save Matrix Adjustments";
+            document.getElementById('postTitle').value = item.title;
+            document.getElementById('postPrice').value = item.price;
+            document.getElementById('postCategory').value = item.category;
+            document.getElementById('postImage').value = item.image || '';
+            document.getElementById('postThoughts').value = item.thoughts || '';
+            document.getElementById('sellModal').style.display = 'flex';
+        }
+
+        function submitHardwareListing() {
+            let title = document.getElementById('postTitle').value.trim();
+            let price = document.getElementById('postPrice').value.trim();
+            let category = document.getElementById('postCategory').value;
+            let image = document.getElementById('postImage').value.trim();
+            let thoughts = document.getElementById('postThoughts').value.trim();
+            let owner = localStorage.getItem('potato_local_session');
+
+            if (!title || !price) return deployNotificationGui("Please compile required title and valuation metrics.");
+
+            let payload = { title, price, category, image, thoughts, owner };
+
+            if (editingListingKey) {
+                database.ref(`marketplace/listings/${editingListingKey}`).update(payload)
+                    .then(() => { deployNotificationGui("Listing data updated.", "⚙️"); closeSell(); });
+            } else {
+                database.ref('marketplace/listings').push(payload)
+                    .then(() => { deployNotificationGui("New hardware asset listed.", "🚀"); closeSell(); });
+            }
+        }
+
+        function deleteListingNode(key, e) {
+            if(e) e.stopPropagation();
+            if (confirm("Confirm removal of listing from active directory?")) {
+                database.ref(`marketplace/listings/${key}`).remove()
+                    .then(() => deployNotificationGui("Asset link purged from marketplace.", "🗑️"));
+            }
+        }
+
+        function addEquipmentToCart(key) {
+            let item = globalMarketData[key];
+            if(!item) return;
+            if(item.owner === localStorage.getItem('potato_local_session')) return deployNotificationGui("Cannot purchase your own asset node.");
+            
+            terminalCart.push({ key, ...item });
+            updateCartInterface();
+            deployNotificationGui(`${item.title} linked to terminal cart.`, "🛒");
+        }
+
+        function updateCartInterface() {
+            document.getElementById('cartCount').innerText = terminalCart.length;
+            const container = document.getElementById('cartItemsContainer');
+            container.innerHTML = '';
+            
+            let dynamicTotal = 0;
+            terminalCart.forEach((item, idx) => {
+                dynamicTotal += parseInt(item.price);
+                container.innerHTML += `
+                    <div class="cart-item-card">
+                        <button class="remove-item-btn" onclick="removeCartItemNode(${idx})">✕</button>
+                        <strong>${item.title}</strong>
+                        <div style="font-size:12px; color:var(--primary); margin-top:4px;">₹${parseInt(item.price).toLocaleString('en-IN')}</div>
+                    </div>
+                `;
+            });
+            document.getElementById('cartTotalValue').innerText = `₹${dynamicTotal.toLocaleString('en-IN')}`;
+        }
+
+        function removeCartItemNode(idx) {
+            terminalCart.splice(idx, 1);
+            updateCartInterface();
+        }
+
+        function checkoutTerminal() {
+            if (terminalCart.length === 0) return deployNotificationGui("Terminal cart is empty.");
+            
+            let client = localStorage.getItem('potato_local_session');
+            let timestamp = new Date().toLocaleString('en-IN');
+            
+            terminalCart.forEach(item => {
+                let orderPayload = {
+                    itemTitle: item.title,
+                    price: item.price,
+                    buyer: client,
+                    seller: item.owner,
+                    status: 'Processing Base',
+                    date: timestamp,
+                    type: 'Marketplace'
+                };
+                
+                database.ref('marketplace/orders').push(orderPayload);
+                database.ref(`marketplace/listings/${item.key}`).remove();
+            });
+
+            terminalCart = [];
+            updateCartInterface();
+            toggleCart();
+            deployNotificationGui("Invoice deployed. Assets secured inside central operations pipeline.", "📦");
+        }
+
+        function renderUserOrders(ordersBlock) {
+            const container = document.getElementById('userOrdersGrid');
+            container.innerHTML = '';
+            let currentSession = localStorage.getItem('potato_local_session');
+            
+            let count = 0;
+            Object.keys(ordersBlock).forEach(k => {
+                let o = ordersBlock[k];
+                if (o.buyer !== currentSession && o.seller !== currentSession) return;
+                count++;
+
+                let isBuyer = o.buyer === currentSession;
+                let card = document.createElement('div');
+                card.className = 'ops-order-card';
+                card.style.background = 'rgba(255,255,255,0.01)';
+                card.style.padding = '15px';
+                card.innerHTML = `
+                    <span class="ops-badge" style="background:${o.status === 'Completed' ? 'rgba(1,148,11,0.15)' : 'rgba(26,115,232,0.15)'}; color:${o.status === 'Completed' ? 'var(--primary)' : '#1a73e8'}">${o.status}</span>
+                    <strong style="font-size:14px; display:block; margin-bottom:4px;">${o.itemTitle || 'Configurator Custom Build'}</strong>
+                    <div style="font-size:12px; color:#888;">
+                        <span>Value: <strong>₹${parseInt(o.price).toLocaleString('en-IN')}</strong></span> | 
+                        <span>Role: <strong>${isBuyer ? 'Buyer' : 'Seller'}</strong></span> |
+                        <span>Date: ${o.date}</span>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            if (count === 0) {
+                container.innerHTML = '<div style="color:#666; font-size:13px;">No personal transactions deployed in current matrix session.</div>';
+            }
+        }
+
+        function checkUserTreasureAllowance(ordersBlock) {
+            let currentSession = localStorage.getItem('potato_local_session');
+            let completedCount = 0;
+            
+            Object.keys(ordersBlock).forEach(k => {
+                let o = ordersBlock[k];
+                if (o.buyer === currentSession && o.status === 'Completed') completedCount++;
+            });
+
+            const checkbox = document.getElementById('useTreasureCheckbox');
+            const boxContainer = document.getElementById('treasureContainer');
+            const desc = document.getElementById('treasureDesc');
+            const title = document.getElementById('treasureTitle');
+
+            if (completedCount > 0) {
+                userTreasureBalance = completedCount * 100; // 100 Coins per past verification node
+                checkbox.disabled = false;
+                boxContainer.classList.add('unlocked');
+                title.style.color = '#eab308';
+                desc.innerHTML = `Verified Node Client! You possess <strong style="color:#eab308">${userTreasureBalance} Treasure Coins</strong>. Apply them for immediate invoice deductions.`;
+            } else {
+                userTreasureBalance = 0;
+                checkbox.disabled = true;
+                checkbox.checked = false;
+                boxContainer.classList.remove('unlocked');
+                title.style.color = '#666';
+                desc.innerText = "Only verified repeat clients with a 'Completed' pipeline transaction can apply coin deductions.";
+            }
+        }
+
+        // 🖥️ STRATEGIC CONFIGURATOR WIZARD ARCHITECTURE
+        function syncBudgetInputs(origin) {
+            const slider = document.getElementById('wizBudgetSlider');
+            const manual = document.getElementById('wizBudgetManual');
+            const display = document.getElementById('wizPriceDisplay');
+
+            if (origin === 'slider') {
+                manual.value = slider.value;
+            } else {
+                if (parseInt(manual.value) > 400000) manual.value = 400000;
+                slider.value = manual.value;
+            }
+            display.innerText = parseInt(slider.value).toLocaleString('en-IN');
+            if (currentWizCategory) updateDynamicSpecsEngine();
+        }
+
+        function changeWizardStep(stepNum) {
+            document.querySelectorAll('.wizard-step').forEach(step => step.classList.remove('active'));
+            document.getElementById(`wizStep${stepNum}`).classList.add('active');
+            if (stepNum === 3) calculateFinalWizardPrice();
+        }
+
+        function selectCategory(catId) {
+            currentWizCategory = catId;
+            document.querySelectorAll('.category-card').forEach(card => card.classList.remove('selected'));
+            document.getElementById(`cat-${catId}`).classList.add('selected');
+            updateDynamicSpecsEngine();
+        }
+
+        function updateDynamicSpecsEngine() {
+            let budget = parseInt(document.getElementById('wizBudgetSlider').value);
+            const area = document.getElementById('generatedSpecsArea');
+            
+            let gpu = "Integrated Graphics Core Architecture", cpu = "Core i3 Entry Class", ram = "8GB DDR4 RAM", storage = "512GB High-Speed SATA SSD";
+
+            if (currentWizCategory === 'gaming') {
+                if (budget < 30000) { gpu = "AMD Radeon Built-In Vega Graphics"; cpu = "Ryzen 3 Quad-Core Processor"; ram = "8GB RAM Single-Channel"; }
+                else if (budget < 60000) { gpu = "AMD Radeon RX 580 8GB VRAM Dual-Fan Edition"; cpu = "Intel Core i5 Hexa-Core Stable Stack"; ram = "16GB Dual-Channel DDR4"; storage = "512GB M.2 NVMe Performance Drive"; }
+                else if (budget < 120000) { gpu = "NVIDIA RTX 4060 Ti Ray-Tracing Node"; cpu = "Intel Core i7 Cutting Edge Matrix Engine"; ram = "32GB High-Speed RAM"; storage = "1TB NVMe Performance SSD Stack"; }
+                else { gpu = "NVIDIA RTX 4080 Super Supreme Grid"; cpu = "AMD Ryzen 9 Flagship Processing Unit"; ram = "64GB DDR5 Matrix Array"; storage = "2TB NVMe PCIe 4.0 Storage Unit"; }
+            } else if (currentWizCategory === 'editing') {
+                if (budget < 50000) { cpu = "Intel Core i5 Performance Stack"; ram = "16GB RAM"; storage = "512GB Fast SSD"; }
+                else { cpu = "Intel Core i7 Rendering Framework"; ram = "32GB Precision RAM Stack"; storage = "1TB High-End NVMe Cache Unit"; gpu = "NVIDIA Studio Dedicated Accelerator Card"; }
+            } else if (currentWizCategory === 'school') {
+                cpu = "Intel Core i3 Energy Optimized Node"; ram = "8GB RAM Framework"; storage = "512GB Standard Storage Matrix";
+            } else if (currentWizCategory === 'modelling') {
+                if (budget < 70000) { gpu = "NVIDIA RTX 3050 VRAM Matrix"; cpu = "Intel Core i5 Precision Engine"; ram = "16GB RAM Framework"; }
+                else { gpu = "NVIDIA RTX 4070 CAD Performance Verified Node"; cpu = "Intel Core i7 Matrix Processing Array"; ram = "32GB Multi-Tasking Architecture"; storage = "1TB NVMe Cache Solid-State Stack"; }
+            }
+
+            area.innerHTML = `
+                <div class="spec-line">🧠 Central Processor: <strong>${cpu}</strong></div>
+                <div class="spec-line">🖼️ Graphical Core Array: <strong>${gpu}</strong></div>
+                <div class="spec-line">📟 Memory Buffer Layer: <strong>${ram}</strong></div>
+                <div class="spec-line">💽 High-Speed Storage Archive: <strong>${storage}</strong></div>
+            `;
+        }
+
+        function goToStep3() {
+            if (!currentWizCategory) return deployNotificationGui("Please pinpoint a performance classification node first.");
+            changeWizardStep(3);
+        }
+
+        function calculateFinalWizardPrice() {
+            let base = parseInt(document.getElementById('wizBudgetSlider').value);
+            if (document.getElementById('useTreasureCheckbox').checked) {
+                base -= (userTreasureBalance * 2); // Double-value conversion modifier applied to coins
+                if(base < 0) base = 0;
+            }
+            document.getElementById('wizardInvoiceTotal').innerText = `₹${base.toLocaleString('en-IN')}`;
+        }
+
+        function finalizeWizardBuildOrder() {
+            let address = document.getElementById('shipAddress').value.trim();
+            let city = document.getElementById('shipCity').value.trim();
+            let state = document.getElementById('shipState').value.trim();
+            let pin = document.getElementById('shipPincode').value.trim();
+
+            if (!address || !city || !state || !pin) return deployNotificationGui("Destination coordinates array incomplete.");
+
+            let finalPriceStr = document.getElementById('wizardInvoiceTotal').innerText.replace(/[₹,]/g, '');
+            let timestamp = new Date().toLocaleString('en-IN');
+            let client = localStorage.getItem('potato_local_session');
+
+            let payload = {
+                itemTitle: `LBPC Custom Configuration (${currentWizCategory.toUpperCase()} Unit)`,
+                price: finalPriceStr,
+                buyer: client,
+                seller: 'LB_CENTRAL_HQ',
+                status: 'Processing Base',
+                date: timestamp,
+                type: 'Configurator',
+                shippingCoordinates: `${address}, ${city}, ${state} - ${pin}`
+            };
+
+            database.ref('marketplace/orders').push(payload)
+                .then(() => {
+                    deployNotificationGui("Build manifest deployed to central assembly grid.", "🚀");
+                    // Reset fields
+                    document.getElementById('shipAddress').value = '';
+                    document.getElementById('shipCity').value = '';
+                    document.getElementById('shipState').value = '';
+                    document.getElementById('shipPincode').value = '';
+                    changeWizardStep(1);
+                    switchTab('marketView');
+                });
+        }
+
+        // 🕹️ ARCADE VAULT INTERFACE
+        function submitGameToVault() {
+            let name = document.getElementById('vaultGameName').value.trim();
+            let url = document.getElementById('vaultGameUrl').value.trim();
+            let price = document.getElementById('vaultGamePrice').value.trim() || 0;
+            let img = document.getElementById('vaultGameImg').value.trim() || 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=500';
+            let desc = document.getElementById('vaultGameDesc').value.trim();
+
+            if (!name || !url) return deployNotificationGui("Game title and executable data links required.");
+
+            database.ref('marketplace/games').push({ name, url, price, img, desc })
+                .then(() => {
+                    deployNotificationGui("Game build successfully deployed to Vault grid.", "🕹️");
+                    document.getElementById('vaultGameName').value = '';
+                    document.getElementById('vaultGameUrl').value = '';
+                    document.getElementById('vaultGamePrice').value = 0;
+                    document.getElementById('vaultGameImg').value = '';
+                    document.getElementById('vaultGameDesc').value = '';
+                });
+        }
+
+        function renderGameVaultGrid(gamesBlock) {
+            const grid = document.getElementById('vaultGamesGrid');
+            grid.innerHTML = '';
+            let keys = Object.keys(gamesBlock);
+
+            if(keys.length === 0) {
+                grid.innerHTML = '<div style="color:#666; font-size:14px;">No interactive programs available inside the current vault parameters.</div>';
+                return;
+            }
+
+            keys.forEach(k => {
+                let g = gamesBlock[k];
+                let card = document.createElement('div');
+                card.className = 'market-card';
+                card.innerHTML = `
+                    <div class="market-img-container">
+                        <img class="market-img" src="${g.img}" alt="Arcade">
+                    </div>
+                    <div class="market-details">
+                        <div>
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <strong style="font-size:16px; color:#0284c7;">${g.name}</strong>
+                                <span style="font-size:12px; font-weight:bold; background:rgba(0,162,255,0.1); color:#0284c7; padding:2px 8px; border-radius:4px;">${parseInt(g.price) === 0 ? 'FREE ACCESS' : '₹'+g.price}</span>
+                            </div>
+                            <p style="font-size:12px; color:#aaa; margin:10px 0;">${g.desc || 'No developer matrix context provided.'}</p>
+                        </div>
+                        <a href="${g.url}" target="_blank" style="text-decoration:none; text-align:center; display:block; background:linear-gradient(180deg,#60a5fa,#2563eb); color:white; padding:10px; border-radius:6px; font-weight:bold; font-size:13px; margin-top:10px;">Initialize Simulation Node ⚡</a>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // 💼 PUBLIC JOB ARCHIVE & LOGS
+        function renderPublicJobBoard(jobsBlock) {
+            const container = document.getElementById('publicJobsContainer');
+            container.innerHTML = '';
+            
+            // Hardcoded structural fallback nodes if database contains clear paths
+            let baseJobs = {
+                "job_01": { title: "Lead PC Assembly Technician", sector: "Hardware Engineering", compensation: "₹25,000 - ₹35,000 / Month", criteria: "Must know component configuration matrix stack, cable routing architecture, and RX/GTX graphics card validation." },
+                "job_02": { title: "Inventory Pipeline Logistics Associate", sector: "Supply Operations", compensation: "₹18,000 - ₹22,000 / Month", criteria: "Maintains database logging accuracy for inbound parts streams." }
+            };
+
+            let merged = { ...baseJobs, ...jobsBlock };
+
+            Object.keys(merged).forEach(k => {
+                let j = merged[k];
+                let card = document.createElement('div');
+                card.className = 'ops-order-card';
+                card.style.background = 'rgba(255,255,255,0.01)';
+                card.innerHTML = `
+                    <strong style="font-size:16px; color:var(--primary); display:block; margin-bottom:2px;">${j.title}</strong>
+                    <div style="font-size:11px; font-weight:bold; text-transform:uppercase; color:#666; margin-bottom:10px;">Sector: ${j.sector} | Remuneration: ${j.compensation}</div>
+                    <p style="font-size:13px; margin: 0 0 15px 0; color:#aaa; line-height:1.4;">${j.criteria}</p>
+                    <button onclick="openApplyJobModal('${k}')" style="background:#1a73e8; color:white; border:none; padding:8px 16px; border-radius:6px; font-weight:bold; font-size:12px; cursor:pointer; text-transform:uppercase;">Transmit Application Packet</button>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function openApplyJobModal(jobId) {
+            activeJobIdApplying = jobId;
+            document.getElementById('jobApplyModal').style.display = 'flex';
+        }
+
+        function submitJobApplication() {
+            let phone = document.getElementById('jobAppPhone').value.trim();
+            let pitch = document.getElementById('jobAppPitch').value.trim();
+            let handle = localStorage.getItem('potato_local_session');
+
+            if (!phone || !pitch) return deployNotificationGui("Please record mobile node and qualifications data stream.");
+
+            database.ref(`marketplace/jobs/${activeJobIdApplying}/applications`).push({ handle, phone, pitch })
+                .then(() => {
+                    deployNotificationGui("Packet cleanly uploaded into live personnel directory framework.", "💼");
+                    document.getElementById('jobAppPhone').value = '';
+                    document.getElementById('jobAppPitch').value = '';
+                    closeJobModal();
+                });
+        }
+
+        // 📊 OPERATIONS MANAGEMENT HQ PIPELINE (ADMIN/CEO EXCLUSIVE VIEW)
+        function renderOperationsGrid(ordersBlock) {
+            const container = document.getElementById('opsGrid');
+            container.innerHTML = '';
+            let keys = Object.keys(ordersBlock);
+
+            if(keys.length === 0) {
+                container.innerHTML = '<div style="color:#666; font-size:13px; padding:20px; text-align:center;">No processing files found inside the operational queue.</div>';
+                return;
+            }
+
+            keys.forEach(k => {
+                let o = ordersBlock[k];
+                let card = document.createElement('div');
+                card.className = 'ops-order-card';
+                card.innerHTML = `
+                    <div style="display:flex; justify-content:between; align-items:flex-start;">
+                        <div>
+                            <strong style="font-size:15px; color:var(--text);">${o.itemTitle}</strong>
+                            <div style="font-size:12px; color:#888; margin-top:4px;">
+                                <span>Total Node Value: <strong style="color:var(--primary)">₹${parseInt(o.price).toLocaleString('en-IN')}</strong></span> | 
+                                <span>Client Handle: <strong>@${o.buyer}</strong></span> |
+                                <span>Fulfillment Sector: <strong>${o.seller}</strong></span>
+                            </div>
+                            ${o.shippingCoordinates ? `<div style="font-size:11px; background:rgba(255,255,255,0.03); padding:6px; border-radius:4px; margin-top:8px; border-left:2px solid #1a73e8;">📍 Destination Vector: ${o.shippingCoordinates}</div>` : ''}
+                        </div>
+                        <div style="text-align:right; display:flex; flex-direction:column; gap:8px;">
+                            <select onchange="updatePipelineStatus('${k}', this.value)" style="margin:0; padding:6px; font-size:12px; background:#222; border-color:#444;">
+                                <option value="Processing Base" ${o.status === 'Processing Base' ? 'selected' : ''}>Processing Base</option>
+                                <option value="Assembling Hardware Components" ${o.status === 'Assembling Hardware Components' ? 'selected' : ''}>Assembling Node</option>
+                                <option value="Dispatched via Transit Fleet" ${o.status === 'Dispatched via Transit Fleet' ? 'selected' : ''}>Transit Fleet</option>
+                                <option value="Completed" ${o.status === 'Completed' ? 'selected' : ''}>Completed Node</option>
+                            </select>
+                            <button onclick="purgePipelineOrder('${k}')" style="background:none; border:none; color:#ff4444; font-size:11px; cursor:pointer; font-weight:bold;">Purge Record 🗑️</button>
                         </div>
                     </div>
                 `;
@@ -667,263 +1122,130 @@
             });
         }
 
-        function filterMarketplace(category) {
-            activeMarketplaceFilterKey = category;
-            document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-            event.target.classList.add('active');
-            renderMarketGrid();
+        function updatePipelineStatus(key, statusValue) {
+            database.ref(`marketplace/orders/${key}`).update({ status: statusValue })
+                .then(() => deployNotificationGui(`Transaction matrix status modified to [${statusValue}].`, "📦"));
         }
 
-        function handleSearchInput() { renderMarketGrid(); }
-
-        function renderGameVaultGrid(gamesData) {
-            const container = document.getElementById('vaultGameGrid');
-            container.innerHTML = '';
-            Object.keys(gamesData).forEach(id => {
-                let g = gamesData[id];
-                let div = document.createElement('div');
-                div.className = 'market-card';
-                div.innerHTML = `
-                    <div class="market-img-container"><img class="market-img" src="${g.imageAsset}"></div>
-                    <div class="market-details">
-                        <div style="font-weight:bold; font-size:16px;">${g.title}</div>
-                        <p style="font-size:12px; color:#777; margin:5px 0;">${g.documentation}</p>
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
-                            <span style="font-weight:bold; color:var(--primary);">${g.price === 0 ? 'FREEWARE' : '₹'+g.price}</span>
-                            <a href="${g.downloadUrl}" target="_blank" style="background:#0284c7; color:white; text-decoration:none; padding:8px 16px; font-size:12px; font-weight:bold; border-radius:6px;">FETCH BINARY</a>
-                        </div>
-                    </div>
-                `;
-                container.appendChild(div);
-            });
-        }
-
-        function renderPipelineAndOrders(ordersData) {
-            const pipeline = document.getElementById('opsGrid');
-            const personal = document.getElementById('userOrdersGrid');
-            pipeline.innerHTML = '';
-            personal.innerHTML = '';
-
-            let hasPersonal = false;
-
-            Object.keys(ordersData).forEach(id => {
-                let o = ordersData[id];
-                let isMine = o.buyer === currentActiveUserNode;
-                
-                let markup = `
-                    <div class="ops-order-card">
-                        <span class="ops-badge">${o.status || 'PROVISIONING'}</span>
-                        <div style="font-weight:bold;">ORDER CODE: ${id.substring(1,8).toUpperCase()}</div>
-                        <div style="font-size:13px; color:#aaa; margin-top:5px;">Config: ${o.summary || 'Custom Hardware Component Bundle'}</div>
-                        <div style="font-weight:900; color:var(--primary); margin-top:10px;">₹${o.invoiceCost}</div>
-                    </div>
-                `;
-
-                pipeline.innerHTML += markup;
-                if(isMine) {
-                    personal.innerHTML += markup;
-                    hasPersonal = true;
-                }
-            });
-
-            if(!hasPersonal) {
-                personal.innerHTML = `<div style="color:#666; font-size:13px;">No personal transactions deployed in current matrix session.</div>`;
+        function purgePipelineOrder(key) {
+            if(confirm("Purge order record file irreversibly from central server matrices?")) {
+                database.ref(`marketplace/orders/${key}`).remove()
+                    .then(() => deployNotificationGui("Order tracking document file deleted.", "🗑️"));
             }
         }
 
-        function renderCareerPipeline(hrData) {
+        function renderHrPipeline(jobsBlock) {
             const container = document.getElementById('hrOpsGrid');
             container.innerHTML = '';
-            Object.keys(hrData).forEach(id => {
-                let r = hrData[id];
-                container.innerHTML += `
-                    <div class="ops-order-card">
-                        <div style="font-weight:bold; color:var(--primary);">${r.applicant} (@${r.handle.toUpperCase()})</div>
-                        <div style="font-size:13px; color:#eee; margin:8px 0;">Skills: ${r.proficiencies}</div>
-                        <div style="font-size:12px; color:#777; font-style:italic;">"${r.coverStatement}"</div>
-                    </div>
-                `;
+            let count = 0;
+
+            Object.keys(jobsBlock).forEach(jk => {
+                let j = jobsBlock[jk];
+                if (!j.applications) return;
+                
+                Object.keys(j.applications).forEach(ak => {
+                    count++;
+                    let appNode = j.applications[ak];
+                    let card = document.createElement('div');
+                    card.className = 'ops-order-card';
+                    card.innerHTML = `
+                        <strong style="font-size:14px; color:#11998e;">Application Packet: ${j.title}</strong>
+                        <div style="font-size:12px; color:#aaa; margin:6px 0;">
+                            Applicant Identity: <strong style="color:#fff">@${appNode.handle}</strong> | Direct Core Comm: <strong>${appNode.phone}</strong>
+                        </div>
+                        <p style="font-size:13px; background:rgba(0,0,0,0.2); padding:10px; border-radius:6px; color:#eee; margin:0 0 10px 0;">"${appNode.pitch}"</p>
+                        <button onclick="purgeApplicationPacket('${jk}', '${ak}')" style="background:none; border:none; color:#ff4444; font-size:11px; font-weight:bold; cursor:pointer; padding:0;">Purge Candidate Manifest 🗑></button>
+                    `;
+                    container.appendChild(card);
+                });
             });
-        }
 
-        // 4. Cart Logic Matrices
-        function addItemToCartMatrix(id) {
-            let item = globalMarketplaceCollection[id];
-            if(!item) return;
-            globalCartArray.push(item);
-            syncCartInterface();
-            showGuiNotification(`${item.title} linked to terminal session cart grid.`, "success");
-        }
-
-        function removeCartItem(idx) {
-            globalCartArray.splice(idx, 1);
-            syncCartInterface();
-        }
-
-        function syncCartInterface() {
-            document.getElementById('cartCount').innerText = globalCartArray.length;
-            const container = document.getElementById('cartItemsContainer');
-            container.innerHTML = '';
-            let total = 0;
-
-            globalCartArray.forEach((item, idx) => {
-                total += item.price;
-                container.innerHTML += `
-                    <div class="cart-item-card">
-                        <button class="remove-item-btn" onclick="removeCartItem(${idx})">✖</button>
-                        <div style="font-weight:bold; font-size:13px; padding-right:15px;">${item.title}</div>
-                        <div style="color:var(--primary); font-weight:bold; margin-top:4px;">₹${item.price.toLocaleString()}</div>
-                    </div>
-                `;
-            });
-            document.getElementById('cartTotalValue').innerText = `₹${total.toLocaleString()}`;
-        }
-
-        function checkoutTerminal() {
-            if(globalCartArray.length === 0) return showGuiNotification("Session cart container holds no data objects.");
-            let total = globalCartArray.reduce((acc, curr) => acc + curr.price, 0);
-            
-            database.ref('marketplace/orders').push({
-                buyer: currentActiveUserNode,
-                invoiceCost: total,
-                summary: globalCartArray.map(i => i.title).join(', '),
-                status: 'PROVISIONING',
-                timestamp: Date.now()
-            }).then(() => {
-                globalCartArray = [];
-                syncCartInterface();
-                toggleCart();
-                showGuiNotification("Transaction successfully deployed down the pipeline chain.", "success");
-            });
-        }
-
-        // 5. Strategic Configurator Wizard Core Nodes
-        function syncBudgetInputs(origin) {
-            const slider = document.getElementById('wizBudgetSlider');
-            const manual = document.getElementById('wizBudgetManual');
-            const display = document.getElementById('wizPriceDisplay');
-
-            if(origin === 'slider') {
-                manual.value = slider.value;
-            } else {
-                slider.value = manual.value;
+            if(count === 0) {
+                container.innerHTML = '<div style="color:#555; text-align:center; padding:20px; font-size:13px;">No personnel applications currently inside the HR pipeline.</div>';
             }
-            display.innerText = parseInt(slider.value).toLocaleString();
-            if(activeWizardSelectedCategory) calculateSpecsMatrixOutput();
         }
 
-        function changeWizardStep(stepNum) {
-            document.querySelectorAll('.wizard-step').forEach(step => step.classList.remove('active'));
-            document.getElementById(`wizStep${stepNum}`).classList.add('active');
+        function purgeApplicationPacket(jobKey, appKey) {
+            if(confirm(" Irreversibly delete applicant packet tracking vector?")) {
+                database.ref(`marketplace/jobs/${jobKey}/applications/${appKey}`).remove()
+                    .then(() => deployNotificationGui("Candidate node purged from matrix successfully.", "🗑️"));
+            }
         }
 
-        function selectCategory(catKey) {
-            activeWizardSelectedCategory = catKey;
-            document.querySelectorAll('.category-card').forEach(c => c.classList.remove('active', 'selected'));
-            document.getElementById(`cat-${catKey}`).classList.add('selected');
-            calculateSpecsMatrixOutput();
-        }
+        // 💬 CHANNELSECURE DIRECT COMMUNICATION REALTIME ENGINE
+        function openDirectMessage(sellerHandle, itemKey) {
+            let buyerHandle = localStorage.getItem('potato_local_session');
+            if (buyerHandle === sellerHandle) return;
 
-        function calculateSpecsMatrixOutput() {
-            let budget = parseInt(document.getElementById('wizBudgetSlider').value);
-            const outNode = document.getElementById('generatedSpecsArea');
-            outNode.innerHTML = '';
+            // Generate deterministic matrix channel key string mapping both users
+            activeDMChannelId = [buyerHandle, sellerHandle].sort().join('_ch_');
+            document.getElementById('dmTargetTitle').innerText = `🔒 Secure Link: @${sellerHandle}`;
+            document.getElementById('dmBox').style.display = 'flex';
+            document.getElementById('dmLogs').innerHTML = '<div style="color:#666; font-size:11px; text-align:center;">Establishing interface sync telemetry...</div>';
 
-            let cpu = budget > 80000 ? "Intel Core i7-14700K Processing Frame" : "Intel Core i5 Balanced Compute Core";
-            let gpu = budget > 150000 ? "RTX 4070 Ti Hyper-Graphics System" : (budget > 45000 ? "RX 580 Sapphire 8GB Video Node" : "Integrated Graphics Processing Architecture");
-            let ram = budget > 100000 ? "32GB High Frequency Dual-Channel Array" : "16GB Operational Cache RAM";
-            let storage = budget > 60000 ? "1TB High-Speed NVMe Solid State Layer" : "512GB M.2 Flash Media Storage Block";
-
-            outNode.innerHTML = `
-                <div class="spec-line">💾 Processor Architecture: <strong>${cpu}</strong></div>
-                <div class="spec-line">⚡ Graphical Compute Array: <strong>${gpu}</strong></div>
-                <div class="spec-line">🔲 Cache Memory Array: <strong>${ram}</strong></div>
-                <div class="spec-line">💿 Storage Media Unit: <strong>${storage}</strong></div>
-            `;
-        }
-
-        function goToStep3() {
-            if(!activeWizardSelectedCategory) return showGuiNotification("A classification track node must be assigned first.");
-            let cost = parseInt(document.getElementById('wizBudgetSlider').value);
-            document.getElementById('wizardInvoiceTotal').innerText = `₹${cost.toLocaleString()}`;
-            changeWizardStep(3);
-        }
-
-        function finalizeWizardBuildOrder() {
-            let address = document.getElementById('shipAddress').value.trim();
-            let city = document.getElementById('shipCity').value.trim();
-            let cost = parseInt(document.getElementById('wizBudgetSlider').value);
-
-            if(!address || !city) return showGuiNotification("Destination geographic telemetry arrays incomplete.");
-
-            database.ref('marketplace/orders').push({
-                buyer: currentActiveUserNode,
-                invoiceCost: cost,
-                summary: `Custom Setup: [Budget: ₹${cost}, Target Profile: ${activeWizardSelectedCategory.toUpperCase()}]`,
-                status: 'PROVISIONING',
-                address: `${address}, ${city}`,
-                timestamp: Date.now()
-            }).then(() => {
-                changeWizardStep(1);
-                switchTab('marketView');
-                showGuiNotification("Custom Strategic Configuration Order Deployed Successfully.", "success");
-            });
-        }
-
-        // 6. Messaging Arrays Channels Logic
-        function openDirectMessageMatrix(sellerUsername) {
-            activeDirectMessageChannelId = [currentActiveUserNode, sellerUsername].sort().join('_ch_');
-            document.getElementById('dmTargetTitle').innerText = `CHANNEL ID: @${sellerUsername.toUpperCase()}`;
-            document.getElementById('dmBox').style.style.display = 'flex';
-
-            database.ref(`marketplace/chats/${activeDirectMessageChannelId}`).on('value', snap => {
+            database.ref(`marketplace/chats/${activeDMChannelId}`).off();
+            database.ref(`marketplace/chats/${activeDMChannelId}`).on('value', snapshot => {
                 const logs = document.getElementById('dmLogs');
                 logs.innerHTML = '';
-                let data = snap.val() || {};
-                Object.keys(data).forEach(mId => {
-                    let m = data[mId];
-                    let alignment = m.sender === currentActiveUserNode ? 'text-align:right;' : 'text-align:left;';
-                    let bubbleBg = m.sender === currentActiveUserNode ? 'background:rgba(1, 148, 11, 0.2);' : 'background:rgba(255,255,255,0.05);';
-                    logs.innerHTML += `
-                        <div style="${alignment} margin-bottom:5px;">
-                            <div style="display:inline-block; padding:8px 12px; border-radius:8px; max-width:80%; ${bubbleBg}">
-                                <strong style="font-size:10px; display:block; color:#777;">@${m.sender.toUpperCase()}</strong>
-                                <span>${m.message}</span>
-                            </div>
-                        </div>
-                    `;
+                let block = snapshot.val() || {};
+                
+                Object.keys(block).forEach(mk => {
+                    let m = block[mk];
+                    let isMe = m.sender === buyerHandle;
+                    let row = document.createElement('div');
+                    row.style.alignSelf = isMe ? 'flex-end' : 'flex-start';
+                    row.style.background = isMe ? 'var(--primary)' : '#252525';
+                    row.style.color = '#fff';
+                    row.style.padding = '8px 12px';
+                    row.style.borderRadius = '10px';
+                    row.style.maxWidth = '80%';
+                    row.style.wordBreak = 'break-word';
+                    row.style.fontSize = '12px';
+                    row.innerHTML = `<span style="font-size:9px; opacity:0.6; display:block; margin-bottom:2px;">${m.sender}</span>${m.msg}`;
+                    logs.appendChild(row);
                 });
                 logs.scrollTop = logs.scrollHeight;
             });
         }
 
-        function closeDirectMessageMatrix() {
-            if(activeDirectMessageChannelId) database.ref(`marketplace/chats/${activeDirectMessageChannelId}`).off();
-            document.getElementById('dmBox').style.style.display = 'none';
+        function sendDMMessage() {
+            let input = document.getElementById('dmInputField');
+            let msg = input.value.trim();
+            if(!msg || !activeDMChannelId) return;
+
+            let sender = localStorage.getItem('potato_local_session');
+            database.ref(`marketplace/chats/${activeDMChannelId}`).push({ sender, msg })
+                .then(() => { input.value = ''; });
         }
 
-        function transmitDirectMessageSignal() {
-            let text = document.getElementById('dmRawInput').value.trim();
-            if(!text || !activeDirectMessageChannelId) return;
-
-            database.ref(`marketplace/chats/${activeDirectMessageChannelId}`).push({
-                sender: currentActiveUserNode,
-                message: text,
-                timestamp: Date.now()
-            }).then(() => {
-                document.getElementById('dmRawInput').value = '';
-            });
-        }
-
-        // 7. Session Validation Autoload Initialization Row Engine
         window.onload = function() {
-            let savedSessionToken = localStorage.getItem('potato_local_session');
-            if(!savedSessionToken) return;
+            let session = localStorage.getItem('potato_local_session');
+            if (!session) return; // No saved session, keep them at the login gate
 
-            if(hardcodedLocalAccounts[savedSessionToken]) {
-                loginSuccess(savedSessionToken);
-            } else {
-                localStorage.removeItem('potato_local_session');
+            // 1. If it's a hardcoded local account (like nafeez or admin lists), log them straight in
+            if (typeof localAccounts !== 'undefined' && localAccounts[session]) {
+                loginSuccess(session);
+                return;
+            }
+
+            // 2. If it's 'guest' and you are using open guest bypass
+            if (session === 'guest') {
+                loginSuccess('guest');
+                return;
+            }
+
+            // 3. Otherwise, check if they exist in the live Firebase dynamic roster database
+            if (typeof database !== 'undefined') {
+                database.ref(`marketplace/users/${session}`).once('value', snapshot => {
+                    if (snapshot.exists()) {
+                        loginSuccess(session);
+                    } else {
+                        // Handle no longer valid (e.g., deleted from DB), clear the stale session
+                        localStorage.removeItem('potato_local_session');
+                    }
+                }).catch(error => {
+                    console.error("Auto-Auth Matrix Interruption:", error);
+                });
             }
         };
     </script>
