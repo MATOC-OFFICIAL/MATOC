@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Potato Builders | Authorized PC Marketplace</title>
+    <title>Potato Builders | Secure Central Command</title>
     
     <link rel="manifest" href="manifest.json">
     
@@ -81,7 +81,6 @@
 
         body { font-family: var(--font); background: var(--bg); color: var(--text); margin: 0; transition: all 0.4s ease; overflow-x: hidden; min-height: 100vh; }
         
-        /* Frutiger Aero Vibrant Background Setup */
         body.theme-frutiger::before {
             content: "";
             position: fixed;
@@ -136,6 +135,7 @@
         .sidebar.active { left: 0; visibility: visible; }
         .nav-item { padding: 12px; border-bottom: 1px solid var(--border); cursor: pointer; font-weight: bold; font-size: 13px; text-transform: uppercase; }
         .nav-item:hover { color: var(--primary); }
+        .staff-visible-nav { display: none; border-left: 3px solid #10b981; padding-left: 8px; color: #10b981; }
         .admin-only-nav { display: none; border-left: 3px solid #1a73e8; padding-left: 8px; color: #1a73e8; }
         body.theme-frutiger .admin-only-nav { color: #1e3a8a; border-left-color: #0284c7; }
 
@@ -270,6 +270,7 @@
         <div class="nav-item" onclick="switchTab('gameVaultView')">🕹️ Game Vault</div>
         <div class="nav-item" onclick="switchTab('jobsView')">💼 Career Openings</div>
         <div class="nav-item" onclick="openSell()">⚙️ Appraise & Sell Gear</div>
+        <div class="nav-item staff-visible-nav" id="staffSidebarLink" onclick="switchTab('staffView')">👥 Internal Roster</div>
         <div class="nav-item admin-only-nav" id="adminSidebarLink" onclick="switchTab('opsView')">📊 Live Order Pipeline</div>
     </div>
 
@@ -278,6 +279,7 @@
         <button class="tab-btn" id="btn-buildView" onclick="switchTab('buildView')">🖥️ PC Builder</button>
         <button class="tab-btn" id="btn-gameVaultView" onclick="switchTab('gameVaultView')">🕹️ Game Vault</button>
         <button class="tab-btn" id="btn-jobsView" onclick="switchTab('jobsView')">💼 Careers</button>
+        <button class="tab-btn staff-visible-nav" id="btn-staffView" onclick="switchTab('staffView')">👥 Roster</button>
         <button class="tab-btn admin-only-nav" id="btn-opsView" onclick="switchTab('opsView')">📊 HQ Pipeline</button>
     </div>
 
@@ -393,18 +395,20 @@
         </div>
     </div>
 
+    <div class="app-view" id="staffView">
+        <h2 style="text-transform: uppercase; margin: 0 0 5px 0; font-size: 24px; color: #10b981;">Internal Organization Framework</h2>
+        <p style="font-size: 13px; color:#666; margin-bottom: 20px;">Protected staff listing visible exclusively to Owner, CEOs, and Hired Employees.</p>
+        <div class="ops-grid" id="staffRosterGrid"></div>
+    </div>
+
     <div class="app-view" id="opsView">
         <h2 style="text-transform: uppercase; margin: 0 0 5px 0; font-size: 24px;">Live Operations Pipeline</h2>
+        
         <h3 style="text-transform: uppercase; font-size:14px; color:#0284c7; margin-bottom:10px;">📦 Client Build Orders</h3>
         <div class="ops-grid" id="opsGrid" style="margin-bottom: 40px;"></div>
         
-        <h3 style="text-transform: uppercase; font-size:14px; color:#11998e; margin-bottom:10px;">💼 Submitted Job Packets</h3>
+        <h3 style="text-transform: uppercase; font-size:14px; color:#11998e; margin-bottom:10px;">💼 Submitted Job Application Packets</h3>
         <div class="ops-grid" id="hrOpsGrid"></div>
-        
-        <h3 style="text-transform: uppercase; font-size:14px; color:#ff4444; margin-top: 40px; margin-bottom:10px;">🚩 Security Violation Reports</h3>
-        <div class="ops-grid" id="reportsOpsGrid">
-            <div style="text-align:center; color:#555; padding:40px;">No incident packets found in security log matrices.</div>
-        </div>
     </div>
 
     <div class="app-view" id="gameVaultView">
@@ -426,7 +430,7 @@
 
     <div class="app-view" id="jobsView">
         <h2 style="text-transform: uppercase; margin: 0 0 5px 0; font-size: 24px;">Career Openings</h2>
-        <p style="font-size:13px; color:#666; margin-bottom:25px;">Apply to help expand Potato Builders processing grids across the sub-continent.</p>
+        <p style="font-size:13px; color:#666; margin-bottom:25px;">Applicants are strictly required to compile profile information details before deployment clearance.</p>
         <div class="ops-grid" id="publicJobsContainer"></div>
     </div>
 
@@ -452,13 +456,16 @@
 
     <div class="modal" id="jobApplyModal">
         <div class="modal-content">
-            <h3 style="text-transform: uppercase; margin-top: 0; color: #1a73e8;" id="jobModalTitle">Apply For Listing</h3>
-            <input type="text" id="jobAppPhone" placeholder="Contact Mobile Core Identifier">
-            <textarea id="jobAppPitch" placeholder="Briefly detail past assembly expertise or hardware diagnostic background..." rows="4"></textarea>
+            <h3 style="text-transform: uppercase; margin-top: 0; color: #1a73e8;" id="jobModalTitle">Employment Profile Compilation</h3>
+            <p style="font-size: 11px; color: #777; margin-bottom: 15px;">Mandatory Framework: Fill out structural identification parameters completely before transmitting packet metadata.</p>
+            <input type="text" id="jobAppFullName" placeholder="Full Legal Identity Name">
+            <input type="text" id="jobAppPhone" placeholder="Mobile / Core Comms Identifier">
+            <input type="text" id="jobAppCity" placeholder="Current Base Location City">
+            <textarea id="jobAppPitch" placeholder="Provide operational portfolio summary details or specific technical engineering background notes..." rows="4"></textarea>
             
             <div style="display: flex; gap: 10px;">
                 <button onclick="closeJobModal()" style="background:#222; color:white; border:1px solid #333; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer; flex:1;">Cancel</button>
-                <button onclick="submitJobApplication()" style="background:#1a73e8; color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer; flex:2;">Transmit Packet</button>
+                <button onclick="submitJobApplication()" style="background:#1a73e8; color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer; flex:2;">Transmit Profile Node</button>
             </div>
         </div>
     </div>
@@ -476,12 +483,10 @@
     </div>
 
     <script>
-        // FIREBASE DEPLOYMENT HARDWARE TARGET LINKS
         const firebaseConfig = {
             databaseURL: "https://potato-builders-default-rtdb.firebaseio.com"
         };
         
-        // Initialize Firebase Compat Pipeline
         let app, database;
         try {
             app = firebase.initializeApp(firebaseConfig);
@@ -490,13 +495,17 @@
             console.error("Matrix Database Initialization Halt:", e);
         }
 
-        // 🔐 STATIC AUTHAUTHORIZED ACCESS HANDLES
+        // 🔐 SECURE STRUCTURAL ACCESS MATRIX POOL
         const localAccounts = {
-            "nafeez": { role: "ceo", name: "Nafeez (El Buitre)" },
+            "nafeez": { role: "owner", name: "Nafeez (Owner / Strategist)" },
             "slith": { role: "ceo", name: "Slith (CEO)" },
-            "nuff": { role: "ceo", name: "Nuff (CEO)" },
-            "admin": { role: "admin", name: "System Administrator" }
+            "nuff": { role: "ceo", name: "Nuff (CEO)" }
         };
+
+        // Inject 10 sequential guest validation accounts directly into local gate
+        for (let i = 1; i <= 10; i++) {
+            localAccounts[`guest${i}`] = { role: "guest", name: `Guest Terminal Node ${i}` };
+        }
 
         let currentActiveUser = null;
         let globalMarketData = {};
@@ -537,26 +546,51 @@
             let u = document.getElementById('authUsername').value.trim().toLowerCase();
             if (!u) return deployNotificationGui("Access Denied. Identity entry block empty.");
 
+            // First check the static access pool
             if (localAccounts[u]) {
                 localStorage.setItem('potato_local_session', u);
-                loginSuccess(u);
-                deployNotificationGui(`Clearance Verified. Welcome back, ${localAccounts[u].name}`, "🚀");
+                loginSuccess(u, localAccounts[u]);
+                deployNotificationGui(`Clearance Verified. Profile: ${localAccounts[u].name}`, "🚀");
+            } else if (database) {
+                // Check dynamic hired database node path
+                database.ref(`marketplace/hired_staff/${u}`).once('value', snapshot => {
+                    if (snapshot.exists()) {
+                        let staffData = snapshot.val();
+                        localStorage.setItem('potato_local_session', u);
+                        loginSuccess(u, { role: "employee", name: `${staffData.name} (Employee)` });
+                        deployNotificationGui(`Employee Clear. Welcome back, ${staffData.name}`, "💼");
+                    } else {
+                        deployNotificationGui("Access Denied. Credentials mismatch.");
+                    }
+                });
             } else {
-                deployNotificationGui("Access Denied. Credentials mismatch.");
+                deployNotificationGui("Access Denied. Target missing.");
             }
         }
 
-        function loginSuccess(sessionHandle) {
-            currentActiveUser = localAccounts[sessionHandle] || { role: "user", name: sessionHandle };
+        function loginSuccess(sessionHandle, accountProfile) {
+            currentActiveUser = accountProfile;
             document.getElementById('authGate').style.display = 'none';
             document.getElementById('terminalUserHandle').innerText = `@${sessionHandle} (${currentActiveUser.role.toUpperCase()})`;
 
-            if (currentActiveUser.role === 'ceo' || currentActiveUser.role === 'admin') {
+            // View configuration matrix locks
+            let isOwner = currentActiveUser.role === 'owner';
+            let isCeo = currentActiveUser.role === 'ceo';
+            let isEmployee = currentActiveUser.role === 'employee';
+
+            if (isOwner || isCeo) {
                 document.querySelectorAll('.admin-only-nav').forEach(el => el.style.display = 'block');
                 document.getElementById('developerGameConsole').style.display = 'block';
             } else {
                 document.querySelectorAll('.admin-only-nav').forEach(el => el.style.display = 'none');
                 document.getElementById('developerGameConsole').style.display = 'none';
+            }
+
+            // Private Workspace Matrix Rule: Team directory completely invisible unless Owner, CEO, or Employee
+            if (isOwner || isCeo || isEmployee) {
+                document.querySelectorAll('.staff-visible-nav').forEach(el => el.style.display = 'block');
+            } else {
+                document.querySelectorAll('.staff-visible-nav').forEach(el => el.style.display = 'none');
             }
 
             initializeRealtimeDataMappers();
@@ -589,13 +623,11 @@
         function initializeRealtimeDataMappers() {
             if (!database) return;
 
-            // 1. Marketplace Stream
             database.ref('marketplace/listings').on('value', snapshot => {
                 globalMarketData = snapshot.val() || {};
                 renderMarketGrid();
             });
 
-            // 2. Client Orders Stream
             database.ref('marketplace/orders').on('value', snapshot => {
                 const orders = snapshot.val() || {};
                 renderOperationsGrid(orders);
@@ -603,16 +635,19 @@
                 checkUserTreasureAllowance(orders);
             });
 
-            // 3. Arcade Vault Stream
             database.ref('marketplace/games').on('value', snapshot => {
                 renderGameVaultGrid(snapshot.val() || {});
             });
 
-            // 4. Job Boards Stream
             database.ref('marketplace/jobs').on('value', snapshot => {
                 const jobs = snapshot.val() || {};
                 renderPublicJobBoard(jobs);
                 renderHrPipeline(jobs);
+            });
+
+            // Sync structural roster engine mapping static entries and live approved employee data blocks
+            database.ref('marketplace/hired_staff').on('value', snapshot => {
+                renderStaffRosterGrid(snapshot.val() || {});
             });
         }
 
@@ -631,7 +666,7 @@
                 if (activeFilterNode !== 'all' && item.category !== activeFilterNode) return;
 
                 let isOwner = item.owner === localStorage.getItem('potato_local_session');
-                let isAdmin = currentActiveUser.role === 'admin' || currentActiveUser.role === 'ceo';
+                let isAdmin = currentActiveUser.role === 'owner' || currentActiveUser.role === 'ceo';
 
                 let card = document.createElement('div');
                 card.className = 'market-card';
@@ -855,7 +890,7 @@
             const title = document.getElementById('treasureTitle');
 
             if (completedCount > 0) {
-                userTreasureBalance = completedCount * 100; // 100 Coins per past verification node
+                userTreasureBalance = completedCount * 100;
                 checkbox.disabled = false;
                 boxContainer.classList.add('unlocked');
                 title.style.color = '#eab308';
@@ -870,7 +905,6 @@
             }
         }
 
-        // 🖥️ STRATEGIC CONFIGURATOR WIZARD ARCHITECTURE
         function syncBudgetInputs(origin) {
             const slider = document.getElementById('wizBudgetSlider');
             const manual = document.getElementById('wizBudgetManual');
@@ -936,7 +970,7 @@
         function calculateFinalWizardPrice() {
             let base = parseInt(document.getElementById('wizBudgetSlider').value);
             if (document.getElementById('useTreasureCheckbox').checked) {
-                base -= (userTreasureBalance * 2); // Double-value conversion modifier applied to coins
+                base -= (userTreasureBalance * 2);
                 if(base < 0) base = 0;
             }
             document.getElementById('wizardInvoiceTotal').innerText = `₹${base.toLocaleString('en-IN')}`;
@@ -968,7 +1002,6 @@
             database.ref('marketplace/orders').push(payload)
                 .then(() => {
                     deployNotificationGui("Build manifest deployed to central assembly grid.", "🚀");
-                    // Reset fields
                     document.getElementById('shipAddress').value = '';
                     document.getElementById('shipCity').value = '';
                     document.getElementById('shipState').value = '';
@@ -978,7 +1011,6 @@
                 });
         }
 
-        // 🕹️ ARCADE VAULT INTERFACE
         function submitGameToVault() {
             let name = document.getElementById('vaultGameName').value.trim();
             let url = document.getElementById('vaultGameUrl').value.trim();
@@ -1032,15 +1064,13 @@
             });
         }
 
-        // 💼 PUBLIC JOB ARCHIVE & LOGS
         function renderPublicJobBoard(jobsBlock) {
             const container = document.getElementById('publicJobsContainer');
             container.innerHTML = '';
             
-            // Hardcoded structural fallback nodes if database contains clear paths
             let baseJobs = {
-                "job_01": { title: "Lead PC Assembly Technician", sector: "Hardware Engineering", compensation: "₹25,000 - ₹35,000 / Month", criteria: "Must know component configuration matrix stack, cable routing architecture, and RX/GTX graphics card validation." },
-                "job_02": { title: "Inventory Pipeline Logistics Associate", sector: "Supply Operations", compensation: "₹18,000 - ₹22,000 / Month", criteria: "Maintains database logging accuracy for inbound parts streams." }
+                "job_01": { title: "Lead PC Assembly Technician", sector: "Hardware Engineering", compensation: "₹25,000 - ₹35,000 / Month", criteria: "Requires component configuration alignment mastery, cable routing, and graphical core testing expertise." },
+                "job_02": { title: "Inventory Pipeline Logistics Associate", sector: "Supply Operations", compensation: "₹18,000 - ₹22,000 / Month", criteria: "Handles structural database logging accuracy for inbound components." }
             };
 
             let merged = { ...baseJobs, ...jobsBlock };
@@ -1054,7 +1084,7 @@
                     <strong style="font-size:16px; color:var(--primary); display:block; margin-bottom:2px;">${j.title}</strong>
                     <div style="font-size:11px; font-weight:bold; text-transform:uppercase; color:#666; margin-bottom:10px;">Sector: ${j.sector} | Remuneration: ${j.compensation}</div>
                     <p style="font-size:13px; margin: 0 0 15px 0; color:#aaa; line-height:1.4;">${j.criteria}</p>
-                    <button onclick="openApplyJobModal('${k}')" style="background:#1a73e8; color:white; border:none; padding:8px 16px; border-radius:6px; font-weight:bold; font-size:12px; cursor:pointer; text-transform:uppercase;">Transmit Application Packet</button>
+                    <button onclick="openApplyJobModal('${k}')" style="background:#1a73e8; color:white; border:none; padding:8px 16px; border-radius:6px; font-weight:bold; font-size:12px; cursor:pointer; text-transform:uppercase;">Compile Profile Application</button>
                 `;
                 container.appendChild(card);
             });
@@ -1062,26 +1092,32 @@
 
         function openApplyJobModal(jobId) {
             activeJobIdApplying = jobId;
+            document.getElementById('jobAppFullName').value = '';
+            document.getElementById('jobAppPhone').value = '';
+            document.getElementById('jobAppCity').value = '';
+            document.getElementById('jobAppPitch').value = '';
             document.getElementById('jobApplyModal').style.display = 'flex';
         }
 
         function submitJobApplication() {
+            let name = document.getElementById('jobAppFullName').value.trim();
             let phone = document.getElementById('jobAppPhone').value.trim();
+            let city = document.getElementById('jobAppCity').value.trim();
             let pitch = document.getElementById('jobAppPitch').value.trim();
-            let handle = localStorage.getItem('potato_local_session');
+            let handle = localStorage.getItem('potato_local_session') || 'anonymous_candidate';
 
-            if (!phone || !pitch) return deployNotificationGui("Please record mobile node and qualifications data stream.");
+            // Profile info requirements check before allowing entry submission
+            if (!name || !phone || !city || !pitch) {
+                return deployNotificationGui("Profile block rejected. All metadata fields must be compiled thoroughly.");
+            }
 
-            database.ref(`marketplace/jobs/${activeJobIdApplying}/applications`).push({ handle, phone, pitch })
+            database.ref(`marketplace/jobs/${activeJobIdApplying}/applications`).push({ handle, name, phone, city, pitch })
                 .then(() => {
-                    deployNotificationGui("Packet cleanly uploaded into live personnel directory framework.", "💼");
-                    document.getElementById('jobAppPhone').value = '';
-                    document.getElementById('jobAppPitch').value = '';
+                    deployNotificationGui("Profile cleanly uploaded into central personnel queue.", "💼");
                     closeJobModal();
                 });
         }
 
-        // 📊 OPERATIONS MANAGEMENT HQ PIPELINE (ADMIN/CEO EXCLUSIVE VIEW)
         function renderOperationsGrid(ordersBlock) {
             const container = document.getElementById('opsGrid');
             container.innerHTML = '';
@@ -1149,12 +1185,16 @@
                     let card = document.createElement('div');
                     card.className = 'ops-order-card';
                     card.innerHTML = `
-                        <strong style="font-size:14px; color:#11998e;">Application Packet: ${j.title}</strong>
+                        <strong style="font-size:14px; color:#11998e;">Profile Application For: ${j.title}</strong>
                         <div style="font-size:12px; color:#aaa; margin:6px 0;">
-                            Applicant Identity: <strong style="color:#fff">@${appNode.handle}</strong> | Direct Core Comm: <strong>${appNode.phone}</strong>
+                            Name: <strong>${appNode.name}</strong> | Handle: <strong>@${appNode.handle}</strong> | Core Comm: <strong>${appNode.phone}</strong> | City: <strong>${appNode.city}</strong>
                         </div>
                         <p style="font-size:13px; background:rgba(0,0,0,0.2); padding:10px; border-radius:6px; color:#eee; margin:0 0 10px 0;">"${appNode.pitch}"</p>
-                        <button onclick="purgeApplicationPacket('${jk}', '${ak}')" style="background:none; border:none; color:#ff4444; font-size:11px; font-weight:bold; cursor:pointer; padding:0;">Purge Candidate Manifest 🗑></button>
+                        
+                        <div style="display:flex; gap:10px;">
+                            <button onclick="approveCandidateHire('${jk}', '${ak}')" style="background:#10b981; color:white; border:none; padding:6px 12px; border-radius:4px; font-size:11px; font-weight:bold; cursor:pointer;">✔️ Approve & Generate Staff Account</button>
+                            <button onclick="purgeApplicationPacket('${jk}', '${ak}')" style="background:none; border:none; color:#ff4444; font-size:11px; font-weight:bold; cursor:pointer;">Purge Candidate 🗑️</button>
+                        </div>
                     `;
                     container.appendChild(card);
                 });
@@ -1165,19 +1205,133 @@
             }
         }
 
+        // Automated Hired Accounts Initialization Path Block
+        function approveCandidateHire(jobKey, appKey) {
+            database.ref(`marketplace/jobs/${jobKey}/applications/${appKey}`).once('value', snapshot => {
+                if(!snapshot.exists()) return;
+                let candidate = snapshot.val();
+                
+                let targetHandle = candidate.handle.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
+                if(targetHandle === 'anonymouscandidate' || !targetHandle) {
+                    targetHandle = "emp_" + Math.floor(1000 + Math.random() * 9000);
+                }
+
+                let staffPayload = {
+                    handle: targetHandle,
+                    name: candidate.name,
+                    phone: candidate.phone,
+                    city: candidate.city,
+                    role: "employee"
+                };
+
+                // Inject approved employee handle directly into central dynamic database node path
+                database.ref(`marketplace/hired_staff/${targetHandle}`).set(staffPayload)
+                    .then(() => {
+                        database.ref(`marketplace/jobs/${jobKey}/applications/${appKey}`).remove();
+                        deployNotificationGui(`Staff Account Generated for @${targetHandle}! Account active.`, "🚀");
+                    });
+            });
+        }
+
         function purgeApplicationPacket(jobKey, appKey) {
-            if(confirm(" Irreversibly delete applicant packet tracking vector?")) {
+            if(confirm("Irreversibly delete applicant packet tracking vector?")) {
                 database.ref(`marketplace/jobs/${jobKey}/applications/${appKey}`).remove()
                     .then(() => deployNotificationGui("Candidate node purged from matrix successfully.", "🗑️"));
             }
         }
 
-        // 💬 CHANNELSECURE DIRECT COMMUNICATION REALTIME ENGINE
+        // 👥 SECURED ROSTER DISPLAY CONTROLLER 
+        function renderStaffRosterGrid(dynamicHiredStaff) {
+            const container = document.getElementById('staffRosterGrid');
+            container.innerHTML = '';
+
+            // Render Static Executive Framework Array Configurations
+            Object.keys(localAccounts).forEach(k => {
+                let user = localAccounts[k];
+                if(user.role === 'guest') return; // Skip guest accounts in internal roster visibility
+
+                let card = document.createElement('div');
+                card.className = 'ops-order-card';
+                card.style.borderLeft = user.role === 'owner' ? '4px solid #ffaa00' : '4px solid #00a2ff';
+                card.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <strong style="font-size:15px; color:#fff;">${user.name}</strong>
+                            <div style="font-size:12px; color:#888;">Handle Identifier: <span style="color:var(--primary)">@${k}</span> | Class: <strong>${user.role.toUpperCase()}</strong></div>
+                        </div>
+                        <span style="font-size:11px; background:rgba(255,255,255,0.05); padding:4px 8px; border-radius:4px; font-weight:bold; color:#aaa;">System Anchor Node</span>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            // Merge and Render Dynamic Approved Employee Roster Blocks
+            Object.keys(dynamicHiredStaff).forEach(k => {
+                let staff = dynamicHiredStaff[k];
+                let card = document.createElement('div');
+                card.className = 'ops-order-card';
+                card.style.borderLeft = '4px solid #10b981';
+                
+                card.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <strong style="font-size:15px; color:#fff;">${staff.name}</strong>
+                            <div style="font-size:12px; color:#aaa;">
+                                Handle: <span style="color:#10b981">@${k}</span> | Comms: <strong>${staff.phone}</strong> | City: <strong>${staff.city}</strong>
+                            </div>
+                        </div>
+                        <div>
+                            <button onclick="kickRosterMember('${k}')" style="background:rgba(255,68,68,0.15); border:1px solid #ff4444; color:#ff4444; padding:6px 12px; border-radius:4px; font-size:11px; font-weight:bold; cursor:pointer;">Purge Clearance ❌</button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // 🛡️ CRITICAL SECURITY PROTECTION MATRIX RULES
+        function kickRosterMember(targetHandle) {
+            let activeSession = localStorage.getItem('potato_local_session');
+            if (!activeSession) return;
+
+            // Rule 1: Static Hardcoded Local Target Shield Verification
+            if (localAccounts[targetHandle]) {
+                // Owner is god-tier: can kick even CEOs if they are dynamically updated, but standard script configuration checks:
+                if (activeSession !== 'nafeez') {
+                    return deployNotificationGui("Access Denied. CEOs are physically un-kickable by normal commands.", "🛑");
+                }
+            }
+
+            // Rule 2: Execute Evaluated Permissions Matrix Checks
+            if (activeSession === 'nafeez') {
+                // Owner has full access to kick absolutely anyone
+                if (confirm(`Irreversibly revoke system authorization and kick employee node @${targetHandle}?`)) {
+                    database.ref(`marketplace/hired_staff/${targetHandle}`).remove()
+                        .then(() => deployNotificationGui(`Handle clearance @${targetHandle} completely purged by Owner.`, "🗑️"));
+                }
+            } else if (localAccounts[activeSession] && localAccounts[activeSession].role === 'ceo') {
+                // CEO execution loop protection barrier checks
+                if (targetHandle === 'nafeez') {
+                    return deployNotificationGui("Access Denied. Hierarchy Lockout: CEOs cannot kick the Owner.", "🛑");
+                }
+                if (localAccounts[targetHandle] && localAccounts[targetHandle].role === 'ceo') {
+                    return deployNotificationGui("Access Denied. Hierarchy Lockout: CEOs cannot kick other CEOs.", "🛑");
+                }
+
+                // Execute action on regular employee blocks
+                if (confirm(`Irreversibly revoke clearance and kick employee node @${targetHandle}?`)) {
+                    database.ref(`marketplace/hired_staff/${targetHandle}`).remove()
+                        .then(() => deployNotificationGui(`Handle clearance @${targetHandle} completely purged by CEO.`, "🗑️"));
+                }
+            } else {
+                deployNotificationGui("Security Volatility Warning: Unauthorized deletion request dropped.", "🛑");
+            }
+        }
+
         function openDirectMessage(sellerHandle, itemKey) {
             let buyerHandle = localStorage.getItem('potato_local_session');
             if (buyerHandle === sellerHandle) return;
 
-            // Generate deterministic matrix channel key string mapping both users
             activeDMChannelId = [buyerHandle, sellerHandle].sort().join('_ch_');
             document.getElementById('dmTargetTitle').innerText = `🔒 Secure Link: @${sellerHandle}`;
             document.getElementById('dmBox').style.display = 'flex';
@@ -1220,27 +1374,19 @@
 
         window.onload = function() {
             let session = localStorage.getItem('potato_local_session');
-            if (!session) return; // No saved session, keep them at the login gate
+            if (!session) return;
 
-            // 1. If it's a hardcoded local account (like nafeez or admin lists), log them straight in
-            if (typeof localAccounts !== 'undefined' && localAccounts[session]) {
-                loginSuccess(session);
+            if (localAccounts[session]) {
+                loginSuccess(session, localAccounts[session]);
                 return;
             }
 
-            // 2. If it's 'guest' and you are using open guest bypass
-            if (session === 'guest') {
-                loginSuccess('guest');
-                return;
-            }
-
-            // 3. Otherwise, check if they exist in the live Firebase dynamic roster database
             if (typeof database !== 'undefined') {
-                database.ref(`marketplace/users/${session}`).once('value', snapshot => {
+                database.ref(`marketplace/hired_staff/${session}`).once('value', snapshot => {
                     if (snapshot.exists()) {
-                        loginSuccess(session);
+                        let staffData = snapshot.val();
+                        loginSuccess(session, { role: "employee", name: `${staffData.name} (Employee)` });
                     } else {
-                        // Handle no longer valid (e.g., deleted from DB), clear the stale session
                         localStorage.removeItem('potato_local_session');
                     }
                 }).catch(error => {
