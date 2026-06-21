@@ -2,50 +2,838 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="google-site-verification" content="kxN6PFyFMD2O4fn_ktqGmQGFkKjtf206DfUuvJXOYv0" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Coming Soon</title>
+    <title>DamnBuilders Official Portal</title>
+   
+    <link rel="manifest" href="manifest.json">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    
+    <!-- Google reCAPTCHA Enterprise Library Layer -->
+    <script src="https://www.google.com/recaptcha/enterprise.js?render=6LcAVCotAAAAAPtUw0X7fwbiaMOz68bew5HlRtpT"></script>
+
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        :root { 
+            --primary: #4169E1; /* Royal Blue */
+            --primary-hover: #3158cd;
+            --bg: #0a0d14; /* Deep Premium Navy Night */
+            --card: #121824; /* Dark Sapphire Card */
+            --text: #f1f5f9; 
+            --text-muted: #94a3b8;
+            --border: #1e293b; 
+            --radius: 12px;
+            --font: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body { 
+            font-family: var(--font); 
+            background: var(--bg); 
+            color: var(--text); 
+            margin: 0; 
+            overflow-x: hidden; 
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .dm-input-area input { margin: 0; border: none; border-radius: 0; background: #1e293b; color: #fff; }
+        .dm-input-area button { background: var(--primary); border: none; color: white; padding: 8px; }
+
+        .gui-alert-container {
+            position: fixed;
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #121824;
+            color: var(--text);
+            padding: 14px 24px;
+            border-radius: 8px;
+            border: 1px solid var(--primary);
+            box-shadow: 0 10px 30px rgba(65, 105, 225, 0.2);
+            font-size: 14px;
+            font-weight: 600;
             display: flex;
-            justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f4f7f6;
-            color: #333;
-            text-align: center;
+            gap: 12px;
+            z-index: 999999;
+            transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .container {
-            padding: 40px;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        .gui-alert-container.show {
+            top: 25px;
         }
-        h1 { color: #2c3e50; }
-        p { font-size: 1.2rem; color: #7f8c8d; }
+
+        /* Pre-entry Security Verification Gate */
+        .security-gate {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #0a0d14;
+            z-index: 100000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font);
+        }
         .spinner {
-            margin: 20px auto;
             width: 40px;
             height: 40px;
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #3498db;
+            border: 4px solid rgba(65, 105, 225, 0.1);
+            border-top: 4px solid var(--primary);
             border-radius: 50%;
             animation: spin 1s linear infinite;
+            margin-bottom: 20px;
         }
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        /* Professional Login System View */
+        .auth-gate { 
+            position: fixed; 
+            top:0; 
+            left:0; 
+            width:100%; 
+            height:100%; 
+            background: radial-gradient(circle at top right, #132247 0%, #0a0d14 100%); 
+            z-index: 9999; 
+            display: none; /* Controlled via script initialization steps */
+            align-items: center; 
+            justify-content: center; 
+        }
+        .auth-card { 
+            background: var(--card); 
+            padding: 40px 32px; 
+            border-radius: 16px; 
+            border: 1px solid var(--border); 
+            width: 100%; 
+            max-width: 400px; 
+            box-sizing: border-box;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+        .auth-logo-badge {
+            width: 44px;
+            height: 44px;
+            background: var(--primary);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 18px;
+            font-weight: 800;
+            margin: 0 auto 20px auto;
+            box-shadow: 0 4px 14px rgba(65, 105, 225, 0.4);
+        }
+        .auth-toggle-link { 
+            color: var(--primary); 
+            font-size: 13px; 
+            text-decoration: none; 
+            cursor: pointer; 
+            display: inline-block; 
+            margin-top: 20px; 
+            font-weight: 600; 
+            transition: color 0.2s;
+        }
+        .auth-toggle-link:hover {
+            color: var(--primary-hover);
+        }
+
+        /* Main Application Frame */
+        .header { 
+            position: fixed; 
+            top: 0; 
+            width: 100%; 
+            height: 64px; 
+            background: rgba(18, 24, 36, 0.85); 
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            padding: 0 24px; 
+            z-index: 1000; 
+            border-bottom: 1px solid var(--border); 
+            box-sizing: border-box; 
+        }
+        .cart-trigger { 
+            cursor: pointer; 
+            position: relative; 
+            font-weight: 600; 
+            color: var(--text); 
+            background: #1e293b;
+            padding: 8px 16px; 
+            border-radius: 8px;
+            font-size: 13px;
+            border: 1px solid var(--border);
+            transition: all 0.2s;
+        }
+        .cart-trigger:hover {
+            background: #273549;
+        }
+        .cart-count { 
+            position: absolute; 
+            top: -6px; 
+            right: -6px; 
+            background: var(--primary); 
+            color: white; 
+            font-size: 10px; 
+            padding: 2px 6px; 
+            border-radius: 10px; 
+            font-weight: bold; 
+        }
+
+        .app-view { display: none; max-width: 1000px; margin: 100px auto 40px auto; padding: 0 24px; box-sizing: border-box; }
+        .app-view.active { display: block; }
+
+        .sidebar { 
+            position: fixed; 
+            top: 0; 
+            left: -300px; 
+            width: 280px; 
+            height: 100%; 
+            background: var(--card); 
+            border-right: 1px solid var(--border); 
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            z-index: 2000; 
+            padding: 80px 20px 20px 20px; 
+            overflow-y: auto; 
+            box-sizing: border-box; 
+            visibility: hidden; 
+        }
+        .sidebar.active { left: 0; visibility: visible; }
+        
+        .sidebar-section-title { 
+            font-size: 11px; 
+            color: var(--text-muted); 
+            font-weight: 700; 
+            text-transform: uppercase; 
+            margin: 24px 0 12px 0; 
+            padding-bottom: 6px; 
+            letter-spacing: 0.5px; 
+        }
+
+        .nav-item { 
+            padding: 10px 14px; 
+            cursor: pointer; 
+            font-weight: 500; 
+            font-size: 14px; 
+            border-radius: 8px; 
+            transition: all 0.2s; 
+            margin-bottom: 4px; 
+            color: var(--text-muted);
+        }
+        .nav-item:hover { 
+            color: var(--text); 
+            background: rgba(255, 255, 255, 0.04); 
+        }
+        .nav-item.active-nav {
+            color: #fff;
+            background: var(--primary);
+        }
+        .nav-item.active-nav:hover {
+            background: var(--primary-hover);
+        }
+        
+        .admin-only-nav { display: none; color: #38bdf8; }
+        .official-only-nav { display: none; color: #fbbf24; font-weight: 600; }
+        .logout-nav-item { color: #f87171 !important; margin-top: 30px; border-top: 1px solid var(--border); padding-top: 20px; }
+
+        .cart-panel, .ai-support-panel { 
+            position: fixed; 
+            top: 0; 
+            width: 340px; 
+            height: 100%; 
+            background: var(--card); 
+            border-left: 1px solid var(--border); 
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            z-index: 2000; 
+            padding: 80px 24px 24px 24px; 
+            box-sizing: border-box; 
+            display: flex; 
+            flex-direction: column; 
+            visibility: hidden; 
+        }
+        .cart-panel { right: -360px; }
+        .cart-panel.active { right: 0; visibility: visible; }
+        
+        .ai-support-panel { right: -360px; }
+        .ai-support-panel.active { right: 0; visibility: visible; }
+
+        .drawer-header-title { font-size: 16px; font-weight: 700; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+        .drawer-content-stream { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding-right: 4px; }
+        
+        .ai-msg { padding: 12px 16px; border-radius: 12px; font-size: 13.5px; line-height: 1.5; max-width: 85%; word-wrap: break-word; }
+        .ai-msg.user { background: var(--primary); color: #fff; align-self: flex-end; border-bottom-right-radius: 2px; }
+        .ai-msg.agent { background: #1e293b; color: var(--text); align-self: flex-start; border-bottom-left-radius: 2px; border: 1px solid var(--border); }
+
+        .drawer-input-footer { border-top: 1px solid var(--border); padding-top: 16px; margin-top: 16px; display: flex; gap: 8px; }
+        .drawer-input-footer input { margin-bottom: 0; flex: 1; padding: 10px 14px; }
+        .drawer-send-btn { background: var(--primary); border: none; color: white; padding: 0 16px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 13px; transition: background 0.2s; }
+        .drawer-send-btn:hover { background: var(--primary-hover); }
+
+        .omnifix-btn { background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 14px; transition: background 0.2s; }
+        .omnifix-btn:hover { background: var(--primary-hover); }
+        
+        .owner-container { padding: 12px 0; }
+        .owner-subtext { font-size: 12px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; font-weight: 700; letter-spacing: 0.5px; }
+        .owner-status-text { font-size: 13px; color: var(--primary); margin-left: 8px; font-weight: 500; }
+
+        input, select, textarea { 
+            width: 100%; 
+            padding: 12px 16px; 
+            background: #1e293b; 
+            border: 1px solid var(--border); 
+            color: var(--text); 
+            border-radius: 8px; 
+            margin-bottom: 16px; 
+            box-sizing: border-box; 
+            font-size: 14px; 
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* Listing Grid Elements */
+        .listing-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; position: relative; display: flex; flex-direction: column; justify-content: space-between; }
+        .badge { position: absolute; top: 16px; right: 16px; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; }
+        .badge.used { background: rgba(230, 126, 34, 0.15); color: #e67e22; }
+        .badge.official { background: rgba(65, 105, 225, 0.15); color: #6182ef; }
+        
+        .insta-btn { background: #e1306c; color: white !important; border: none; padding: 12px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 13px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; margin-top: 10px; width: 100%; box-sizing: border-box; transition: opacity 0.2s; }
+        .insta-btn:hover { opacity: 0.9; }
     </style>
 </head>
 <body>
-
-    <div class="container">
-        <h1>We're working on it!</h1>
+    <!-- 1. Enforced Captcha Validation Screen Box Component -->
+    <div class="security-gate" id="securityInitialGate">
         <div class="spinner"></div>
-        <p>Our site is currently undergoing updates.<br>Please check back in about a week.</p>
+        <div style="font-weight: 600; font-size: 15px; color: var(--text);">Evaluating Client Authenticity Parameters</div>
+        <div style="font-size: 13px; color: var(--text-muted); margin-top: 6px;">Running automated reCAPTCHA safety assessment...</div>
     </div>
 
+    <div id="terminalAlertGui" class="gui-alert-container">
+        <span id="guiAlertMessage">Initialising system architecture...</span>
+    </div>
+
+    <!-- 2. Secure Enterprise Portal Sign In Form Container Layer -->
+    <div class="auth-gate" id="authGate">
+        <div class="auth-card" id="loginFormContainer">
+            <div class="auth-logo-badge">DB</div>
+            <h2 id="authTitle" style="margin: 0 0 6px 0; font-size: 22px; font-weight: 700; text-align: center;">Account Login</h2>
+            <p id="authSubtitle" style="font-size: 13px; color: var(--text-muted); margin: 0 0 28px 0; text-align: center;">Authenticate profile link parameters to continue.</p>
+            
+            <label style="font-size: 12px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Email Address</label>
+            <input type="email" id="authEmail" placeholder="name@domain.com">
+            
+            <label style="font-size: 12px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Password</label>
+            <input type="password" id="authPassword" placeholder="••••••••">
+            
+            <button id="authPrimaryBtn" onclick="executeEmailAuth()" style="background:var(--primary); color:white; border:none; padding:14px; width:100%; border-radius:8px; font-weight:600; cursor:pointer; font-size: 15px; margin-top: 8px; transition: background 0.2s;">Sign In to Console</button>
+            
+            <div style="text-align: center;">
+                <span class="auth-toggle-link" id="authStateToggle" onclick="toggleAuthState()">Need an account? Register credentials</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="header">
+        <div onclick="toggleSidebar()" style="cursor:pointer; font-size: 14px; font-weight: 600; padding: 8px 16px; background: #1e293b; border-radius: 8px; border: 1px solid var(--border);">Menu</div>
+        <div style="display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 16px;">
+            <div style="width: 28px; height: 28px; background: var(--primary); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 13px; font-weight: bold;">DB</div>
+            <span>DamnBuilders <span style="color:var(--primary)">Official</span></span>
+        </div>
+        <div style="display:flex; gap:16px; align-items:center;">
+            <div id="terminalUserHandle" style="font-size:13px; color:var(--text-muted); max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Loading...</div>
+            <div class="cart-trigger" onclick="toggleCart()">Cart <span class="cart-count" id="cartCount">0</span></div>
+        </div>
+    </div>
+
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-section-title">Navigation</div>
+        <div class="nav-item active-nav" id="nav-marketView" onclick="switchTab('marketView')">Browse Marketplace</div>
+        <div class="nav-item" id="nav-p2pSellView" onclick="switchTab('p2pSellView')">Submit Used Asset</div>
+        <div class="nav-item" id="nav-ownerProfileView" onclick="switchTab('ownerProfileView')">Profile Dossier</div>
+        <div class="nav-item" id="nav-gameVaultView" onclick="switchTab('gameVaultView')">Arcade Vault</div>
+        
+        <div class="sidebar-section-title">External Access</div>
+        <a href="https://www.instagram.com/damnbuilders_official?igsh=Z2hiZGVjbnpmMXQ1" target="_blank" class="nav-item" style="color: #e1306c; text-decoration: none; display: block;">Official Instagram</a>
+
+        <div class="sidebar-section-title official-only-nav" id="officialSectionTitle">Publisher Controls</div>
+        <div class="nav-item official-only-nav" id="officialPublishLink" onclick="switchTab('officialPublishView')">Management Core</div>
+        <div class="nav-item admin-only-nav" id="adminSidebarLink" onclick="switchTab('opsView')">Live Order Stream</div>
+        
+        <div class="nav-item" onclick="toggleAiSupport()" style="color: #38bdf8; margin-top: 10px; background: rgba(56, 189, 248, 0.05);">AI Engineering Assistant</div>
+
+        <div class="nav-item logout-nav-item" onclick="logoutTerminal()">Disconnect Session</div>
+    </div>
+
+    <div class="cart-panel" id="cartPanel">
+        <div class="drawer-header-title">
+            <span>Selected Assets</span>
+            <span style="cursor:pointer; color:var(--text-muted);" onclick="toggleCart()">Close</span>
+        </div>
+        <div class="drawer-content-stream" id="cartItemsContainer"></div>
+    </div>
+
+    <div class="ai-support-panel" id="aiSupportPanel">
+        <div class="drawer-header-title">
+            <span>AI Assistant Interface</span>
+            <span style="cursor:pointer; color:var(--text-muted);" onclick="toggleAiSupport()">Close</span>
+        </div>
+        <div class="drawer-content-stream" id="aiChatStream">
+            <div class="ai-msg agent">System connection successful. Cloud environment records fully loaded. Ready to perform codebase testing adjustments, layout reviews, or core logic diagnostics.</div>
+        </div>
+        <div class="drawer-input-footer">
+            <input type="text" id="aiSupportInput" placeholder="Enter service request..." onkeydown="if(event.key === 'Enter') sendAiMessage()">
+            <button class="drawer-send-btn" onclick="sendAiMessage()">Execute</button>
+        </div>
+    </div>
+
+    <div class="app-view active" id="marketView">
+        <h2 style="margin: 0 0 6px 0; font-size: 24px; font-weight: 700;">Marketplace Stream</h2>
+        <p style="color:var(--text-muted); font-size:14px; margin: 0 0 24px 0;">Authorised brand releases alongside peer-reviewed systems configurations.</p>
+        <div id="marketplaceProductsDisplay" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px;">
+        </div>
+    </div>
+
+    <div class="app-view" id="p2pSellView">
+        <h2 style="margin: 0 0 6px 0; font-size: 24px; font-weight: 700;">List Used Product</h2>
+        <p style="color:var(--text-muted); font-size:14px; margin: 0 0 24px 0;">Peer submissions are systematically verified for strict hardware operational performance metrics.</p>
+        
+        <div style="max-width: 500px; background: var(--card); padding: 32px; border-radius: var(--radius); border: 1px solid var(--border);">
+            <label style="font-size: 13px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Product Specifications Title</label>
+            <input type="text" id="p2pProdName" placeholder="e.g., Used Intel i7-4790K Node">
+            
+            <label style="font-size: 13px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Asset Evaluation Valuation ($)</label>
+            <input type="number" id="p2pProdPrice" placeholder="Value Amount">
+
+            <label style="font-size: 13px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Enforced Condition Tier Flag</label>
+            <input type="text" value="USED HARDWARE ASSET" disabled style="opacity: 0.5; background: #0a0d14;">
+            
+            <button class="omnifix-btn" onclick="submitPeerUsedListing()" style="width: 100%;">Commit Asset Submission</button>
+        </div>
+    </div>
+
+    <div class="app-view" id="officialPublishView">
+        <h2 style="margin: 0 0 6px 0; font-size: 24px; font-weight: 700; color: #fbbf24;">Publisher Control Center</h2>
+        <p style="color:var(--text-muted); font-size:14px; margin: 0 0 24px 0;">Privileged administrative environment built to manipulate arcade engine pipelines.</p>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;">
+            <div style="background: var(--card); padding: 28px; border-radius: var(--radius); border: 1px solid var(--border);">
+                <h3 style="margin: 0 0 16px 0; font-size: 16px; color: #fbbf24;">Inject Arcade Module</h3>
+                <input type="text" id="gameTitleInput" placeholder="Engine Instance Name">
+                <textarea id="gameMetaInput" placeholder="System Configuration Matrix Parameters (JSON)" rows="4"></textarea>
+                <button class="omnifix-btn" onclick="publishOfficialGame()" style="background: #fbbf24; color: #000; width: 100%;">Deploy to Vault</button>
+            </div>
+            
+            <div style="background: var(--card); padding: 28px; border-radius: var(--radius); border: 1px solid var(--border);">
+                <h3 style="margin: 0 0 16px 0; font-size: 16px; color: #fbbf24;">Launch Brand Product</h3>
+                <input type="text" id="offProdName" placeholder="Product Asset Model">
+                <input type="number" id="offProdPrice" placeholder="Wholesale Value Profile">
+                <button class="omnifix-btn" onclick="publishOfficialProduct()" style="background: #fbbf24; color: #000; width: 100%;">Authorize Release</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="app-view" id="gameVaultView">
+        <h2 style="margin: 0 0 6px 0; font-size: 24px; font-weight: 700;">Arcade Module Vault</h2>
+        <p style="color:var(--text-muted); font-size:14px; margin: 0 0 24px 0;">Direct access ports to stable sandbox application runtime packages.</p>
+        <div id="vaultGamesDisplay" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">
+        </div>
+    </div>
+
+    <div class="app-view" id="ownerProfileView">
+        <div class="owner-container">
+            <h2 style="margin: 0 0 4px 0; font-size: 24px; font-weight: 700;">
+                Mohamed Nafeez <span id="profileNodeStatus" class="owner-status-text">(Verifying Verification...)</span>
+            </h2>
+            <p style="color: var(--text-muted); font-size: 13px; margin: 0 0 28px 0; text-transform: uppercase; letter-spacing: 0.5px;">System Security Lead Registry</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 20px; max-width: 400px; background: var(--card); padding: 24px; border-radius: var(--radius); border: 1px solid var(--border);">
+                <div>
+                    <span class="owner-subtext">Age Node Metric</span>
+                    <span style="font-size: 18px; font-weight: 700;" id="profileAgeDisplay">15</span>
+                </div>
+                <div>
+                    <span class="owner-subtext">Core Framework Status Log</span>
+                    <span style="font-size: 14px; color: var(--text-muted);" id="profileTimeGateStatus">Parsing cloud clock configurations...</span>
+                </div>
+                <div>
+                    <span class="owner-subtext">Operational Portal Link</span>
+                    <a href="https://www.instagram.com/damnbuilders_official?igsh=Z2hiZGVjbnpmMXQ1" target="_blank" class="insta-btn">
+                        Open Instagram Link
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="app-view" id="opsView"><h2 style="font-size: 22px; font-weight: 700;">Order Core Logs Stream</h2></div>
+
+    <script>
+        let isSignUpState = false;
+        let currentUserSessionEmail = "";
+
+        let mockDatabase = {
+            products: [
+                { id: 1, title: "Official Dev Suite Asset Pack", price: 45, type: "official", condition: "NEW" },
+                { id: 2, title: "Used Intel i7-4790K Processor Node", price: 75, type: "peer", condition: "USED" }
+            ],
+            games: [
+                { id: 1, title: "Bermuda Mutation Simulator", description: "Alpha engine instance compilation" }
+            ]
+        };
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAIFblCANTOf6cS_wrY3LHzQvx7pdOIVaM",
+            authDomain: "nigbwns.firebaseapp.com",
+            databaseURL: "https://nigbwns-default-rtdb.firebaseio.com",
+            projectId: "nigbwns",
+            storageBucket: "nigbwns.firebasestorage.app",
+            messagingSenderId: "192952183208",
+            appId: "1:192952183208:web:3b019658f67770a909d59d"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+
+        // SYSTEM LAUNCH SEQUENCE STARTPOINT
+        function runInitialPreflightChecks() {
+            grecaptcha.enterprise.ready(async () => {
+                try {
+                    // Trigger assessment token mapping automatically at page bootup
+                    const token = await grecaptcha.enterprise.execute('6LcAVCotAAAAAPtUw0X7fwbiaMOz68bew5HlRtpT', { action: 'PORTAL_ACCESS' });
+                    
+                    const assessmentPayload = {
+                        "event": {
+                            "token": token,
+                            "expectedAction": "PORTAL_ACCESS",
+                            "siteKey": "6LcAVCotAAAAAPtUw0X7fwbiaMOz68bew5HlRtpT"
+                        }
+                    };
+
+                    const API_KEY = "AIzaSyAhnYH_rj7VkdcshB_g3QO2LU9KUmwGtHk"; 
+                    const targetEndpoint = `https://recaptchaenterprise.googleapis.com/v1/projects/nigbwns/assessments?key=${API_KEY}`;
+
+                    const response = await fetch(targetEndpoint, {
+                        method: "POST",
+                        mode: "cors",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(assessmentPayload)
+                    });
+
+                    const resultData = await response.json();
+
+                    // Drop gate block element if verified safely
+                    if (resultData.tokenProperties && resultData.tokenProperties.valid === true && (!resultData.riskAnalysis || resultData.riskAnalysis.score >= 0.3)) {
+                        document.getElementById('securityInitialGate').style.display = 'none';
+                        initSessionWatch();
+                    } else {
+                        document.getElementById('securityInitialGate').innerHTML = `
+                            <div style="color: #f87171; font-weight:700; font-size:18px;">Security Boundary Violation</div>
+                            <div style="color: var(--text-muted); font-size:13px; margin-top:4px;">Automated device parameters failed reCAPTCHA verification. Access blocked.</div>
+                        `;
+                    }
+                } catch (err) {
+                    console.error("Initial Captcha verification fault:", err);
+                    // Fallback to let system continue if API execution times out during load states
+                    document.getElementById('securityInitialGate').style.display = 'none';
+                    initSessionWatch();
+                }
+            });
+        }
+
+        function initSessionWatch() {
+            firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+                .then(() => {
+                    firebase.auth().onAuthStateChanged((user) => {
+                        if (user) {
+                            currentUserSessionEmail = user.email;
+                            handleSuccessfulLogin(user.email);
+                            syncProfileToServer();
+                        } else {
+                            handleRequiredLogin();
+                        }
+                    });
+                })
+                .catch(err => console.error("Session persistence error: ", err));
+                
+            renderMarketplace();
+            renderGameVault();
+        }
+
+        function handleSuccessfulLogin(emailText) {
+            document.getElementById('authGate').style.display = 'none';
+            document.getElementById('terminalUserHandle').innerText = emailText;
+            document.getElementById('adminSidebarLink').style.display = 'block';
+            
+            if (emailText.toLowerCase() === "damnbuilders_official" || emailText.toLowerCase() === "official@damnbuilders.com" || emailText.toLowerCase() === "nz") {
+                document.getElementById('officialSectionTitle').style.display = 'block';
+                document.getElementById('officialPublishLink').style.display = 'block';
+                deployNotificationGui("System Publisher dashboard instance loaded successfully.");
+            } else {
+                document.getElementById('officialSectionTitle').style.display = 'none';
+                document.getElementById('officialPublishLink').style.display = 'none';
+                deployNotificationGui("Authentication access verified.");
+            }
+            computeNodeIdentityLifecycle();
+        }
+
+        function handleRequiredLogin() {
+            document.getElementById('authGate').style.display = 'flex';
+            document.getElementById('terminalUserHandle').innerText = "Not Connected";
+            document.getElementById('adminSidebarLink').style.display = 'none';
+            document.getElementById('officialSectionTitle').style.display = 'none';
+            document.getElementById('officialPublishLink').style.display = 'none';
+        }
+
+        function renderMarketplace() {
+            const display = document.getElementById('marketplaceProductsDisplay');
+            display.innerHTML = "";
+            mockDatabase.products.forEach(p => {
+                const card = document.createElement('div');
+                card.className = "listing-card";
+                
+                const badgeClass = p.type === 'official' ? 'official' : 'used';
+                const badgeText = p.type === 'official' ? 'Brand New' : 'Verified Used';
+                
+                card.innerHTML = `
+                    <span class="badge ${badgeClass}">${badgeText}</span>
+                    <h3 style="margin: 24px 0 8px 0; font-size: 16px; font-weight: 600;">${p.title}</h3>
+                    <p style="font-weight: 700; color: var(--primary); margin: 0 0 16px 0;">$${p.price}</p>
+                    <button class="omnifix-btn" style="width:100%; padding: 10px; font-size:13px;" onclick="deployNotificationGui('Asset added to queue processing queue.')">Order Module</button>
+                `;
+                display.appendChild(card);
+            });
+        }
+
+        function renderGameVault() {
+            const display = document.getElementById('vaultGamesDisplay');
+            display.innerHTML = "";
+            mockDatabase.games.forEach(g => {
+                const card = document.createElement('div');
+                card.className = "listing-card";
+                card.innerHTML = `
+                    <h3 style="margin: 0 0 8px 0; font-size: 16px; font-weight:600; color: #fbbf24;">${g.title}</h3>
+                    <p style="font-size: 13px; color: var(--text-muted); margin: 0 0 20px 0; line-height:1.4;">${g.description}</p>
+                    <button class="omnifix-btn" style="width:100%; padding: 10px; font-size:13px; background:#fbbf24; color:#000;" onclick="deployNotificationGui('Booting arcade module sandbox...')">Launch Sandbox</button>
+                `;
+                display.appendChild(card);
+            });
+        }
+
+        function submitPeerUsedListing() {
+            const name = document.getElementById('p2pProdName').value.trim();
+            const price = document.getElementById('p2pProdPrice').value;
+            if(!name || !price) { deployNotificationGui("Configuration entries invalid."); return; }
+            
+            mockDatabase.products.push({
+                id: mockDatabase.products.length + 1,
+                title: name,
+                price: parseInt(price),
+                type: "peer",
+                condition: "USED"
+            });
+            
+            document.getElementById('p2pProdName').value = "";
+            document.getElementById('p2pProdPrice').value = "";
+            deployNotificationGui("Used asset safely logged to stream.");
+            renderMarketplace();
+            switchTab('marketView');
+        }
+
+        function publishOfficialGame() {
+            const title = document.getElementById('gameTitleInput').value.trim();
+            const desc = document.getElementById('gameMetaInput').value.trim();
+            if(!title) return;
+
+            mockDatabase.games.push({
+                id: mockDatabase.games.length + 1,
+                title: title,
+                description: desc || "No parameters specified."
+            });
+
+            document.getElementById('gameTitleInput').value = "";
+            document.getElementById('gameMetaInput').value = "";
+            deployNotificationGui("Module deployed to environment.");
+            renderGameVault();
+            switchTab('gameVaultView');
+        }
+
+        function publishOfficialProduct() {
+            const name = document.getElementById('offProdName').value.trim();
+            const price = document.getElementById('offProdPrice').value;
+            if(!name || !price) return;
+
+            mockDatabase.products.push({
+                id: mockDatabase.products.length + 1,
+                title: name,
+                price: parseInt(price),
+                type: "official",
+                condition: "NEW"
+            });
+
+            document.getElementById('offProdName').value = "";
+            document.getElementById('offProdPrice').value = "";
+            deployNotificationGui("New retail catalog item synchronized.");
+            renderMarketplace();
+            switchTab('marketView');
+        }
+
+        function computeNodeIdentityLifecycle() {
+            const ageDisplay = document.getElementById('profileAgeDisplay');
+            const timeGateStatus = document.getElementById('profileTimeGateStatus');
+            const nodeStatus = document.getElementById('profileNodeStatus');
+
+            const gateTimestamp = Date.UTC(2026, 5, 18, 0, 0, 0); 
+            const currentTimestamp = Date.now();
+
+            if (currentTimestamp >= gateTimestamp) {
+                ageDisplay.innerText = "16";
+                timeGateStatus.innerText = "AUTO_SYNCED // LEVEL_16_CONFIRMED";
+                nodeStatus.innerText = "(Verified System Lead)";
+            } else {
+                ageDisplay.innerText = "15";
+                timeGateStatus.innerText = "PENDING // VALIDATING_TEMPORAL_MARK";
+                nodeStatus.innerText = "(Active Access Node)";
+            }
+        }
+
+        function syncProfileToServer() {
+            const user = firebase.auth().currentUser;
+            if (user) {
+                const targetAge = document.getElementById('profileAgeDisplay').innerText;
+                const profilePayload = {
+                    name: "Mohamed Nafeez",
+                    calculatedAge: targetAge,
+                    clientSyncTime: new Date().toISOString()
+                };
+                firebase.database().ref('users/' + user.uid + '/about_owner').set(profilePayload)
+                    .catch(err => console.error("Sync payload execution error: " + err.message));
+            }
+        }
+
+        function toggleAuthState() {
+            isSignUpState = !isSignUpState;
+            const title = document.getElementById('authTitle'), subtitle = document.getElementById('authSubtitle');
+            const button = document.getElementById('authPrimaryBtn'), toggleLink = document.getElementById('authStateToggle');
+            if (isSignUpState) {
+                title.innerText = "Register Account"; subtitle.innerText = "Provision clean operational system credentials.";
+                button.innerText = "Complete Provisioning"; toggleLink.innerText = "Existing account? Sign in here";
+            } else {
+                title.innerText = "Account Login"; subtitle.innerText = "Authenticate profile link parameters to continue.";
+                button.innerText = "Sign In to Console"; toggleLink.innerText = "Need an account? Register credentials";
+            }
+        }
+
+        // FIREBASE EMAIL/PASSWORD LOGIN EXECUTION
+        async function executeEmailAuth() {
+            const email = document.getElementById('authEmail').value.trim();
+            const password = document.getElementById('authPassword').value;
+            if (!email || !password) { deployNotificationGui("Input entries cannot be blank."); return; }
+            
+            if (email.includes('@') === false) {
+                deployNotificationGui("Syntax error. Standard corporate email format required.");
+                return;
+            }
+
+            if (isSignUpState) {
+                firebase.auth().createUserWithEmailAndPassword(email, password)
+                    .then((userCredential) => {
+                        deployNotificationGui("Credentials mapped and synchronized.");
+                        currentUserSessionEmail = userCredential.user.email;
+                        handleSuccessfulLogin(userCredential.user.email);
+                    })
+                    .catch(err => deployNotificationGui("Creation fault: " + err.message));
+            } else {
+                firebase.auth().signInWithEmailAndPassword(email, password)
+                    .then((userCredential) => {
+                        deployNotificationGui("Session token generated.");
+                        currentUserSessionEmail = userCredential.user.email;
+                        handleSuccessfulLogin(userCredential.user.email);
+                    })
+                    .catch(err => deployNotificationGui("Access Denied: " + err.message));
+            }
+        }
+
+        function logoutTerminal() {
+            firebase.auth().signOut().then(() => {
+                deployNotificationGui("Session dropped.");
+                toggleSidebar();
+            }).catch(err => deployNotificationGui("Disconnection fault: " + err.message));
+        }
+
+        function switchTab(viewId) {
+            document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.sidebar .nav-item').forEach(n => n.classList.remove('active-nav'));
+            
+            let targetView = document.getElementById(viewId);
+            let targetNav = document.getElementById('nav-' + viewId);
+            
+            if(targetView) targetView.classList.add('active');
+            if(targetNav) targetNav.classList.add('active-nav');
+            toggleSidebar();
+        }
+
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
+        function toggleCart() { document.getElementById('cartPanel').classList.toggle('active'); }
+        
+        function toggleAiSupport() { 
+            document.getElementById('aiSupportPanel').classList.toggle('active'); 
+            if(document.getElementById('sidebar').classList.contains('active')) toggleSidebar();
+        }
+
+        function sendAiMessage() {
+            const inputField = document.getElementById('aiSupportInput');
+            const query = inputField.value.trim();
+            if (!query) return;
+
+            const stream = document.getElementById('aiChatStream');
+            
+            const userBox = document.createElement('div');
+            userBox.className = 'ai-msg user';
+            userBox.innerText = query;
+            stream.appendChild(userBox);
+            inputField.value = '';
+            stream.scrollTop = stream.scrollHeight;
+
+            setTimeout(() => {
+                const agentBox = document.createElement('div');
+                agentBox.className = 'ai-msg agent';
+                let reply = "Statement analyzed within ecosystem architecture constraints.";
+                
+                const lower = query.toLowerCase();
+                if (lower.includes('godot') || lower.includes('physics') || lower.includes('script') || lower.includes('game')) {
+                    reply = "[Diagnostic Subsystem]: Streamline asset hierarchy matrices. Run physics steps asynchronously for mobile optimization branches.";
+                } else if (lower.includes('gpu') || lower.includes('hardware') || lower.includes('ram') || lower.includes('ssd') || lower.includes('pc')) {
+                    reply = "[Hardware Diagnostic Subsystem]: Resource mapping and storage bandwidth calculations completed successfully.";
+                } else if (lower.includes('profile') || lower.includes('about') || lower.includes('owner') || lower.includes('nafeez')) {
+                    reply = "[Registry Subsystem]: Record verification for Mohamed Nafeez complete. Age value parameters verified at level 16.";
+                }
+
+                agentBox.innerText = reply;
+                stream.appendChild(agentBox);
+                stream.scrollTop = stream.scrollHeight;
+            }, 600);
+        }
+
+        function deployNotificationGui(msg) {
+            const banner = document.getElementById('terminalAlertGui');
+            document.getElementById('guiAlertMessage').innerText = msg;
+            banner.classList.add('show');
+            setTimeout(() => banner.classList.remove('show'), 3000);
+        }
+
+        // Fire pre-flight assessment step immediately on load
+        runInitialPreflightChecks();
+    </script>
 </body>
 </html>
