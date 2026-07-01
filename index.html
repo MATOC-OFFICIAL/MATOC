@@ -15,6 +15,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
     
+    <!-- Google reCAPTCHA Enterprise Library Layer -->
     <script src="https://www.google.com/recaptcha/enterprise.js?render=6LcAVCotAAAAAPtUw0X7fwbiaMOz68bew5HlRtpT"></script>
 
     <style>
@@ -92,14 +93,13 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* NEW Professional & Clean Premium PC Build Inspired Auth Gate */
+        /* Professional & Clean Premium PC Build Inspired Auth Gate */
         .auth-gate { 
             position: fixed; 
             top:0; 
             left:0; 
             width:100%; 
             height:100%; 
-            /* Deep slate/blue blurred background mesh matching your idea image */
             background: radial-gradient(circle at 30% 20%, #1e3a8a 0%, #0f172a 60%, #020617 100%);
             z-index: 9999; 
             display: none; 
@@ -137,6 +137,7 @@
             margin-bottom: 28px;
             display: flex;
             align-items: center;
+            transition: all 0.3s ease;
         }
         .auth-input-wrapper svg {
             position: absolute;
@@ -163,6 +164,11 @@
         }
         .auth-clean-input::placeholder {
             color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Dynamically shown during registration state */
+        #authUsernameWrapper {
+            display: none;
         }
 
         /* Extra utilities row (Remember me / Forgot pass) */
@@ -393,6 +399,7 @@
     </style>
 </head>
 <body>
+    <!-- 1. Enforced Captcha Validation Screen Box Component -->
     <div class="security-gate" id="securityInitialGate">
         <div class="spinner"></div>
         <div style="font-weight: 600; font-size: 15px; color: var(--text);">Evaluating Client Authenticity Parameters</div>
@@ -403,8 +410,10 @@
         <span id="guiAlertMessage">Initialising system architecture...</span>
     </div>
 
+    <!-- 2. Overhauled Clean Login Interface -->
     <div class="auth-gate" id="authGate">
         <div class="auth-card" id="loginFormContainer">
+            <!-- Center Profile Avatar Ring -->
             <div class="auth-user-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
@@ -414,6 +423,13 @@
             
             <h2 id="authTitle" style="margin: 0 0 36px 0; font-size: 18px; font-weight: 400; text-align: center; text-transform: uppercase; letter-spacing: 3px; color: #fff;">Customer Login</h2>
             
+            <!-- Dynamic Custom Username Field (Shown only on registration state) -->
+            <div class="auth-input-wrapper" id="authUsernameWrapper">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94"></path></svg>
+                <input type="text" id="authUsername" class="auth-clean-input" placeholder="Choose Username">
+            </div>
+
+            <!-- Underline Input Fields -->
             <div class="auth-input-wrapper">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
                 <input type="email" id="authEmail" class="auth-clean-input" placeholder="Email ID">
@@ -424,6 +440,7 @@
                 <input type="password" id="authPassword" class="auth-clean-input" placeholder="Password">
             </div>
             
+            <!-- Utility Actions Row -->
             <div class="auth-utilities">
                 <label class="auth-checkbox-label">
                     <input type="checkbox" checked> Remember me
@@ -431,6 +448,7 @@
                 <span style="cursor: pointer; opacity: 0.8;" onclick="deployNotificationGui('Password reset matrix triggered.')">Forgot Password?</span>
             </div>
             
+            <!-- Solid Clean Action Bar -->
             <button id="authPrimaryBtn" class="auth-submit-action" onclick="executeEmailAuth()">Login</button>
             
             <div>
@@ -569,6 +587,10 @@
             
             <div style="display: flex; flex-direction: column; gap: 20px; max-width: 400px; background: var(--card); padding: 24px; border-radius: var(--radius); border: 1px solid var(--border);">
                 <div>
+                    <span class="owner-subtext">Assigned Display Pseudonym</span>
+                    <span style="font-size: 18px; font-weight: 700;" id="profileUsernameDisplay">Loading profile identifier...</span>
+                </div>
+                <div>
                     <span class="owner-subtext">Age Node Metric</span>
                     <span style="font-size: 18px; font-weight: 700;" id="profileAgeDisplay">15</span>
                 </div>
@@ -662,7 +684,7 @@
                     firebase.auth().onAuthStateChanged((user) => {
                         if (user) {
                             currentUserSessionEmail = user.email;
-                            handleSuccessfulLogin(user.email);
+                            handleSuccessfulLogin(user);
                             syncProfileToServer();
                         } else {
                             handleRequiredLogin();
@@ -675,12 +697,25 @@
             renderGameVault();
         }
 
-        function handleSuccessfulLogin(emailText) {
+        function handleSuccessfulLogin(user) {
             document.getElementById('authGate').style.display = 'none';
-            document.getElementById('terminalUserHandle').innerText = emailText;
+            
+            // Read username from real-time database to map custom handles
+            firebase.database().ref('users/' + user.uid + '/username').once('value')
+                .then((snapshot) => {
+                    let activeUsername = snapshot.val() || user.email;
+                    document.getElementById('terminalUserHandle').innerText = activeUsername;
+                    document.getElementById('profileUsernameDisplay').innerText = activeUsername;
+                })
+                .catch(() => {
+                    document.getElementById('terminalUserHandle').innerText = user.email;
+                    document.getElementById('profileUsernameDisplay').innerText = user.email;
+                });
+
             document.getElementById('adminSidebarLink').style.display = 'block';
             
-            if (emailText.toLowerCase() === "damnbuilders_official" || emailText.toLowerCase() === "official@damnbuilders.com" || emailText.toLowerCase() === "nz") {
+            let emailText = user.email.toLowerCase();
+            if (emailText === "damnbuilders_official" || emailText === "official@damnbuilders.com" || emailText === "nz") {
                 document.getElementById('officialSectionTitle').style.display = 'block';
                 document.getElementById('officialPublishLink').style.display = 'block';
                 deployNotificationGui("System Publisher dashboard instance loaded successfully.");
@@ -829,32 +864,46 @@
         function toggleAuthState() {
             isSignUpState = !isSignUpState;
             const title = document.getElementById('authTitle');
-            const button = document.getElementById('authPrimaryBtn'), toggleLink = document.getElementById('authStateToggle');
+            const button = document.getElementById('authPrimaryBtn');
+            const toggleLink = document.getElementById('authStateToggle');
+            const usernameWrapper = document.getElementById('authUsernameWrapper');
+            
             if (isSignUpState) {
                 title.innerText = "Register Account";
-                button.innerText = "Register"; toggleLink.innerText = "Existing account? Sign in here";
+                button.innerText = "Register"; 
+                toggleLink.innerText = "Existing account? Sign in here";
+                usernameWrapper.style.display = 'flex'; // reveal username input clean container
             } else {
                 title.innerText = "Customer Login";
-                button.innerText = "Login"; toggleLink.innerText = "Need an account? Register credentials";
+                button.innerText = "Login"; 
+                toggleLink.innerText = "Need an account? Register credentials";
+                usernameWrapper.style.display = 'none'; // hide username input clean container
             }
         }
 
         async function executeEmailAuth() {
             const email = document.getElementById('authEmail').value.trim();
             const password = document.getElementById('authPassword').value;
-            if (!email || !password) { deployNotificationGui("Input entries cannot be blank."); return; }
+            const username = document.getElementById('authUsername').value.trim();
             
-            if (email.includes('@') === false) {
-                deployNotificationGui("Syntax error. Standard corporate email format required.");
-                return;
-            }
+            if (!email || !password) { deployNotificationGui("Input entries cannot be blank."); return; }
+            if (email.includes('@') === false) { deployNotificationGui("Syntax error. Standard corporate email format required."); return; }
 
             if (isSignUpState) {
+                if(!username) { deployNotificationGui("Please establish a username configuration."); return; }
+                
                 firebase.auth().createUserWithEmailAndPassword(email, password)
                     .then((userCredential) => {
-                        deployNotificationGui("Credentials mapped and synchronized.");
-                        currentUserSessionEmail = userCredential.user.email;
-                        handleSuccessfulLogin(userCredential.user.email);
+                        let user = userCredential.user;
+                        // Synchronize custom account profile parameters right inside Database 
+                        firebase.database().ref('users/' + user.uid).update({
+                            username: username,
+                            email: email
+                        }).then(() => {
+                            deployNotificationGui("Credentials mapped and synchronized.");
+                            currentUserSessionEmail = user.email;
+                            handleSuccessfulLogin(user);
+                        });
                     })
                     .catch(err => deployNotificationGui("Creation fault: " + err.message));
             } else {
@@ -862,7 +911,7 @@
                     .then((userCredential) => {
                         deployNotificationGui("Session token generated.");
                         currentUserSessionEmail = userCredential.user.email;
-                        handleSuccessfulLogin(userCredential.user.email);
+                        handleSuccessfulLogin(userCredential.user);
                     })
                     .catch(err => deployNotificationGui("Access Denied: " + err.message));
             }
@@ -920,7 +969,7 @@
                 } else if (lower.includes('gpu') || lower.includes('hardware') || lower.includes('ram') || lower.includes('ssd') || lower.includes('pc')) {
                     reply = "[Hardware Diagnostic Subsystem]: Resource mapping and storage bandwidth calculations completed successfully.";
                 } else if (lower.includes('profile') || lower.includes('about') || lower.includes('owner') || lower.includes('nafeez')) {
-                    reply = "[Registry Subsystem]: Record verification for Mohamed Nafeez complete. Age value parameters verified at level 16.";
+                    reply = "[Registry Subsystem]: Record verification complete.";
                 }
 
                 agentBox.innerText = reply;
