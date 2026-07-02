@@ -62,258 +62,81 @@
             z-index: 999999;
             transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .gui-alert-container.show {
-            top: 25px;
-        }
+        .gui-alert-container.show { top: 25px; }
 
         /* Auth Gate */
         .auth-gate { 
             position: fixed; 
-            top:0; 
-            left:0; 
-            width:100%; 
-            height:100%; 
+            top:0; left:0; width:100%; height:100%; 
             background: radial-gradient(circle at 30% 20%, #1e3a8a 0%, #0f172a 60%, #020617 100%);
-            z-index: 9999; 
-            display: none; 
-            align-items: center; 
-            justify-content: center; 
+            z-index: 9999; display: none; align-items: center; justify-content: center; 
         }
-        .auth-card { 
-            background: transparent; 
-            padding: 20px 40px; 
-            width: 100%; 
-            max-width: 380px; 
-            box-sizing: border-box;
-            text-align: center;
-        }
-        .auth-user-icon {
-            width: 80px;
-            height: 80px;
-            border: 2px solid rgba(255, 255, 255, 0.8);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            margin: 0 auto 24px auto;
-        }
-        .auth-user-icon svg {
-            width: 40px;
-            height: 40px;
-            opacity: 0.9;
-        }
+        .auth-card { background: transparent; padding: 20px 40px; width: 100%; max-width: 380px; box-sizing: border-box; text-align: center; }
+        .auth-user-icon { width: 80px; height: 80px; border: 2px solid rgba(255, 255, 255, 0.8); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; margin: 0 auto 24px auto; }
+        .auth-user-icon svg { width: 40px; height: 40px; opacity: 0.9; }
         
-        .auth-input-wrapper {
-            position: relative;
-            margin-bottom: 28px;
-            display: flex;
-            align-items: center;
-        }
-        .auth-input-wrapper svg {
-            position: absolute;
-            left: 4px;
-            color: rgba(255, 255, 255, 0.7);
-            width: 18px;
-            height: 18px;
-        }
+        .auth-input-wrapper { position: relative; margin-bottom: 28px; display: flex; align-items: center; }
+        .auth-input-wrapper svg { position: absolute; left: 4px; color: rgba(255, 255, 255, 0.7); width: 18px; height: 18px; }
         .auth-clean-input {
-            width: 100%;
-            background: transparent !important;
-            border: none !important;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.4) !important;
-            border-radius: 0 !important;
-            padding: 10px 10px 10px 36px !important;
-            color: #fff !important;
-            font-size: 15px !important;
-            margin-bottom: 0 !important;
-            transition: border-color 0.3s ease;
+            width: 100%; background: transparent !important; border: none !important; border-bottom: 1px solid rgba(255, 255, 255, 0.4) !important;
+            border-radius: 0 !important; padding: 10px 10px 10px 36px !important; color: #fff !important; font-size: 15px !important; margin-bottom: 0 !important; transition: border-color 0.3s ease;
         }
-        .auth-clean-input:focus {
-            outline: none !important;
-            border-bottom-color: #fff !important;
-        }
-        .auth-clean-input::placeholder {
-            color: rgba(255, 255, 255, 0.5);
-        }
+        .auth-clean-input:focus { outline: none !important; border-bottom-color: #fff !important; }
+        .auth-clean-input::placeholder { color: rgba(255, 255, 255, 0.5); }
 
-        .auth-utilities {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.7);
-            margin-bottom: 32px;
-        }
-        .auth-checkbox-label {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            cursor: pointer;
-        }
-        .auth-checkbox-label input {
-            margin: 0;
-            width: 14px;
-            height: 14px;
-            accent-color: var(--primary);
-        }
+        .auth-utilities { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: rgba(255, 255, 255, 0.7); margin-bottom: 32px; }
+        .auth-checkbox-label { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+        .auth-checkbox-label input { margin: 0; width: 14px; height: 14px; accent-color: var(--primary); }
 
         .auth-submit-action {
-            background: #1d4ed8; 
-            color: white; 
-            border: none; 
-            padding: 14px; 
-            width: 100%; 
-            border-radius: 4px; 
-            font-weight: 600; 
-            cursor: pointer; 
-            font-size: 14px; 
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            transition: background 0.2s, transform 0.1s;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            background: #1d4ed8; color: white; border: none; padding: 14px; width: 100%; border-radius: 4px; font-weight: 600; cursor: pointer; font-size: 14px; text-transform: uppercase; letter-spacing: 1.5px; transition: background 0.2s, transform 0.1s; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
         }
-        .auth-submit-action:hover {
-            background: #2563eb;
-        }
-        .auth-submit-action:active {
-            transform: scale(0.99);
-        }
-
-        .auth-toggle-link { 
-            color: rgba(255, 255, 255, 0.6); 
-            font-size: 13px; 
-            text-decoration: none; 
-            cursor: pointer; 
-            display: inline-block; 
-            margin-top: 24px; 
-            transition: color 0.2s;
-        }
-        .auth-toggle-link:hover {
-            color: #fff;
-        }
+        .auth-submit-action:hover { background: #2563eb; }
+        .auth-submit-action:active { transform: scale(0.99); }
+        .auth-toggle-link { color: rgba(255, 255, 255, 0.6); font-size: 13px; text-decoration: none; cursor: pointer; display: inline-block; margin-top: 24px; transition: color 0.2s; }
+        .auth-toggle-link:hover { color: #fff; }
 
         /* Main Application Frame */
         .header { 
-            position: fixed; 
-            top: 0; 
-            width: 100%; 
-            height: 64px; 
-            background: rgba(15, 23, 42, 0.85); 
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            display: flex; 
-            align-items: center; 
-            justify-content: space-between; 
-            padding: 0 24px; 
-            z-index: 1000; 
-            border-bottom: 1px solid var(--border); 
-            box-sizing: border-box; 
+            position: fixed; top: 0; width: 100%; height: 64px; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            display: flex; align-items: center; justify-content: space-between; padding: 0 24px; z-index: 1000; border-bottom: 1px solid var(--border); box-sizing: border-box; 
         }
         
-        .hamburger-btn {
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 8px;
-            background: transparent;
-            border-radius: 6px;
-            color: var(--text);
-            transition: background 0.2s;
-        }
-        .hamburger-btn:hover {
-            background: var(--card);
-        }
+        .hamburger-btn { cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 8px; background: transparent; border-radius: 6px; color: var(--text); transition: background 0.2s; }
+        .hamburger-btn:hover { background: var(--card); }
 
         .app-view { display: none; max-width: 1000px; margin: 100px auto 40px auto; padding: 0 24px; box-sizing: border-box; }
         .app-view.active { display: block; }
 
         .sidebar { 
-            position: fixed; 
-            top: 0; 
-            left: -300px; 
-            width: 280px; 
-            height: 100%; 
-            background: var(--card); 
-            border-right: 1px solid var(--border); 
-            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
-            z-index: 2000; 
-            padding: 80px 20px 20px 20px; 
-            overflow-y: auto; 
-            box-sizing: border-box; 
-            visibility: hidden; 
+            position: fixed; top: 0; left: -300px; width: 280px; height: 100%; background: var(--card); border-right: 1px solid var(--border); transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            z-index: 2000; padding: 80px 20px 20px 20px; overflow-y: auto; box-sizing: border-box; visibility: hidden; 
         }
         .sidebar.active { left: 0; visibility: visible; }
-        
-        .sidebar-section-title { 
-            font-size: 11px; 
-            color: var(--text-muted); 
-            font-weight: 700; 
-            text-transform: uppercase; 
-            margin: 24px 0 12px 0; 
-            padding-bottom: 6px; 
-            letter-spacing: 0.5px; 
-        }
+        .sidebar-section-title { font-size: 11px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; margin: 24px 0 12px 0; padding-bottom: 6px; letter-spacing: 0.5px; }
 
         .nav-item { 
-            padding: 10px 14px; 
-            cursor: pointer; 
-            font-weight: 500; 
-            font-size: 14px; 
-            border-radius: var(--radius); 
-            transition: all 0.2s; 
-            margin-bottom: 4px; 
-            color: var(--text-muted);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            padding: 10px 14px; cursor: pointer; font-weight: 500; font-size: 14px; border-radius: var(--radius); transition: all 0.2s; margin-bottom: 4px; color: var(--text-muted);
+            display: flex; align-items: center; justify-content: space-between;
         }
-        .nav-item:hover { 
-            color: var(--text); 
-            background: rgba(255, 255, 255, 0.04); 
-        }
-        .nav-item.active-nav {
-            color: #fff;
-            background: var(--primary);
-        }
-        .nav-item.active-nav:hover {
-            background: var(--primary-hover);
-        }
-        
-        .cart-trigger-menu .cart-count {
-            background: var(--primary);
-            color: white;
-            font-size: 11px;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-weight: bold;
-        }
+        .nav-item:hover { color: var(--text); background: rgba(255, 255, 255, 0.04); }
+        .nav-item.active-nav { color: #fff; background: var(--primary); }
+        .cart-trigger-menu .cart-count { background: var(--primary); color: white; font-size: 11px; padding: 2px 8px; border-radius: 12px; font-weight: bold; }
 
         .admin-only-nav { display: none; color: #38bdf8; }
         .official-only-nav { display: none; color: #fbbf24; font-weight: 600; }
         .logout-nav-item { color: #f87171 !important; margin-top: 30px; border-top: 1px solid var(--border); padding-top: 20px; }
 
-        .cart-panel, .ai-support-panel { 
-            position: fixed; 
-            top: 0; 
-            width: 340px; 
-            height: 100%; 
-            background: var(--card); 
-            border-left: 1px solid var(--border); 
-            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
-            z-index: 2000; 
-            padding: 80px 24px 24px 24px; 
-            box-sizing: border-box; 
-            display: flex; 
-            flex-direction: column; 
-            visibility: hidden; 
+        .cart-panel, .ai-support-panel, .p2p-chat-panel { 
+            position: fixed; top: 0; width: 340px; height: 100%; background: var(--card); border-left: 1px solid var(--border); transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            z-index: 2000; padding: 80px 24px 24px 24px; box-sizing: border-box; display: flex; flex-direction: column; visibility: hidden; 
         }
         .cart-panel { right: -360px; }
         .cart-panel.active { right: 0; visibility: visible; }
-        
         .ai-support-panel { right: -360px; }
         .ai-support-panel.active { right: 0; visibility: visible; }
+        .p2p-chat-panel { right: -360px; }
+        .p2p-chat-panel.active { right: 0; visibility: visible; }
 
         .drawer-header-title { font-size: 16px; font-weight: 700; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
         .drawer-content-stream { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding-right: 4px; }
@@ -325,7 +148,6 @@
         .drawer-input-footer { border-top: 1px solid var(--border); padding-top: 16px; margin-top: 16px; display: flex; gap: 8px; }
         .drawer-input-footer input { margin-bottom: 0; flex: 1; padding: 10px 14px; }
         .drawer-send-btn { background: var(--primary); border: none; color: white; padding: 0 16px; border-radius: var(--radius); font-weight: 600; cursor: pointer; font-size: 13px; transition: background 0.2s; }
-        .drawer-send-btn:hover { background: var(--primary-hover); }
 
         .omnifix-btn { background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: var(--radius); font-weight: 600; cursor: pointer; font-size: 14px; transition: background 0.2s; }
         .omnifix-btn:hover { background: var(--primary-hover); }
@@ -335,31 +157,24 @@
         .owner-status-text { font-size: 13px; color: var(--primary); margin-left: 8px; font-weight: 500; }
 
         input, select, textarea { 
-            width: 100%; 
-            padding: 12px 16px; 
-            background: var(--bg); 
-            border: 1px solid var(--border); 
-            color: var(--text); 
-            border-radius: var(--radius); 
-            margin-bottom: 16px; 
-            box-sizing: border-box; 
-            font-size: 14px; 
-            font-family: inherit;
-            transition: border-color 0.2s;
+            width: 100%; padding: 12px 16px; background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: var(--radius); margin-bottom: 16px; box-sizing: border-box; font-size: 14px; font-family: inherit; transition: border-color 0.2s;
         }
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary); }
 
-        /* Listing Grid Elements */
-        .listing-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; position: relative; display: flex; flex-direction: column; justify-content: space-between; }
-        .badge { position: absolute; top: 16px; right: 16px; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; }
+        .listing-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; position: relative; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; }
+        .badge { position: absolute; top: 16px; right: 16px; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; z-index: 2; }
         .badge.used { background: rgba(230, 126, 34, 0.15); color: #e67e22; }
         .badge.official { background: rgba(37, 99, 235, 0.15); color: #60a5fa; }
         
         .cart-item-row { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: var(--bg); border-radius: var(--radius); border: 1px solid var(--border); }
         .log-card { background: var(--bg); border-left: 3px solid var(--primary); padding: 12px; font-size: 13px; line-height: 1.4; }
+
+        /* Advanced Filtering Utility Bar */
+        .market-filter-bar { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+        @media(max-width: 600px){ .market-filter-bar { grid-template-columns: 1fr; } }
+        
+        .asset-preview-frame { width: 100%; height: 140px; background: #0b111e; border-radius: var(--radius); margin-bottom: 12px; background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 12px; border: 1px solid var(--border); }
+        .compatibility-warning-box { background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; color: #f87171; padding: 12px; border-radius: var(--radius); margin-bottom: 12px; font-size: 12px; display: none; }
     </style>
 </head>
 <body>
@@ -376,41 +191,27 @@
                     <circle cx="12" cy="7" r="4"></circle>
                 </svg>
             </div>
-            
             <h2 id="authTitle" style="margin: 0 0 36px 0; font-size: 18px; font-weight: 400; text-align: center; text-transform: uppercase; letter-spacing: 3px; color: #fff;">Customer Login</h2>
-            
             <div class="auth-input-wrapper">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
                 <input type="email" id="authEmail" class="auth-clean-input" placeholder="Email ID">
             </div>
-            
             <div class="auth-input-wrapper">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
                 <input type="password" id="authPassword" class="auth-clean-input" placeholder="Password">
             </div>
-            
             <div class="auth-utilities">
-                <label class="auth-checkbox-label">
-                    <input type="checkbox" checked> Remember me
-                </label>
+                <label class="auth-checkbox-label"><input type="checkbox" checked> Remember me</label>
                 <span style="cursor: pointer; opacity: 0.8;" onclick="deployNotificationGui('Password reset matrix triggered.')">Forgot Password?</span>
             </div>
-            
             <button id="authPrimaryBtn" class="auth-submit-action" onclick="executeEmailAuth()">Login</button>
-            
-            <div>
-                <span class="auth-toggle-link" id="authStateToggle" onclick="toggleAuthState()">Need an account? Register credentials</span>
-            </div>
+            <div><span class="auth-toggle-link" id="authStateToggle" onclick="toggleAuthState()">Need an account? Register credentials</span></div>
         </div>
     </div>
 
     <div class="header">
         <div onclick="toggleSidebar()" class="hamburger-btn">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="3" y1="12" x2="21" y2="12"></line>
-                <line x1="3" y1="6" x2="21" y2="6"></line>
-                <line x1="3" y1="18" x2="21" y2="18"></line>
-            </svg>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
         </div>
         <div style="display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 16px;">
             <div style="width: 28px; height: 28px; background: var(--primary); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 13px; font-weight: bold;">MB</div>
@@ -424,23 +225,35 @@
     <div class="sidebar" id="sidebar">
         <div class="sidebar-section-title">Quick Actions</div>
         <div class="nav-item cart-trigger-menu" onclick="toggleCart()">
-            <span>Shopping Cart</span>
-            <span class="cart-count" id="cartCount">0</span>
+            <span>Shopping Cart</span><span class="cart-count" id="cartCount">0</span>
         </div>
-
         <div class="sidebar-section-title">Navigation</div>
         <div class="nav-item active-nav" id="nav-marketView" onclick="switchTab('marketView')">Browse Marketplace</div>
         <div class="nav-item" id="nav-p2pSellView" onclick="switchTab('p2pSellView')">Submit Used Asset</div>
         <div class="nav-item" id="nav-ownerProfileView" onclick="switchTab('ownerProfileView')">Profile Dossier</div>
         <div class="nav-item" id="nav-gameVaultView" onclick="switchTab('gameVaultView')">Arcade Vault</div>
-
         <div class="sidebar-section-title official-only-nav" id="officialSectionTitle">Publisher Controls</div>
         <div class="nav-item official-only-nav" id="officialPublishLink" onclick="switchTab('officialPublishView')">Management Core</div>
         <div class="nav-item admin-only-nav" id="adminSidebarLink" onclick="switchTab('opsView')">Live Order Stream</div>
-        
         <div class="nav-item" onclick="toggleAiSupport()" style="color: #38bdf8; margin-top: 10px; background: rgba(56, 189, 248, 0.05);">AI Engineering Assistant</div>
-
         <div class="nav-item logout-nav-item" onclick="logoutTerminal()">Disconnect Session</div>
+    </div>
+
+    <div class="p2p-chat-panel" id="p2pChatPanel">
+        <div class="drawer-header-title">
+            <div>
+                <span style="display:block; font-size:14px;" id="p2pChatTargetTitle">Negotiation Hub</span>
+                <span style="font-size:11px; color:var(--text-muted);" id="p2pChatSellerId">ID: Loading</span>
+            </div>
+            <span style="cursor:pointer; color:var(--text-muted);" onclick="toggleP2pChat()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </span>
+        </div>
+        <div class="drawer-content-stream" id="p2pChatStream"></div>
+        <div class="drawer-input-footer">
+            <input type="text" id="p2pChatInput" placeholder="Propose offer or question..." onkeydown="if(event.key === 'Enter') sendP2pChatMessage()">
+            <button class="drawer-send-btn" onclick="sendP2pChatMessage()">Send</button>
+        </div>
     </div>
 
     <div class="cart-panel" id="cartPanel">
@@ -450,6 +263,7 @@
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </span>
         </div>
+        <div id="compatibilityWarning" class="compatibility-warning-box"></div>
         <div class="drawer-content-stream" id="cartItemsContainer"></div>
         <div style="border-top:1px solid var(--border); padding-top:14px; margin-top:10px;">
             <div style="display:flex; justify-content:space-between; margin-bottom:12px; font-weight:700;">
@@ -466,9 +280,7 @@
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </span>
         </div>
-        <div class="drawer-content-stream" id="aiChatStream">
-            <div class="ai-msg agent">System connection successful. Cloud environment records fully loaded. Ready to perform codebase testing adjustments or core logic diagnostics.</div>
-        </div>
+        <div class="drawer-content-stream" id="aiChatStream"></div>
         <div class="drawer-input-footer">
             <input type="text" id="aiSupportInput" placeholder="Enter service request..." onkeydown="if(event.key === 'Enter') sendAiMessage()">
             <button class="drawer-send-btn" onclick="sendAiMessage()">Execute</button>
@@ -476,8 +288,23 @@
     </div>
 
     <div class="app-view" id="marketView">
-        <h2 style="margin: 0 0 6px 0; font-size: 24px; font-weight: 700;">Marketplace Stream</h2>
-        <p style="color:var(--text-muted); font-size:14px; margin: 0 0 24px 0;">Authorised brand releases alongside peer-reviewed systems configurations.</p>
+        <h2 style="margin: 0 0 4px 0; font-size: 24px; font-weight: 700;">Marketplace Stream</h2>
+        <p style="color:var(--text-muted); font-size:14px; margin: 0 0 20px 0;">Authorised brand releases alongside peer-reviewed systems configurations.</p>
+        
+        <div class="market-filter-bar">
+            <input type="text" id="marketSearchInput" placeholder="Search components (e.g., i7, GTX, PSU)..." oninput="processMarketFiltering()">
+            <select id="marketTypeFilter" onchange="processMarketFiltering()">
+                <option value="all">All Channels</option>
+                <option value="official">Brand Store</option>
+                <option value="peer">Peer Exchanges</option>
+            </select>
+            <select id="marketSortOrder" onchange="processMarketFiltering()">
+                <option value="default">Sort Matrix</option>
+                <option value="low">Price: Low-High</option>
+                <option value="high">Price: High-Low</option>
+            </select>
+        </div>
+
         <div id="marketplaceProductsDisplay" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;"></div>
     </div>
 
@@ -492,7 +319,7 @@
             <label style="font-size: 13px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Asset Evaluation Valuation ($)</label>
             <input type="number" id="p2pProdPrice" placeholder="Value Amount">
 
-            <label style="font-size: 13px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Hardware Asset Preview Image</label>
+            <label style="font-size: 13px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Hardware Preview Image File</label>
             <input type="file" id="p2pProdImage" accept="image/*" style="padding:8px;">
 
             <label style="font-size: 13px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Enforced Condition Tier Flag</label>
@@ -513,7 +340,6 @@
                 <textarea id="gameMetaInput" placeholder="System Configuration Matrix Parameters (JSON)" rows="4"></textarea>
                 <button class="omnifix-btn" onclick="publishOfficialGame()" style="background: #fbbf24; color: #000; width: 100%;">Deploy to Vault</button>
             </div>
-            
             <div style="background: var(--card); padding: 28px; border-radius: var(--radius); border: 1px solid var(--border);">
                 <h3 style="margin: 0 0 16px 0; font-size: 16px; color: #fbbf24;">Launch Brand Product</h3>
                 <input type="text" id="offProdName" placeholder="Product Asset Model">
@@ -535,7 +361,6 @@
                 Mohamed Nafeez <span id="profileNodeStatus" class="owner-status-text">(Verifying Verification...)</span>
             </h2>
             <p style="color: var(--text-muted); font-size: 13px; margin: 0 0 28px 0; text-transform: uppercase; letter-spacing: 0.5px;">System Security Lead Registry</p>
-            
             <div style="display: flex; flex-direction: column; gap: 20px; max-width: 400px; background: var(--card); padding: 24px; border-radius: var(--radius); border: 1px solid var(--border);">
                 <div>
                     <span class="owner-subtext">Age Node Metric</span>
@@ -559,6 +384,8 @@
         let isSignUpState = false;
         let currentUserSessionEmail = "";
         let shoppingCartState = [];
+        let rawProductsCache = [];
+        let activeP2pChatRoomId = null;
 
         const firebaseConfig = {
             apiKey: "AIzaSyAIFblCANTOf6cS_wrY3LHzQvx7pdOIVaM",
@@ -577,29 +404,26 @@
             if (typeof grecaptcha !== 'undefined' && grecaptcha.enterprise) {
                 grecaptcha.enterprise.ready(function() {
                     grecaptcha.enterprise.execute('6LcAVCotAAAAAPtUw0X7fwbiaMOz68bew5HlRtpT', {action: 'login'})
-                    .then(function(token) {
-                        console.log("Background reCAPTCHA Token verified securely.");
-                    }).catch(err => console.warn("Background reCAPTCHA bypassed: ", err));
+                    .then(token => console.log("Background reCAPTCHA Token verified securely."))
+                    .catch(err => console.warn("Background reCAPTCHA bypassed: ", err));
                 });
             }
             initSessionWatch();
         }
 
         function initSessionWatch() {
-            firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-                .then(() => {
-                    firebase.auth().onAuthStateChanged((user) => {
-                        if (user) {
-                            currentUserSessionEmail = user.email;
-                            handleSuccessfulLogin(user.email);
-                            syncProfileToServer();
-                            listenToChatLogs(user.uid);
-                        } else {
-                            handleRequiredLogin();
-                        }
-                    });
-                })
-                .catch(err => console.error("Session persistence error: ", err));
+            firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(() => {
+                firebase.auth().onAuthStateChanged((user) => {
+                    if (user) {
+                        currentUserSessionEmail = user.email;
+                        handleSuccessfulLogin(user.email);
+                        syncProfileToServer();
+                        listenToChatLogs(user.uid);
+                    } else {
+                        handleRequiredLogin();
+                    }
+                });
+            }).catch(err => console.error("Session persistence error: ", err));
                 
             initRealtimeSyncListeners();
         }
@@ -607,7 +431,8 @@
         function initRealtimeSyncListeners() {
             db.ref('products').on('value', (snapshot) => {
                 const data = snapshot.val();
-                renderMarketplace(data ? Object.values(data) : []);
+                rawProductsCache = data ? Object.values(data) : [];
+                processMarketFiltering();
             });
 
             db.ref('games').on('value', (snapshot) => {
@@ -624,15 +449,14 @@
         function handleSuccessfulLogin(emailText) {
             document.getElementById('authGate').style.display = 'none';
             document.getElementById('terminalUserHandle').innerText = emailText;
-            
             document.getElementById('marketView').classList.add('active');
 
             const lowerE = emailText.toLowerCase();
-            if (lowerE === "official@matocbuilders.com" || lowerE === "nz") {
+            if (lowerE === "official@matocbuilders.com" || lowerE === "nz" || lowerE === "admin@matocbuilders.com") {
                 document.getElementById('officialSectionTitle').style.display = 'block';
                 document.getElementById('officialPublishLink').style.display = 'block';
                 document.getElementById('adminSidebarLink').style.display = 'block';
-                deployNotificationGui("System Publisher dashboard instance loaded successfully.");
+                deployNotificationGui("Administrative dashboard instance loaded.");
             } else {
                 document.getElementById('officialSectionTitle').style.display = 'none';
                 document.getElementById('officialPublishLink').style.display = 'none';
@@ -651,12 +475,34 @@
             document.getElementById('officialPublishLink').style.display = 'none';
         }
 
-        function renderMarketplace(productsArray) {
+        function processMarketFiltering() {
+            const query = document.getElementById('marketSearchInput').value.toLowerCase();
+            const channel = document.getElementById('marketTypeFilter').value;
+            const sort = document.getElementById('marketSortOrder').value;
+
+            let records = [...rawProductsCache];
+
+            if (query) {
+                records = records.filter(p => p.title.toLowerCase().includes(query));
+            }
+            if (channel !== 'all') {
+                records = records.filter(p => p.type === channel);
+            }
+            if (sort === 'low') {
+                records.sort((a, b) => a.price - b.price);
+            } else if (sort === 'high') {
+                records.sort((a, b) => b.price - a.price);
+            }
+
+            renderMarketplaceGrid(records);
+        }
+
+        function renderMarketplaceGrid(productsArray) {
             const display = document.getElementById('marketplaceProductsDisplay');
             display.innerHTML = "";
             
-            if(productsArray.length === 0) {
-                display.innerHTML = `<p style="color:var(--text-muted);">No assets active in stream.</p>`;
+            if (productsArray.length === 0) {
+                display.innerHTML = `<p style="color:var(--text-muted); grid-column: 1/-1;">No architectural nodes found matching conditions.</p>`;
                 return;
             }
 
@@ -664,13 +510,18 @@
                 const card = document.createElement('div');
                 card.className = "listing-card";
                 const badgeClass = p.type === 'official' ? 'official' : 'used';
-                const badgeText = p.type === 'official' ? 'Brand New' : 'Verified Used';
+                const badgeText = p.type === 'official' ? 'Brand Store' : 'Exchange Pool';
                 
+                let imgBlock = p.imageUri ? `<div class="asset-preview-frame" style="background-image:url('${p.imageUri}')"></div>` : `<div class="asset-preview-frame">NO IMAGE VERIFIED</div>`;
+                let p2pActionBtn = p.type === 'peer' ? `<button class="omnifix-btn" style="width:100%; padding: 8px; font-size:12px; margin-top:8px; background:transparent; border:1px solid var(--border); color:var(--text-muted);" onclick="initializeP2pChatRoom('${p.id}', '${p.title}', '${p.owner || 'Anonymous'}')">Contact Seller</button>` : '';
+
                 card.innerHTML = `
                     <span class="badge ${badgeClass}">${badgeText}</span>
-                    <h3 style="margin: 24px 0 8px 0; font-size: 16px; font-weight: 600;">${p.title}</h3>
-                    <p style="font-weight: 700; color: var(--primary); margin: 0 0 16px 0;">$${p.price}</p>
+                    ${imgBlock}
+                    <h3 style="margin: 8px 0; font-size: 15px; font-weight: 600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p.title}</h3>
+                    <p style="font-weight: 700; color: var(--primary); margin: 0 0 12px 0;">$${p.price}</p>
                     <button class="omnifix-btn" style="width:100%; padding: 10px; font-size:13px;" onclick="addToCart('${p.title}', ${p.price})">Order Module</button>
+                    ${p2pActionBtn}
                 `;
                 display.appendChild(card);
             });
@@ -679,12 +530,6 @@
         function renderGameVault(gamesArray) {
             const display = document.getElementById('vaultGamesDisplay');
             display.innerHTML = "";
-            
-            if(gamesArray.length === 0) {
-                display.innerHTML = `<p style="color:var(--text-muted);">Vault inventory cleared.</p>`;
-                return;
-            }
-
             gamesArray.forEach(g => {
                 const card = document.createElement('div');
                 card.className = "listing-card";
@@ -718,7 +563,7 @@
         function addToCart(title, price) {
             shoppingCartState.push({ title, price });
             updateCartUi();
-            deployNotificationGui(`Added ${title} to asset queue.`);
+            deployNotificationGui(`Added ${title} to queue.`);
         }
 
         function updateCartUi() {
@@ -727,17 +572,42 @@
             container.innerHTML = "";
             let sum = 0;
 
+            let containsGpu = false;
+            let containsPsu = false;
+            let psuWattageValue = 0;
+
             shoppingCartState.forEach((item, index) => {
                 sum += item.price;
+                const lowerTitle = item.title.toLowerCase();
+                if(lowerTitle.includes('gtx') || lowerTitle.includes('rtx') || lowerTitle.includes('gpu') || lowerTitle.includes('graphics')) containsGpu = true;
+                if(lowerTitle.includes('psu') || lowerTitle.includes('power supply')){
+                    containsPsu = true;
+                    let matches = lowerTitle.match(/(\d+)w/);
+                    if(matches && matches[1]) psuWattageValue = parseInt(matches[1]);
+                }
+
                 const div = document.createElement('div');
                 div.className = "cart-item-row";
                 div.innerHTML = `
-                    <span style="font-size:13px; font-weight:600;">${item.title}</span>
+                    <span style="font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:180px;">${item.title}</span>
                     <span style="color:var(--primary); font-size:13px; font-weight:700; margin-left:auto; margin-right:12px;">$${item.price}</span>
                     <span style="color:#f87171; cursor:pointer; font-size:12px;" onclick="removeFromCart(${index})">Drop</span>
                 `;
                 container.appendChild(div);
             });
+
+            // Automated Hardware Compatibility Verification Subsystem
+            const warnBox = document.getElementById('compatibilityWarning');
+            if(containsGpu && containsPsu && psuWattageValue > 0 && psuWattageValue < 500) {
+                warnBox.innerHTML = `<strong>Architectural Warning:</strong> Low Wattage PSU (${psuWattageValue}W) flagged against High-Performance GPU layout. System crashes may manifest under load loops.`;
+                warnBox.style.display = 'block';
+            } else if(containsGpu && !containsPsu) {
+                warnBox.innerHTML = `<strong>System Notice:</strong> High-load GPU mapped without verifying dedicated operational PSU distribution constraints.`;
+                warnBox.style.display = 'block';
+            } else {
+                warnBox.style.display = 'none';
+            }
+
             document.getElementById('cartTotalPrice').innerText = `$${sum}`;
         }
 
@@ -753,15 +623,13 @@
             const finalCost = shoppingCartState.reduce((a, b) => a + b.price, 0);
             const refId = "TX_" + Math.floor(Math.random() * 89999 + 10000);
 
-            const payload = {
+            db.ref('orders/' + refId).set({
                 orderId: refId,
                 buyer: user ? user.email : "Anonymous Port",
                 itemsSummary: itemsSummaryText,
                 totalCost: finalCost,
                 timestamp: new Date().toLocaleTimeString()
-            };
-
-            db.ref('orders/' + refId).set(payload).then(() => {
+            }).then(() => {
                 shoppingCartState = [];
                 updateCartUi();
                 toggleCart();
@@ -772,21 +640,39 @@
         function submitPeerUsedListing() {
             const name = document.getElementById('p2pProdName').value.trim();
             const price = document.getElementById('p2pProdPrice').value;
+            const fileInput = document.getElementById('p2pProdImage');
             if(!name || !price) { deployNotificationGui("Configuration entries invalid."); return; }
             
             const newId = "prod_" + Date.now();
-            db.ref('products/' + newId).set({
-                id: newId,
-                title: name,
-                price: parseInt(price),
-                type: "peer",
-                condition: "USED"
-            }).then(() => {
-                document.getElementById('p2pProdName').value = "";
-                document.getElementById('p2pProdPrice').value = "";
-                deployNotificationGui("Used asset safely synchronized to live stream.");
-                switchTab('marketView');
-            });
+            const user = firebase.auth().currentUser;
+
+            const pushRecord = (imageUriString = "") => {
+                db.ref('products/' + newId).set({
+                    id: newId,
+                    title: name,
+                    price: parseInt(price),
+                    type: "peer",
+                    condition: "USED",
+                    owner: user ? user.uid : "global_node",
+                    imageUri: imageUriString
+                }).then(() => {
+                    document.getElementById('p2pProdName').value = "";
+                    document.getElementById('p2pProdPrice').value = "";
+                    fileInput.value = "";
+                    deployNotificationGui("Used hardware asset safely synced to architecture stream.");
+                    switchTab('marketView');
+                });
+            };
+
+            if(fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    pushRecord(e.target.result);
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+            } else {
+                pushRecord("");
+            }
         }
 
         function publishOfficialGame() {
@@ -798,11 +684,11 @@
             db.ref('games/' + newId).set({
                 id: newId,
                 title: title,
-                description: desc || "No parameters specified."
+                description: desc || "No metrics declared."
             }).then(() => {
                 document.getElementById('gameTitleInput').value = "";
                 document.getElementById('gameMetaInput').value = "";
-                deployNotificationGui("Module deployed to vault infrastructure.");
+                deployNotificationGui("Module deployed to environment.");
                 switchTab('gameVaultView');
             });
         }
@@ -822,9 +708,48 @@
             }).then(() => {
                 document.getElementById('offProdName').value = "";
                 document.getElementById('offProdPrice').value = "";
-                deployNotificationGui("New retail catalog item synchronized.");
+                deployNotificationGui("Catalog expansion broadcast completed.");
                 switchTab('marketView');
             });
+        }
+
+        function initializeP2pChatRoom(itemId, itemTitle, sellerId) {
+            const user = firebase.auth().currentUser;
+            if(!user) { deployNotificationGui("Session link needed to initiate peer negotiation channels."); return; }
+            
+            activeP2pChatRoomId = `chat_${itemId}_${user.uid.substring(0,5)}`;
+            document.getElementById('p2pChatTargetTitle').innerText = itemTitle;
+            document.getElementById('p2pChatSellerId').innerText = `Seller Ref: ${sellerId.substring(0,8)}`;
+            
+            toggleP2pChat(true);
+
+            db.ref('p2p_chats/' + activeP2pChatRoomId + '/messages').on('value', (snapshot) => {
+                const stream = document.getElementById('p2pChatStream');
+                stream.innerHTML = "";
+                const messages = snapshot.val();
+                if(messages) {
+                    Object.values(messages).forEach(m => {
+                        const box = document.createElement('div');
+                        box.className = m.sender === user.email ? 'ai-msg user' : 'ai-msg agent';
+                        box.innerText = m.text;
+                        stream.appendChild(box);
+                    });
+                }
+                stream.scrollTop = stream.scrollHeight;
+            });
+        }
+
+        function sendP2pChatMessage() {
+            const input = document.getElementById('p2pChatInput');
+            const msgText = input.value.trim();
+            if(!msgText || !activeP2pChatRoomId) return;
+
+            const msgId = "p2p_" + Date.now();
+            db.ref('p2p_chats/' + activeP2pChatRoomId + '/messages/' + msgId).set({
+                sender: currentUserSessionEmail,
+                text: msgText,
+                time: Date.now()
+            }).then(() => { input.value = ""; });
         }
 
         function computeNodeIdentityLifecycle() {
@@ -861,9 +786,13 @@
         function listenToChatLogs(uid) {
             db.ref('users/' + uid + '/chat_history').on('value', (snapshot) => {
                 const history = snapshot.val();
-                if(!history) return;
                 const stream = document.getElementById('aiChatStream');
                 stream.innerHTML = "";
+                
+                if(!history) {
+                    stream.innerHTML = `<div class="ai-msg agent">System connection successful. Cloud core ready for hardware metrics reviews or sandbox diagnostic commands.</div>`;
+                    return;
+                }
                 Object.values(history).forEach(msg => {
                     const box = document.createElement('div');
                     box.className = msg.sender === 'user' ? 'ai-msg user' : 'ai-msg agent';
@@ -882,28 +811,24 @@
             const user = firebase.auth().currentUser;
             if(!user) return;
 
-            const userMsgId = "msg_" + Date.now();
-            db.ref('users/' + user.uid + '/chat_history/' + userMsgId).set({
-                sender: "user",
-                text: query
+            db.ref('users/' + user.uid + '/chat_history/' + ("msg_" + Date.now())).set({
+                sender: "user", text: query
             });
             inputField.value = '';
 
             setTimeout(() => {
-                let reply = "Statement analyzed within ecosystem architecture constraints.";
+                let reply = "Operational parameter analyzed within ecosystem constraints.";
                 const lower = query.toLowerCase();
                 if (lower.includes('godot') || lower.includes('physics') || lower.includes('script') || lower.includes('game')) {
-                    reply = "[Diagnostic Subsystem]: Streamline asset hierarchy matrices. Run physics steps asynchronously for mobile optimization branches.";
+                    reply = "[Diagnostic Subsystem]: Hierarchy optimization mapped. Running multi-threaded pipeline matrices asynchronously to secure optimal framing benchmarks.";
                 } else if (lower.includes('gpu') || lower.includes('hardware') || lower.includes('ram') || lower.includes('ssd') || lower.includes('pc')) {
-                    reply = "[Hardware Diagnostic Subsystem]: Resource mapping calculations completed successfully.";
+                    reply = "[Hardware Diagnostic Subsystem]: Core telemetry indicates stable bandwidth layout configurations across matching resource nodes.";
                 } else if (lower.includes('profile') || lower.includes('about') || lower.includes('owner') || lower.includes('nafeez')) {
-                    reply = "[Registry Subsystem]: Record verification for Mohamed Nafeez complete. Age value parameters verified at level 16.";
+                    reply = "[Registry Subsystem]: Record synchronization for Mohamed Nafeez complete. Chrono age metric tracking initialized securely at maturity level 16.";
                 }
 
-                const agentMsgId = "msg_" + (Date.now() + 1);
-                db.ref('users/' + user.uid + '/chat_history/' + agentMsgId).set({
-                    sender: "agent",
-                    text: reply
+                db.ref('users/' + user.uid + '/chat_history/' + ("msg_" + (Date.now() + 1))).set({
+                    sender: "agent", text: reply
                 });
             }, 600);
         }
@@ -913,11 +838,9 @@
             const title = document.getElementById('authTitle');
             const button = document.getElementById('authPrimaryBtn'), toggleLink = document.getElementById('authStateToggle');
             if (isSignUpState) {
-                title.innerText = "Register Account";
-                button.innerText = "Register"; toggleLink.innerText = "Existing account? Sign in here";
+                title.innerText = "Register Account"; button.innerText = "Register"; toggleLink.innerText = "Existing account? Sign in here";
             } else {
-                title.innerText = "Customer Login";
-                button.innerText = "Login"; toggleLink.innerText = "Need an account? Register credentials";
+                title.innerText = "Customer Login"; button.innerText = "Login"; toggleLink.innerText = "Need an account? Register credentials";
             }
         }
 
@@ -925,14 +848,12 @@
             const email = document.getElementById('authEmail').value.trim();
             const password = document.getElementById('authPassword').value;
             if (!email || !password) { deployNotificationGui("Input entries cannot be blank."); return; }
-            if (!email.includes('@')) { deployNotificationGui("Corporate email format required."); return; }
+            if (!email.includes('@')) { deployNotificationGui("Standard corporate format required."); return; }
 
             if (isSignUpState) {
-                firebase.auth().createUserWithEmailAndPassword(email, password)
-                    .catch(err => deployNotificationGui("Creation fault: " + err.message));
+                firebase.auth().createUserWithEmailAndPassword(email, password).catch(err => deployNotificationGui(err.message));
             } else {
-                firebase.auth().signInWithEmailAndPassword(email, password)
-                    .catch(err => deployNotificationGui("Access Denied: " + err.message));
+                firebase.auth().signInWithEmailAndPassword(email, password).catch(err => deployNotificationGui(err.message));
             }
         }
 
@@ -960,6 +881,11 @@
         function toggleAiSupport() { 
             document.getElementById('aiSupportPanel').classList.toggle('active'); 
             if(document.getElementById('sidebar').classList.contains('active')) toggleSidebar();
+        }
+        function toggleP2pChat(forceState = false) {
+            const panel = document.getElementById('p2pChatPanel');
+            if(forceState) panel.classList.add('active');
+            else panel.classList.toggle('active');
         }
 
         function deployNotificationGui(msg) {
