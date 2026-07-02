@@ -66,20 +66,6 @@
             top: 25px;
         }
 
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid rgba(37, 99, 235, 0.1);
-            border-top: 4px solid var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 20px;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
         .auth-gate { 
             position: fixed; 
             top:0; 
@@ -189,9 +175,6 @@
         .auth-submit-action:hover {
             background: #2563eb;
         }
-        .auth-submit-action:active {
-            transform: scale(0.99);
-        }
 
         .auth-toggle-link { 
             color: rgba(255, 255, 255, 0.6); 
@@ -200,10 +183,6 @@
             cursor: pointer; 
             display: inline-block; 
             margin-top: 24px; 
-            transition: color 0.2s;
-        }
-        .auth-toggle-link:hover {
-            color: #fff;
         }
 
         .header { 
@@ -232,11 +211,8 @@
             background: transparent;
             border-radius: 6px;
             color: var(--text);
-            transition: background 0.2s;
         }
-        .hamburger-btn:hover {
-            background: var(--card);
-        }
+        .hamburger-btn:hover { background: var(--card); }
 
         .app-view { display: none; max-width: 1000px; margin: 100px auto 40px auto; padding: 0 24px; box-sizing: border-box; }
         .app-view.active { display: block; }
@@ -281,32 +257,14 @@
             align-items: center;
             justify-content: space-between;
         }
-        .nav-item:hover { 
-            color: var(--text); 
-            background: rgba(255, 255, 255, 0.04); 
-        }
-        .nav-item.active-nav {
-            color: #fff;
-            background: var(--primary);
-        }
-        .nav-item.active-nav:hover {
-            background: var(--primary-hover);
-        }
-        
-        .cart-trigger-menu .cart-count {
-            background: var(--primary);
-            color: white;
-            font-size: 11px;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-weight: bold;
-        }
+        .nav-item:hover { color: var(--text); background: rgba(255, 255, 255, 0.04); }
+        .nav-item.active-nav { color: #fff; background: var(--primary); }
 
         .admin-only-nav { display: none; color: #38bdf8; }
         .official-only-nav { display: none; color: #fbbf24; font-weight: 600; }
         .logout-nav-item { color: #f87171 !important; margin-top: 30px; border-top: 1px solid var(--border); padding-top: 20px; }
 
-        .cart-panel, .ai-support-panel { 
+        .ai-support-panel { 
             position: fixed; 
             top: 0; 
             width: 340px; 
@@ -320,11 +278,8 @@
             display: flex; 
             flex-direction: column; 
             visibility: hidden; 
+            right: -360px;
         }
-        .cart-panel { right: -360px; }
-        .cart-panel.active { right: 0; visibility: visible; }
-        
-        .ai-support-panel { right: -360px; }
         .ai-support-panel.active { right: 0; visibility: visible; }
 
         .drawer-header-title { font-size: 16px; font-weight: 700; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
@@ -336,10 +291,9 @@
 
         .drawer-input-footer { border-top: 1px solid var(--border); padding-top: 16px; margin-top: 16px; display: flex; gap: 8px; }
         .drawer-input-footer input { margin-bottom: 0; flex: 1; padding: 10px 14px; }
-        .drawer-send-btn { background: var(--primary); border: none; color: white; padding: 0 16px; border-radius: var(--radius); font-weight: 600; cursor: pointer; font-size: 13px; transition: background 0.2s; }
-        .drawer-send-btn:hover { background: var(--primary-hover); }
+        .drawer-send-btn { background: var(--primary); border: none; color: white; padding: 0 16px; border-radius: var(--radius); font-weight: 600; cursor: pointer; font-size: 13px; }
 
-        .omnifix-btn { background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: var(--radius); font-weight: 600; cursor: pointer; font-size: 14px; transition: background 0.2s; }
+        .omnifix-btn { background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: var(--radius); font-weight: 600; cursor: pointer; font-size: 14px; }
         .omnifix-btn:hover { background: var(--primary-hover); }
         
         .owner-container { padding: 12px 0; }
@@ -357,20 +311,20 @@
             box-sizing: border-box; 
             font-size: 14px; 
             font-family: inherit;
-            transition: border-color 0.2s;
-        }
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: var(--primary);
         }
 
-        .listing-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; position: relative; display: flex; flex-direction: column; justify-content: space-between; }
-        .badge { position: absolute; top: 16px; right: 16px; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; }
-        .badge.used { background: rgba(230, 126, 34, 0.15); color: #e67e22; }
-        .badge.official { background: rgba(37, 99, 235, 0.15); color: #60a5fa; }
+        .listing-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; position: relative; display: flex; flex-direction: column; justify-content: space-between; }
+        .listing-img { width: 100%; height: 160px; object-fit: cover; background: #0f172a; border-bottom: 1px solid var(--border); }
+        .listing-details { padding: 16px; display: flex; flex-direction: column; flex-grow: 1; }
+        .badge { position: absolute; top: 12px; right: 12px; font-size: 10px; font-weight: 600; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; z-index: 10; }
+        .badge.used { background: #e67e22; color: #fff; }
+        .badge.official { background: var(--primary); color: #fff; }
         
-        .insta-btn { background: #e1306c; color: white !important; border: none; padding: 12px; border-radius: var(--radius); font-weight: 600; cursor: pointer; font-size: 13px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; margin-top: 10px; width: 100%; box-sizing: border-box; transition: opacity 0.2s; }
-        .insta-btn:hover { opacity: 0.9; }
+        .insta-btn { background: #e1306c; color: white !important; border: none; padding: 12px; border-radius: var(--radius); font-weight: 600; cursor: pointer; font-size: 13px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; margin-top: 10px; width: 100%; box-sizing: border-box; }
+        
+        .admin-stream-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 20px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; }
+        .admin-stream-row { display: flex; justify-content: space-between; align-items: center; }
+        .admin-select-status { width: auto; margin-bottom: 0; padding: 6px 12px; font-size: 12px; background: var(--bg); color: #fff; border-color: var(--border); }
     </style>
 </head>
 <body>
@@ -387,7 +341,6 @@
                     <circle cx="12" cy="7" r="4"></circle>
                 </svg>
             </div>
-            
             <h2 id="authTitle" style="margin: 0 0 36px 0; font-size: 18px; font-weight: 400; text-align: center; text-transform: uppercase; letter-spacing: 3px; color: #fff;">Customer Login</h2>
             
             <div class="auth-input-wrapper">
@@ -401,26 +354,19 @@
             </div>
             
             <div class="auth-utilities">
-                <label class="auth-checkbox-label">
-                    <input type="checkbox" checked> Remember me
-                </label>
+                <label class="auth-checkbox-label"><input type="checkbox" checked> Remember me</label>
                 <span style="cursor: pointer; opacity: 0.8;" onclick="deployNotificationGui('Password reset matrix triggered.')">Forgot Password?</span>
             </div>
             
             <button id="authPrimaryBtn" class="auth-submit-action" onclick="executeEmailAuth()">Login</button>
-            
-            <div>
-                <span class="auth-toggle-link" id="authStateToggle" onclick="toggleAuthState()">Need an account? Register credentials</span>
-            </div>
+            <div><span class="auth-toggle-link" id="authStateToggle" onclick="toggleAuthState()">Need an account? Register credentials</span></div>
         </div>
     </div>
 
     <div class="header">
         <div onclick="toggleSidebar()" class="hamburger-btn">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="3" y1="12" x2="21" y2="12"></line>
-                <line x1="3" y1="6" x2="21" y2="6"></line>
-                <line x1="3" y1="18" x2="21" y2="18"></line>
+                <line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line>
             </svg>
         </div>
         <div style="display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 16px;">
@@ -433,12 +379,6 @@
     </div>
 
     <div class="sidebar" id="sidebar">
-        <div class="sidebar-section-title">Quick Actions</div>
-        <div class="nav-item cart-trigger-menu" onclick="toggleCart()">
-            <span>Shopping Cart</span>
-            <span class="cart-count" id="cartCount">0</span>
-        </div>
-
         <div class="sidebar-section-title">Navigation</div>
         <div class="nav-item active-nav" id="nav-marketView" onclick="switchTab('marketView')">Browse Marketplace</div>
         <div class="nav-item" id="nav-ordersView" onclick="switchTab('ordersView')">My Orders</div>
@@ -453,73 +393,59 @@
         <div class="nav-item official-only-nav" id="officialPublishLink" onclick="switchTab('officialPublishView')">Management Core</div>
         <div class="nav-item admin-only-nav" id="adminSidebarLink" onclick="switchTab('opsView')">Live Order Stream</div>
         
-        <div class="nav-item" onclick="toggleAiSupport()" style="color: #38bdf8; margin-top: 10px; background: rgba(56, 189, 248, 0.05);">AI Engineering Assistant</div>
-
+        <div class="nav-item" onclick="toggleAiSupport()" style="color: #38bdf8; margin-top: 10px; background: rgba(56, 189, 248, 0.05);">Live Chat Portal</div>
         <div class="nav-item logout-nav-item" onclick="logoutTerminal()">Disconnect Session</div>
-    </div>
-
-    <div class="cart-panel" id="cartPanel">
-        <div class="drawer-header-title">
-            <span>Selected Assets</span>
-            <span style="cursor:pointer; color:var(--text-muted);" onclick="toggleCart()">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-            </span>
-        </div>
-        <div class="drawer-content-stream" id="cartItemsContainer"></div>
     </div>
 
     <div class="ai-support-panel" id="aiSupportPanel">
         <div class="drawer-header-title">
-            <span>AI Assistant Interface</span>
+            <span id="chatPanelTitle">Live Communication Hub</span>
             <span style="cursor:pointer; color:var(--text-muted);" onclick="toggleAiSupport()">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </span>
         </div>
-        <div class="drawer-content-stream" id="aiChatStream">
-            <div class="ai-msg agent">System connection successful. Cloud environment records fully loaded. Ready to perform codebase testing adjustments, layout reviews, or core logic diagnostics.</div>
-        </div>
+        <div class="drawer-content-stream" id="aiChatStream"></div>
         <div class="drawer-input-footer">
-            <input type="text" id="aiSupportInput" placeholder="Enter service request..." onkeydown="if(event.key === 'Enter') sendAiMessage()">
-            <button class="drawer-send-btn" onclick="sendAiMessage()">Execute</button>
+            <input type="text" id="aiSupportInput" placeholder="Write a secure message..." onkeydown="if(event.key === 'Enter') sendLiveChatMessage()">
+            <button class="drawer-send-btn" onclick="sendLiveChatMessage()">Send</button>
         </div>
     </div>
 
     <div class="app-view active" id="marketView">
         <h2 style="margin: 0 0 6px 0; font-size: 24px; font-weight: 700;">Marketplace Stream</h2>
-        <p style="color:var(--text-muted); font-size:14px; margin: 0 0 24px 0;">Authorised brand releases alongside peer-reviewed systems configurations.</p>
-        <div id="marketplaceProductsDisplay" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px;">
-        </div>
+        <p style="color:var(--text-muted); font-size:14px; margin: 0 0 24px 0;">Authorised brand releases alongside live peer-reviewed configurations.</p>
+        <div id="marketplaceProductsDisplay" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px;"></div>
     </div>
 
     <div class="app-view" id="ordersView">
         <h2 style="margin: 0 0 6px 0; font-size: 24px; font-weight: 700;">Purchase Ledger</h2>
         <p style="color:var(--text-muted); font-size:14px; margin: 0 0 24px 0;">Track your requested asset keys, configurations, and deployment logs.</p>
-        <div id="ordersLogDisplay" style="display: flex; flex-direction: column; gap: 12px;">
-            <p style="color: var(--text-muted); font-size: 14px;">No transactions found in this session branch.</p>
-        </div>
+        <div id="ordersLogDisplay" style="display: flex; flex-direction: column; gap: 12px;"></div>
     </div>
 
     <div class="app-view" id="p2pSellView">
         <h2 style="margin: 0 0 6px 0; font-size: 24px; font-weight: 700;">List Used Product</h2>
-        <p style="color:var(--text-muted); font-size:14px; margin: 0 0 24px 0;">Peer submissions are systematically verified for strict hardware operational performance metrics.</p>
-        
+        <p style="color:var(--text-muted); font-size:14px; margin: 0 0 24px 0;">Peer submissions are systematically verified for hardware performance metrics.</p>
         <div style="max-width: 500px; background: var(--card); padding: 32px; border-radius: var(--radius); border: 1px solid var(--border);">
-            <label style="font-size: 13px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Product Specifications Title</label>
-            <input type="text" id="p2pProdName" placeholder="e.g., Used Intel i7-4790K Node">
+            <label style="font-size:13px; font-weight:600; color:var(--text-muted); display:block; margin-bottom:6px;">Product Title</label>
+            <input type="text" id="p2pProdName" placeholder="e.g., Used GTX 1050 Node">
             
-            <label style="font-size: 13px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Asset Evaluation Valuation ($)</label>
+            <label style="font-size:13px; font-weight:600; color:var(--text-muted); display:block; margin-bottom:6px;">Evaluation Price ($)</label>
             <input type="number" id="p2pProdPrice" placeholder="Value Amount">
 
-            <label style="font-size: 13px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Enforced Condition Tier Flag</label>
-            <input type="text" value="USED HARDWARE ASSET" disabled style="opacity: 0.5; background: var(--bg);">
+            <label style="font-size:13px; font-weight:600; color:var(--text-muted); display:block; margin-bottom:6px;">Image Link URL</label>
+            <input type="text" id="p2pProdImg" placeholder="https://imgur.com/your-image.jpg">
+
+            <label style="font-size:13px; font-weight:600; color:var(--text-muted); display:block; margin-bottom:6px;">Hardware Component Summary</label>
+            <textarea id="p2pProdDesc" placeholder="Describe card/silicon performance metrics..." rows="3"></textarea>
             
-            <button class="omnifix-btn" onclick="submitPeerUsedListing()" style="width: 100%;">Commit Asset Submission</button>
+            <button class="omnifix-btn" onclick="submitGlobalProduct('peer')" style="width: 100%;">Commit Asset Submission</button>
         </div>
     </div>
 
     <div class="app-view" id="officialPublishView">
         <h2 style="margin: 0 0 6px 0; font-size: 24px; font-weight: 700; color: #fbbf24;">Publisher Control Center</h2>
-        <p style="color:var(--text-muted); font-size:14px; margin: 0 0 24px 0;">Privileged administrative environment built to manipulate arcade engine pipelines.</p>
+        <p style="color:var(--text-muted); font-size:14px; margin: 0 0 24px 0;">Privileged administrative environment built to manipulate engine pipelines.</p>
         
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;">
             <div style="background: var(--card); padding: 28px; border-radius: var(--radius); border: 1px solid var(--border);">
@@ -533,7 +459,9 @@
                 <h3 style="margin: 0 0 16px 0; font-size: 16px; color: #fbbf24;">Launch Brand Product</h3>
                 <input type="text" id="offProdName" placeholder="Product Asset Model">
                 <input type="number" id="offProdPrice" placeholder="Wholesale Value Profile">
-                <button class="omnifix-btn" onclick="publishOfficialProduct()" style="background: #fbbf24; color: #000; width: 100%;">Authorize Release</button>
+                <input type="text" id="offProdImg" placeholder="Image Resource Link URL">
+                <textarea id="offProdDesc" placeholder="Enter formal description catalog data..." rows="2"></textarea>
+                <button class="omnifix-btn" onclick="submitGlobalProduct('official')" style="background: #fbbf24; color: #000; width: 100%;">Authorize Release</button>
             </div>
         </div>
     </div>
@@ -541,51 +469,32 @@
     <div class="app-view" id="gameVaultView">
         <h2 style="margin: 0 0 6px 0; font-size: 24px; font-weight: 700;">Arcade Module Vault</h2>
         <p style="color:var(--text-muted); font-size:14px; margin: 0 0 24px 0;">Direct access ports to stable sandbox application runtime packages.</p>
-        <div id="vaultGamesDisplay" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">
-        </div>
+        <div id="vaultGamesDisplay" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;"></div>
     </div>
 
     <div class="app-view" id="ownerProfileView">
         <div class="owner-container">
-            <h2 style="margin: 0 0 4px 0; font-size: 24px; font-weight: 700;">
-                Mohamed Nafeez <span id="profileNodeStatus" class="owner-status-text">(Verifying Verification...)</span>
-            </h2>
+            <h2 style="margin: 0 0 4px 0; font-size: 24px; font-weight: 700;">Mohamed Nafeez <span id="profileNodeStatus" class="owner-status-text">(Verifying Verification...)</span></h2>
             <p style="color: var(--text-muted); font-size: 13px; margin: 0 0 28px 0; text-transform: uppercase; letter-spacing: 0.5px;">System Security Lead Registry</p>
-            
             <div style="display: flex; flex-direction: column; gap: 20px; max-width: 400px; background: var(--card); padding: 24px; border-radius: var(--radius); border: 1px solid var(--border);">
-                <div>
-                    <span class="owner-subtext">Age Node Metric</span>
-                    <span style="font-size: 18px; font-weight: 700;" id="profileAgeDisplay">15</span>
-                </div>
-                <div>
-                    <span class="owner-subtext">Core Framework Status Log</span>
-                    <span style="font-size: 14px; color: var(--text-muted);" id="profileTimeGateStatus">Parsing cloud clock configurations...</span>
-                </div>
-                <div>
-                    <span class="owner-subtext">Operational Portal Link</span>
-                    <a href="https://www.instagram.com/damnbuilders_official?igsh=Z2hiZGVjbnpmMXQ1" target="_blank" class="insta-btn">
-                        Open Instagram Link
-                    </a>
-                </div>
+                <div><span class="owner-subtext">Age Node Metric</span><span style="font-size: 18px; font-weight: 700;" id="profileAgeDisplay">15</span></div>
+                <div><span class="owner-subtext">Framework Status Log</span><span style="font-size: 14px; color: var(--text-muted);" id="profileTimeGateStatus">Parsing clock configurations...</span></div>
+                <div><span class="owner-subtext">Operational Portal Link</span><a href="https://www.instagram.com/damnbuilders_official?igsh=Z2hiZGVjbnpmMXQ1" target="_blank" class="insta-btn">Open Instagram Link</a></div>
             </div>
         </div>
     </div>
 
-    <div class="app-view" id="opsView"><h2 style="font-size: 22px; font-weight: 700;">Order Core Logs Stream</h2></div>
+    <div class="app-view" id="opsView">
+        <h2 style="font-size: 22px; font-weight: 700; color: #38bdf8; margin: 0 0 6px 0;">Live Order Stream</h2>
+        <p style="color:var(--text-muted); font-size:14px; margin: 0 0 24px 0;">Cross-user unified purchase fulfillment command dashboard panel.</p>
+        <div id="adminMasterOrdersDisplay"></div>
+    </div>
 
     <script>
         let isSignUpState = false;
-        let currentUserSessionEmail = "";
+        let isAdminInstance = false;
 
-        let mockDatabase = {
-            products: [
-                { id: 1, title: "Official Dev Suite Asset Pack", price: 45, type: "official", condition: "NEW" },
-                { id: 2, title: "Used Intel i7-4790K Processor Node", price: 75, type: "peer", condition: "USED" }
-            ],
-            games: [
-                { id: 1, title: "Bermuda Mutation Simulator", description: "Alpha engine instance compilation" }
-            ]
-        };
+        let mockDatabase = { games: [{ id: 1, title: "Bermuda Mutation Simulator", description: "Alpha engine instance compilation" }] };
 
         const firebaseConfig = {
             apiKey: "AIzaSyAIFblCANTOf6cS_wrY3LHzQvx7pdOIVaM",
@@ -603,119 +512,138 @@
             grecaptcha.enterprise.ready(async () => {
                 try {
                     const token = await grecaptcha.enterprise.execute('6LcAVCotAAAAAPtUw0X7fwbiaMOz68bew5HlRtpT', { action: 'PORTAL_ACCESS' });
-                    
-                    const assessmentPayload = {
-                        "event": {
-                            "token": token,
-                            "expectedAction": "PORTAL_ACCESS",
-                            "siteKey": "6LcAVCotAAAAAPtUw0X7fwbiaMOz68bew5HlRtpT"
-                        }
-                    };
-
-                    const API_KEY = "AIzaSyAhnYH_rj7VkdcshB_g3QO2LU9KUmwGtHk"; 
-                    const targetEndpoint = `https://recaptchaenterprise.googleapis.com/v1/projects/nigbwns/assessments?key=${API_KEY}`;
-
-                    fetch(targetEndpoint, {
-                        method: "POST",
-                        mode: "cors",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(assessmentPayload)
-                    }).catch(err => console.error("Background assessment error:", err));
-
-                    initSessionWatch();
-                } catch (err) {
-                    console.error("Initial Captcha verification fault:", err);
-                    initSessionWatch();
-                }
+                    fetch(`https://recaptchaenterprise.googleapis.com/v1/projects/nigbwns/assessments?key=AIzaSyAhnYH_rj7VkdcshB_g3QO2LU9KUmwGtHk`, {
+                        method: "POST", mode: "cors", headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ "event": { "token": token, "expectedAction": "PORTAL_ACCESS", "siteKey": "6LcAVCotAAAAAPtUw0X7fwbiaMOz68bew5HlRtpT" } })
+                    });
+                } catch (e) {}
+                initSessionWatch();
             });
         }
 
         function initSessionWatch() {
-            firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-                .then(() => {
-                    firebase.auth().onAuthStateChanged((user) => {
-                        if (user) {
-                            currentUserSessionEmail = user.email;
-                            handleSuccessfulLogin(user.email);
-                            syncProfileToServer();
-                        } else {
-                            handleRequiredLogin();
-                        }
-                    });
-                })
-                .catch(err => console.error("Session persistence error: ", err));
-                
-            renderMarketplace();
+            firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(() => {
+                firebase.auth().onAuthStateChanged((user) => {
+                    if (user) {
+                        handleSuccessfulLogin(user.email);
+                        syncProfileToServer();
+                    } else {
+                        handleRequiredLogin();
+                    }
+                });
+            });
+            listenGlobalMarketplace();
             renderGameVault();
         }
 
         function handleSuccessfulLogin(emailText) {
             document.getElementById('authGate').style.display = 'none';
             document.getElementById('terminalUserHandle').innerText = emailText;
-            document.getElementById('adminSidebarLink').style.display = 'block';
             
-            loadUserOrders();
+            const lowerE = emailText.toLowerCase();
+            isAdminInstance = (lowerE === "damnbuilders_official" || lowerE === "official@damnbuilders.com" || lowerE === "nz");
 
-            if (emailText.toLowerCase() === "damnbuilders_official" || emailText.toLowerCase() === "official@damnbuilders.com" || emailText.toLowerCase() === "nz") {
+            if (isAdminInstance) {
                 document.getElementById('officialSectionTitle').style.display = 'block';
                 document.getElementById('officialPublishLink').style.display = 'block';
-                deployNotificationGui("System Publisher dashboard instance loaded successfully.");
+                document.getElementById('adminSidebarLink').style.display = 'block';
+                document.getElementById('chatPanelTitle').innerText = "Admin Live Master Chat";
+                deployNotificationGui("Publisher override permissions verified.");
+                listenAdminMasterOrders();
             } else {
                 document.getElementById('officialSectionTitle').style.display = 'none';
                 document.getElementById('officialPublishLink').style.display = 'none';
-                deployNotificationGui("Authentication access verified.");
+                document.getElementById('adminSidebarLink').style.display = 'none';
+                document.getElementById('chatPanelTitle').innerText = "Direct Support Portal";
+                deployNotificationGui("Customer node established.");
             }
+            loadUserOrders();
+            listenLiveChatStream();
             computeNodeIdentityLifecycle();
         }
 
         function handleRequiredLogin() {
             document.getElementById('authGate').style.display = 'flex';
             document.getElementById('terminalUserHandle').innerText = "Not Connected";
-            document.getElementById('adminSidebarLink').style.display = 'none';
-            document.getElementById('officialSectionTitle').style.display = 'none';
-            document.getElementById('officialPublishLink').style.display = 'none';
         }
 
-        function renderMarketplace() {
-            const display = document.getElementById('marketplaceProductsDisplay');
-            display.innerHTML = "";
-            mockDatabase.products.forEach(p => {
-                const card = document.createElement('div');
-                card.className = "listing-card";
-                
-                const badgeClass = p.type === 'official' ? 'official' : 'used';
-                const badgeText = p.type === 'official' ? 'Brand New' : 'Verified Used';
-                
-                card.innerHTML = `
-                    <span class="badge ${badgeClass}">${badgeText}</span>
-                    <h3 style="margin: 24px 0 8px 0; font-size: 16px; font-weight: 600;">${p.title}</h3>
-                    <p style="font-weight: 700; color: var(--primary); margin: 0 0 16px 0;">$${p.price}</p>
-                    <button class="omnifix-btn" style="width:100%; padding: 10px; font-size:13px;" onclick="placeOrder('${p.title}', ${p.price})">Order Module</button>
-                `;
-                display.appendChild(card);
+        function listenGlobalMarketplace() {
+            firebase.database().ref('marketplace_products').on('value', (snapshot) => {
+                const display = document.getElementById('marketplaceProductsDisplay');
+                display.innerHTML = "";
+                const data = snapshot.val();
+                if(!data) return;
+
+                Object.keys(data).forEach(key => {
+                    const p = data[key];
+                    const card = document.createElement('div');
+                    card.className = "listing-card";
+                    
+                    const badgeClass = p.type === 'official' ? 'official' : 'used';
+                    const badgeText = p.type === 'official' ? 'Brand New' : 'Verified Used';
+                    const fallbackImg = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%23334155' stroke-width='1'><rect width='18' height='18' x='3' y='3' rx='2' ry='2'/><circle cx='9' cy='9' r='2'/><path d='m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21'/></svg>";
+                    const imgUrl = p.imageUrl ? p.imageUrl : fallbackImg;
+
+                    card.innerHTML = `
+                        <span class="badge ${badgeClass}">${badgeText}</span>
+                        <img src="${imgUrl}" class="listing-img" onerror="this.src=\`${fallbackImg}\`"/>
+                        <div class="listing-details">
+                            <h3 style="margin: 0 0 6px 0; font-size: 15px; font-weight:600;">${p.title}</h3>
+                            <p style="font-size:12px; color:var(--text-muted); margin:0 0 12px 0; flex-grow:1; line-height:1.4;">${p.description || 'No system technical specification profile declared.'}</p>
+                            <div style="display:flex; align-items:center; justify-content:space-between; margin-top:auto;">
+                                <span style="font-weight:700; color:var(--primary); font-size:16px;">$${p.price}</span>
+                                <button class="omnifix-btn" style="padding: 8px 14px; font-size:12px;" onclick="placeOrder('${p.title}', ${p.price})">Order Module</button>
+                            </div>
+                        </div>
+                    `;
+                    display.appendChild(card);
+                });
+            });
+        }
+
+        function submitGlobalProduct(typeFlag) {
+            const name = document.getElementById(typeFlag === 'official' ? 'offProdName' : 'p2pProdName').value.trim();
+            const price = document.getElementById(typeFlag === 'official' ? 'offProdPrice' : 'p2pProdPrice').value;
+            const img = document.getElementById(typeFlag === 'official' ? 'offProdImg' : 'p2pProdImg').value.trim();
+            const desc = document.getElementById(typeFlag === 'official' ? 'offProdDesc' : 'p2pProdDesc').value.trim();
+
+            if(!name || !price) { deployNotificationGui("Missing configuration profiles."); return; }
+
+            const productPayload = {
+                title: name,
+                price: parseInt(price),
+                imageUrl: img,
+                description: desc,
+                type: typeFlag,
+                timestamp: new Date().toISOString()
+            };
+
+            firebase.database().ref('marketplace_products').push(productPayload).then(() => {
+                deployNotificationGui("Product synchronized cleanly to global node.");
+                document.getElementById(typeFlag === 'official' ? 'offProdName' : 'p2pProdName').value = "";
+                document.getElementById(typeFlag === 'official' ? 'offProdPrice' : 'p2pProdPrice').value = "";
+                if(document.getElementById(typeFlag === 'official' ? 'offProdImg' : 'p2pProdImg')) document.getElementById(typeFlag === 'official' ? 'offProdImg' : 'p2pProdImg').value = "";
+                if(document.getElementById(typeFlag === 'official' ? 'offProdDesc' : 'p2pProdDesc')) document.getElementById(typeFlag === 'official' ? 'offProdDesc' : 'p2pProdDesc').value = "";
+                switchTab('marketView');
             });
         }
 
         function placeOrder(productTitle, price) {
             const user = firebase.auth().currentUser;
-            if (!user) {
-                deployNotificationGui("You must be logged in to order assets.");
-                return;
-            }
+            if (!user) { deployNotificationGui("Authentication missing."); return; }
 
             const orderPayload = {
                 title: productTitle,
                 price: price,
+                userEmail: user.email,
+                userId: user.uid,
                 timestamp: new Date().toISOString(),
                 status: "PROCESSING"
             };
 
-            firebase.database().ref('users/' + user.uid + '/orders').push(orderPayload)
-                .then(() => {
-                    deployNotificationGui("Asset logged! Syncing ledger...");
-                    loadUserOrders();
-                })
-                .catch(err => deployNotificationGui("Order error: " + err.message));
+            firebase.database().ref('users/' + user.uid + '/orders').push(orderPayload).then(() => {
+                deployNotificationGui("Asset logging complete.");
+            });
         }
 
         function loadUserOrders() {
@@ -725,18 +653,15 @@
             firebase.database().ref('users/' + user.uid + '/orders').on('value', (snapshot) => {
                 const display = document.getElementById('ordersLogDisplay');
                 display.innerHTML = "";
-                
                 const data = snapshot.val();
                 if (!data) {
-                    display.innerHTML = `<p style="color: var(--text-muted); font-size: 14px;">No transactions found in this session branch.</p>`;
+                    display.innerHTML = `<p style="color:var(--text-muted); font-size:14px;">No transactions found in this session branch.</p>`;
                     return;
                 }
-
                 Object.keys(data).forEach(key => {
                     const order = data[key];
                     const orderCard = document.createElement('div');
                     orderCard.style = "background: var(--card); padding: 16px 20px; border-radius: var(--radius); border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;";
-                    
                     orderCard.innerHTML = `
                         <div>
                             <h4 style="margin: 0 0 4px 0; font-size: 15px;">${order.title}</h4>
@@ -752,88 +677,121 @@
             });
         }
 
+        function listenAdminMasterOrders() {
+            firebase.database().ref('users').on('value', (snapshot) => {
+                const display = document.getElementById('adminMasterOrdersDisplay');
+                display.innerHTML = "";
+                const usersData = snapshot.val();
+                if(!usersData) return;
+
+                Object.keys(usersData).forEach(uid => {
+                    const ordersNode = usersData[uid].orders;
+                    if(!ordersNode) return;
+
+                    Object.keys(ordersNode).forEach(orderKey => {
+                        const o = ordersNode[orderKey];
+                        const card = document.createElement('div');
+                        card.className = "admin-stream-card";
+                        card.innerHTML = `
+                            <div class="admin-stream-row">
+                                <div>
+                                    <strong style="font-size:15px; color:#fff;">${o.title}</strong>
+                                    <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">Client: ${o.userEmail || 'Anonymous'}</div>
+                                </div>
+                                <span style="font-weight:700; color:#38bdf8;">$${o.price}</span>
+                            </div>
+                            <div class="admin-stream-row" style="margin-top:4px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.05);">
+                                <span style="font-size:11px; color:var(--text-muted);">${new Date(o.timestamp).toLocaleString()}</span>
+                                <select class="admin-select-status" onchange="updateOrderStatus('${uid}', '${orderKey}', this.value)">
+                                    <option value="PROCESSING" ${o.status === 'PROCESSING' ? 'selected' : ''}>PROCESSING</option>
+                                    <option value="SHIPPED" ${o.status === 'SHIPPED' ? 'selected' : ''}>SHIPPED</option>
+                                    <option value="COMPLETED" ${o.status === 'COMPLETED' ? 'selected' : ''}>COMPLETED</option>
+                                </select>
+                            </div>
+                        `;
+                        display.appendChild(card);
+                    });
+                });
+            });
+        }
+
+        function updateOrderStatus(userId, orderId, statusValue) {
+            firebase.database().ref(`users/${userId}/orders/${orderId}`).update({ status: statusValue }).then(() => {
+                deployNotificationGui("System Ledger Status State Updated.");
+            });
+        }
+
+        function listenLiveChatStream() {
+            firebase.database().ref('live_system_chats').orderByChild('timestamp').limitToLast(40).on('value', (snapshot) => {
+                const stream = document.getElementById('aiChatStream');
+                stream.innerHTML = "";
+                const data = snapshot.val();
+                if(!data) return;
+
+                Object.keys(data).forEach(msgKey => {
+                    const m = data[msgKey];
+                    const msgDiv = document.createElement('div');
+                    const isMe = m.sender === firebase.auth().currentUser.email;
+                    msgDiv.className = `ai-msg ${isMe ? 'user' : 'agent'}`;
+                    msgDiv.innerHTML = `<div style="font-size:10px; opacity:0.6; margin-bottom:2px;">${m.sender}</div><div>${m.text}</div>`;
+                    stream.appendChild(msgDiv);
+                });
+                stream.scrollTop = stream.scrollHeight;
+            });
+        }
+
+        function sendLiveChatMessage() {
+            const input = document.getElementById('aiSupportInput');
+            const txt = input.value.trim();
+            if(!txt) return;
+
+            const user = firebase.auth().currentUser;
+            const chatPayload = {
+                sender: user.email,
+                text: txt,
+                timestamp: new Date().getTime()
+            };
+
+            firebase.database().ref('live_system_chats').push(chatPayload).then(() => {
+                input.value = "";
+            });
+        }
+
         function renderGameVault() {
             const display = document.getElementById('vaultGamesDisplay');
             display.innerHTML = "";
             mockDatabase.games.forEach(g => {
                 const card = document.createElement('div');
                 card.className = "listing-card";
+                card.style.padding = "20px";
                 card.innerHTML = `
                     <h3 style="margin: 0 0 8px 0; font-size: 16px; font-weight:600; color: #fbbf24;">${g.title}</h3>
                     <p style="font-size: 13px; color: var(--text-muted); margin: 0 0 20px 0; line-height:1.4;">${g.description}</p>
-                    <button class="omnifix-btn" style="width:100%; padding: 10px; font-size:13px; background:#fbbf24; color:#000;" onclick="deployNotificationGui('Booting arcade module sandbox...')">Launch Sandbox</button>
+                    <button class="omnifix-btn" style="width:100%; padding: 10px; font-size:13px; background:#fbbf24; color:#000;" onclick="deployNotificationGui('Booting sandbox...')">Launch Sandbox</button>
                 `;
                 display.appendChild(card);
             });
-        }
-
-        function submitPeerUsedListing() {
-            const name = document.getElementById('p2pProdName').value.trim();
-            const price = document.getElementById('p2pProdPrice').value;
-            if(!name || !price) { deployNotificationGui("Configuration entries invalid."); return; }
-            
-            mockDatabase.products.push({
-                id: mockDatabase.products.length + 1,
-                title: name,
-                price: parseInt(price),
-                type: "peer",
-                condition: "USED"
-            });
-            
-            document.getElementById('p2pProdName').value = "";
-            document.getElementById('p2pProdPrice').value = "";
-            deployNotificationGui("Used asset safely logged to stream.");
-            renderMarketplace();
-            switchTab('marketView');
         }
 
         function publishOfficialGame() {
             const title = document.getElementById('gameTitleInput').value.trim();
             const desc = document.getElementById('gameMetaInput').value.trim();
             if(!title) return;
-
-            mockDatabase.games.push({
-                id: mockDatabase.games.length + 1,
-                title: title,
-                description: desc || "No parameters specified."
-            });
-
+            mockDatabase.games.push({ id: mockDatabase.games.length + 1, title: title, description: desc || "No parameters specified." });
             document.getElementById('gameTitleInput').value = "";
             document.getElementById('gameMetaInput').value = "";
-            deployNotificationGui("Module deployed to environment.");
+            deployNotificationGui("Module deployed.");
             renderGameVault();
             switchTab('gameVaultView');
-        }
-
-        function publishOfficialProduct() {
-            const name = document.getElementById('offProdName').value.trim();
-            const price = document.getElementById('offProdPrice').value;
-            if(!name || !price) return;
-
-            mockDatabase.products.push({
-                id: mockDatabase.products.length + 1,
-                title: name,
-                price: parseInt(price),
-                type: "official",
-                condition: "NEW"
-            });
-
-            document.getElementById('offProdName').value = "";
-            document.getElementById('offProdPrice').value = "";
-            deployNotificationGui("New retail catalog item synchronized.");
-            renderMarketplace();
-            switchTab('marketView');
         }
 
         function computeNodeIdentityLifecycle() {
             const ageDisplay = document.getElementById('profileAgeDisplay');
             const timeGateStatus = document.getElementById('profileTimeGateStatus');
             const nodeStatus = document.getElementById('profileNodeStatus');
-
-            const gateTimestamp = Date.UTC(2026, 5, 18, 0, 0, 0); 
             const currentTimestamp = Date.now();
 
-            if (currentTimestamp >= gateTimestamp) {
+            if (currentTimestamp >= Date.UTC(2026, 5, 18, 0, 0, 0)) {
                 ageDisplay.innerText = "16";
                 timeGateStatus.innerText = "AUTO_SYNCED // LEVEL_16_CONFIRMED";
                 nodeStatus.innerText = "(Verified System Lead)";
@@ -847,118 +805,51 @@
         function syncProfileToServer() {
             const user = firebase.auth().currentUser;
             if (user) {
-                const targetAge = document.getElementById('profileAgeDisplay').innerText;
-                const profilePayload = {
+                firebase.database().ref('users/' + user.uid + '/about_owner').set({
                     name: "Mohamed Nafeez",
-                    calculatedAge: targetAge,
+                    calculatedAge: document.getElementById('profileAgeDisplay').innerText,
                     clientSyncTime: new Date().toISOString()
-                };
-                firebase.database().ref('users/' + user.uid + '/about_owner').set(profilePayload)
-                    .catch(err => console.error("Sync payload execution error: " + err.message));
+                });
             }
         }
 
         function toggleAuthState() {
             isSignUpState = !isSignUpState;
-            const title = document.getElementById('authTitle');
-            const button = document.getElementById('authPrimaryBtn'), toggleLink = document.getElementById('authStateToggle');
-            if (isSignUpState) {
-                title.innerText = "Register Account";
-                button.innerText = "Register"; toggleLink.innerText = "Existing account? Sign in here";
-            } else {
-                title.innerText = "Customer Login";
-                button.innerText = "Login"; toggleLink.innerText = "Need an account? Register credentials";
-            }
+            const title = document.getElementById('authTitle'), button = document.getElementById('authPrimaryBtn'), toggleLink = document.getElementById('authStateToggle');
+            title.innerText = isSignUpState ? "Register Account" : "Customer Login";
+            button.innerText = isSignUpState ? "Register" : "Login";
+            toggleLink.innerText = isSignUpState ? "Existing account? Sign in here" : "Need an account? Register credentials";
         }
 
         async function executeEmailAuth() {
             const email = document.getElementById('authEmail').value.trim();
             const password = document.getElementById('authPassword').value;
-            if (!email || !password) { deployNotificationGui("Input entries cannot be blank."); return; }
-            
-            if (email.includes('@') === false) {
-                deployNotificationGui("Syntax error. Standard corporate email format required.");
-                return;
-            }
+            if (!email || !password) { deployNotificationGui("Inputs cannot be blank."); return; }
+            if (!email.includes('@')) { deployNotificationGui("Invalid email syntax."); return; }
 
             if (isSignUpState) {
                 firebase.auth().createUserWithEmailAndPassword(email, password)
-                    .then((userCredential) => {
-                        deployNotificationGui("Credentials mapped and synchronized.");
-                        currentUserSessionEmail = userCredential.user.email;
-                        handleSuccessfulLogin(userCredential.user.email);
-                    })
                     .catch(err => deployNotificationGui("Creation fault: " + err.message));
             } else {
                 firebase.auth().signInWithEmailAndPassword(email, password)
-                    .then((userCredential) => {
-                        deployNotificationGui("Session token generated.");
-                        currentUserSessionEmail = userCredential.user.email;
-                        handleSuccessfulLogin(userCredential.user.email);
-                    })
                     .catch(err => deployNotificationGui("Access Denied: " + err.message));
             }
         }
 
-        function logoutTerminal() {
-            firebase.auth().signOut().then(() => {
-                deployNotificationGui("Session dropped.");
-                toggleSidebar();
-            }).catch(err => deployNotificationGui("Disconnection fault: " + err.message));
-        }
+        function logoutTerminal() { firebase.auth().signOut().then(() => { toggleSidebar(); }); }
 
         function switchTab(viewId) {
             document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
             document.querySelectorAll('.sidebar .nav-item').forEach(n => n.classList.remove('active-nav'));
-            
-            let targetView = document.getElementById(viewId);
-            let targetNav = document.getElementById('nav-' + viewId);
-            
-            if(targetView) targetView.classList.add('active');
-            if(targetNav) targetNav.classList.add('active-nav');
+            if(document.getElementById(viewId)) document.getElementById(viewId).classList.add('active');
+            if(document.getElementById('nav-' + viewId)) document.getElementById('nav-' + viewId).classList.add('active-nav');
             toggleSidebar();
         }
 
         function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
-        function toggleCart() { document.getElementById('cartPanel').classList.toggle('active'); }
-        
         function toggleAiSupport() { 
             document.getElementById('aiSupportPanel').classList.toggle('active'); 
             if(document.getElementById('sidebar').classList.contains('active')) toggleSidebar();
-        }
-
-        function sendAiMessage() {
-            const inputField = document.getElementById('aiSupportInput');
-            const query = inputField.value.trim();
-            if (!query) return;
-
-            const stream = document.getElementById('aiChatStream');
-            
-            const userBox = document.createElement('div');
-            userBox.className = 'ai-msg user';
-            userBox.innerText = query;
-            stream.appendChild(userBox);
-            inputField.value = '';
-            stream.scrollTop = stream.scrollHeight;
-
-            setTimeout(() => {
-                const agentBox = document.createElement('div');
-                agentBox.className = 'ai-msg agent';
-                let reply = "Statement analyzed within ecosystem architecture constraints.";
-                
-                const lower = query.toLowerCase();
-                if (lower.includes('godot') || lower.includes('physics') || lower.includes('script') || lower.includes('game')) {
-                    reply = "[Diagnostic Subsystem]: Streamline asset hierarchy matrices. Run physics steps asynchronously for mobile optimization branches.";
-                } else if (lower.includes('gpu') || lower.includes('hardware') || lower.includes('ram') || lower.includes('ssd') || lower.includes('pc')) {
-                    reply = "[Hardware Diagnostic Subsystem]: Resource mapping and storage bandwidth calculations completed successfully.";
-                } else if (lower.includes('profile') || lower.includes('about') || lower.includes('owner') || lower.includes('nafeez')) {
-                    reply = "[Registry Subsystem]: Record verification for Mohamed Nafeez complete. Age value parameters verified at level 16.";
-                }
-
-                agentBox.innerText = reply;
-                stream.appendChild(agentBox);
-                stream.scrollTop = stream.scrollHeight;
-            }, 600);
         }
 
         function deployNotificationGui(msg) {
