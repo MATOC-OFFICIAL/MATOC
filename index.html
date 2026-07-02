@@ -469,7 +469,7 @@
         </div>
     </div>
 
-    <div class="app-view active" id="marketView">
+    <div class="app-view" id="marketView">
         <h2 style="margin: 0 0 6px 0; font-size: 24px; font-weight: 700;">Marketplace Stream</h2>
         <p style="color:var(--text-muted); font-size:14px; margin: 0 0 24px 0;">Authorised brand releases alongside peer-reviewed systems configurations.</p>
         <div id="marketplaceProductsDisplay" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">
@@ -570,17 +570,15 @@
         
         firebase.initializeApp(firebaseConfig);
 
-        // Runs reCAPTCHA asynchronously in the background while instantly bypassing the landing loader interface
         function runInitialPreflightChecks() {
-            if (typeof gocaptcha !== 'undefined' && gocaptcha.enterprise) {
-                gocaptcha.enterprise.ready(function() {
-                    gocaptcha.enterprise.execute('6LcAVCotAAAAAPtUw0X7fwbiaMOz68bew5HlRtpT', {action: 'login'})
+            if (typeof grecaptcha !== 'undefined' && grecaptcha.enterprise) {
+                grecaptcha.enterprise.ready(function() {
+                    grecaptcha.enterprise.execute('6LcAVCotAAAAAPtUw0X7fwbiaMOz68bew5HlRtpT', {action: 'login'})
                     .then(function(token) {
                         console.log("Background reCAPTCHA Token verified securely.");
                     }).catch(err => console.warn("Background reCAPTCHA process bypassed: ", err));
                 });
             }
-            // Proceeds immediately to load screens without holding user at any visible preflight loading page
             initSessionWatch();
         }
 
@@ -608,6 +606,9 @@
             document.getElementById('terminalUserHandle').innerText = emailText;
             document.getElementById('adminSidebarLink').style.display = 'block';
             
+            // Mark marketplace view active ONLY when login succeeds
+            document.getElementById('marketView').classList.add('active');
+
             const lowerE = emailText.toLowerCase();
             if (lowerE === "official@matocbuilders.com" || lowerE === "nz") {
                 document.getElementById('officialSectionTitle').style.display = 'block';
@@ -622,6 +623,9 @@
         }
 
         function handleRequiredLogin() {
+            // Keep app views completely hidden if login is required
+            document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
+
             document.getElementById('authGate').style.display = 'flex';
             document.getElementById('terminalUserHandle').innerText = "Not Connected";
             document.getElementById('adminSidebarLink').style.display = 'none';
@@ -804,6 +808,7 @@
             }).catch(err => deployNotificationGui("Disconnection fault: " + err.message));
         }
 
+        // Updated switcher function to ensure view classes update smoothly
         function switchTab(viewId) {
             document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
             document.querySelectorAll('.sidebar .nav-item').forEach(n => n.classList.remove('active-nav'));
