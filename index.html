@@ -88,7 +88,7 @@
         .search-engine-bay {
             display: flex;
             flex: 1;
-            max-width: 600px;
+            max-width: 500px;
             height: 46px;
             background: #f1f5f9;
             border-radius: var(--radius-main);
@@ -273,9 +273,14 @@
         .premium-product-card:hover { border-color: var(--primary); box-shadow: var(--shadow-md); }
         
         .pill-badge { background: var(--primary-light); color: var(--primary); font-size: 11px; padding: 4px 10px; width: fit-content; font-weight: 700; margin-bottom: 14px; border-radius: 20px; }
-        .rating-engine-row { display: flex; align-items: center; gap: 6px; margin: 8px 0 14px 0; }
-        .stars-filled { color: var(--accent-gold); font-size: 13px; }
-        .rating-volume { color: var(--text-muted); font-size: 12px; }
+        
+        /* --- RATING INTERACTIVE ARCHITECTURE --- */
+        .rating-engine-row { display: flex; align-items: center; gap: 8px; margin: 8px 0 14px 0; }
+        .interactive-stars { display: inline-flex; gap: 2px; }
+        .star-node { color: #cbd5e1; font-size: 18px; cursor: pointer; transition: color 0.15s; }
+        .star-node.active { color: var(--accent-gold); }
+        .rating-volume { color: var(--text-muted); font-size: 12px; font-weight: 500; }
+
         .premium-price-tag { color: var(--text); font-size: 22px; font-weight: 800; margin-bottom: 4px; }
         .shipping-sla-line { font-size: 12px; color: var(--text-muted); margin-bottom: 18px; }
         .shipping-sla-line strong { color: #10b981; }
@@ -315,86 +320,29 @@
         .toast-engine-banner { position: fixed; bottom: 24px; right: 24px; background: var(--text); color: white; padding: 16px 24px; border-radius: var(--radius-main); box-shadow: var(--shadow-lg); font-size: 14px; font-weight: 600; z-index: 10000; transform: translateY(150px); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
         .toast-engine-banner.show { transform: translateY(0); }
 
-        /* =======================================================
-           === NATIVE RESPONSIVE MATRIX OVERRIDE (MOBILE FIX) ===
-           ======================================================= */
+        /* --- FORMS --- */
+        .input-element {
+            width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius-main); font-family: var(--font); box-sizing: border-box; font-size: 14px; background: #f8fafc;
+        }
+        .input-element:focus { outline: none; border-color: var(--primary); background: white; }
+
         @media (max-width: 900px) {
-            .premium-header {
-                flex-direction: column;
-                align-items: stretch;
-                padding: 16px;
-                gap: 16px;
-            }
-
-            .header-left-cluster {
-                justify-content: space-between;
-                width: 100%;
-            }
-
-            .location-badge {
-                display: none !important; /* Save premium room on smaller display views */
-            }
-
-            .search-engine-bay {
-                max-width: 100%;
-                width: 100%;
-            }
-
-            .nav-utility-cluster {
-                width: 100%;
-                justify-content: space-between;
-                border-top: 1px solid var(--border);
-                padding-top: 12px;
-            }
-
-            .utility-node {
-                display: none !important;
-            }
-
-            .premium-cart-trigger {
-                width: 100%;
-                justify-content: center;
-                box-sizing: border-box;
-            }
-
-            .premium-subbar {
-                padding: 12px 16px;
-                gap: 16px;
-                overflow-x: auto;
-                white-space: nowrap;
-                -webkit-overflow-scrolling: touch;
-            }
-
-            .hero-showcase {
-                height: 180px;
-                padding: 0 20px;
-            }
-
+            .premium-header { flex-direction: column; align-items: stretch; padding: 16px; gap: 16px; }
+            .header-left-cluster { justify-content: space-between; width: 100%; }
+            .location-badge { display: none !important; }
+            .search-engine-bay { max-width: 100%; width: 100%; }
+            .nav-utility-cluster { width: 100%; justify-content: space-between; border-top: 1px solid var(--border); padding-top: 12px; }
+            .utility-node { display: none !important; }
+            .premium-cart-trigger { width: 100%; justify-content: center; box-sizing: border-box; }
+            .premium-subbar { padding: 12px 16px; gap: 16px; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
+            .hero-showcase { height: 180px; padding: 0 20px; }
             .hero-text h1 { font-size: 22px; }
             .hero-text p { font-size: 13px; }
-
-            .main-layout-stream {
-                padding: 0 16px;
-                margin-top: -24px;
-            }
-
-            .dashboard-masonry {
-                grid-template-columns: 1fr;
-                gap: 16px;
-            }
-
-            .shelf-flex-grid {
-                grid-template-columns: 1fr;
-                gap: 16px;
-            }
-
-            .showcase-shelf {
-                padding: 20px;
-            }
-
-            .sliding-blur-panel {
-                width: 85%;
-            }
+            .main-layout-stream { padding: 0 16px; margin-top: -24px; }
+            .dashboard-masonry { grid-template-columns: 1fr; gap: 16px; }
+            .shelf-flex-grid { grid-template-columns: 1fr; gap: 16px; }
+            .showcase-shelf { padding: 20px; }
+            .sliding-blur-panel { width: 85%; }
         }
     </style>
 </head>
@@ -430,6 +378,11 @@
             <div class="utility-node" onclick="switchView('p2pSellView')">
                 <span>Asset Loop</span>
                 <strong>Trade-Ins</strong>
+            </div>
+            <!-- Identity Control Dynamic Node -->
+            <div class="utility-node" id="authNavTrigger" onclick="switchView('authAuthView')">
+                <span>Secure Matrix</span>
+                <strong id="authNavLabel">Gate Sign-In</strong>
             </div>
             <div class="premium-cart-trigger" onclick="toggleCartPanel()">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
@@ -478,6 +431,33 @@
             <button class="action-button-cta" style="background:var(--primary); color:white; border:none; padding:12px;" onclick="executeAmazonCheckout()">Commit Subtotal to Build Manifest</button>
         </div>
     </div>
+
+    <!-- --- IDENTITY MATRIX GATEWAY (LOGIN VIEW) --- -->
+    <main class="app-view" id="authAuthView" style="max-width:440px; margin:60px auto; padding:0 16px;">
+        <div style="background:white; padding:32px; border-radius:var(--radius-large); box-shadow:var(--shadow-md); border:1px solid var(--border);" id="loggedOutFormBlock">
+            <h2 style="margin:0 0 8px 0; font-size:22px; letter-spacing:-0.5px;">Ecosystem Identity Login</h2>
+            <p style="color:var(--text-muted); font-size:13px; margin-bottom:24px;">Enter an active tracking email structure to compile your hardware nodes.</p>
+            
+            <div style="margin-bottom:16px;">
+                <label style="font-size:11px; font-weight:700; color:var(--text-muted); display:block; margin-bottom:6px; text-transform:uppercase;">Email Vector</label>
+                <input type="email" id="authEmailInput" placeholder="developer@gbwns.node" class="input-element">
+            </div>
+
+            <div style="margin-bottom:24px;">
+                <label style="font-size:11px; font-weight:700; color:var(--text-muted); display:block; margin-bottom:6px; text-transform:uppercase;">Security Signature passphrase</label>
+                <input type="password" id="authPasswordInput" placeholder="••••••••" class="input-element">
+            </div>
+
+            <button class="action-button-cta" style="background:var(--primary); color:white; border:none; padding:12px; margin-bottom:12px;" onclick="handleAccountSign()">Authenticate Account Node</button>
+        </div>
+
+        <div style="background:white; padding:32px; border-radius:var(--radius-large); box-shadow:var(--shadow-md); border:1px solid var(--border); display:none; text-align:center;" id="loggedInStatusBlock">
+            <div style="background:var(--primary-light); color:var(--primary); width:48px; height:48px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 16px auto; font-weight:800; font-size:18px;" id="userProfileBadge">U</div>
+            <h3 style="margin:0 0 4px 0;" id="userGreetingLine">Session Authenticated</h3>
+            <p style="color:var(--text-muted); font-size:13px; margin-bottom:24px;" id="userEmailSubline">node</p>
+            <button class="action-button-cta" style="background:#ef4444; color:white; border:none;" onclick="handleIdentityPurge()">Purge Runtime Authentication</button>
+        </div>
+    </main>
 
     <!-- --- MARKET STAGE VIEW --- -->
     <main class="app-view active" id="marketView">
@@ -601,16 +581,18 @@
     <script>
         let amazonCart = [];
         let pickerRig = { cpu: null, gpu: null, ram: null };
+        let authenticatedUser = null;
 
+        // Structured Component Engine Data Framework
         let hardwareDatabase = {
             products: [
-                { id: 301, title: "Intel Core i7-4790K Processor Node (4.0 GHz, Core Cache)", price: 85.00, category: "cpu", stars: "5", reviews: "2.4k", tags: "Top Rated" },
-                { id: 302, title: "Sapphire Radeon RX 580 Pulse 8GB Frame Buffer Acceleration Module", price: 110.00, category: "gpu", stars: "4", reviews: "1.8k", tags: "Value Pick" },
-                { id: 303, title: "Corsair Vengeance Pro Series 16GB DDR3 Volatile Cache Array", price: 40.00, category: "ram", stars: "5", reviews: "942", tags: "Stable Match" },
-                { id: 304, title: "Crucial MX500 1TB M.2 Internal Solid State Drive Architecture Node", price: 55.00, category: "ssd", stars: "5", reviews: "5.1k", tags: "High Speed" }
+                { id: 301, title: "Intel Core i7-4790K Processor Node (4.0 GHz, Core Cache)", price: 85.00, category: "cpu", currentRating: 0, totalRatingsCount: 0, tags: "Top Rated" },
+                { id: 302, title: "Sapphire Radeon RX 580 Pulse 8GB Frame Buffer Acceleration Module", price: 110.00, category: "gpu", currentRating: 0, totalRatingsCount: 0, tags: "Value Pick" },
+                { id: 303, title: "Corsair Vengeance Pro Series 16GB DDR3 Volatile Cache Array", price: 40.00, category: "ram", currentRating: 0, totalRatingsCount: 0, tags: "Stable Match" },
+                { id: 304, title: "Crucial MX500 1TB M.2 Internal Solid State Drive Architecture Node", price: 55.00, category: "ssd", currentRating: 0, totalRatingsCount: 0, tags: "High Speed" }
             ],
             combos: [
-                { id: 401, title: "Intel i7-4790K Core CPU + Performance Tuning Z97 Platform Architecture Matrix", price: 210.00, stars: "5", reviews: "154" }
+                { id: 401, title: "Intel i7-4790K Core CPU + Performance Tuning Z97 Platform Architecture Matrix", price: 210.00, currentRating: 0, totalRatingsCount: 0 }
             ],
             games: [
                 { id: 1, title: "Bermuda Mutant Matrix Logic Simulator", info: "Isolated vehicle physics vector runtime testing script." }
@@ -618,12 +600,74 @@
         };
 
         function initApp() {
+            loadUserSession();
             renderMarketplace(hardwareDatabase.products);
             populateConfiguratorDropdowns();
             recalculateInstantQuote();
             renderArcadeVault();
         }
 
+        /* --- AUTHENTICATION CONTROLLER SYSTEM --- */
+        function loadUserSession() {
+            const savedUser = localStorage.getItem('matoc_user_node');
+            if(savedUser) {
+                authenticatedUser = JSON.parse(savedUser);
+                updateAuthInterfaceUI(true);
+            } else {
+                updateAuthInterfaceUI(false);
+            }
+        }
+
+        function handleAccountSign() {
+            const email = document.getElementById('authEmailInput').value.trim();
+            const pass = document.getElementById('authPasswordInput').value.trim();
+
+            if(!email || !pass) {
+                triggerToastAlert("Sign-in credential validation dropped.");
+                return;
+            }
+
+            authenticatedUser = { email: email };
+            localStorage.setItem('matoc_user_node', JSON.stringify(authenticatedUser));
+            
+            updateAuthInterfaceUI(true);
+            triggerToastAlert("Identity vector verified. Session locked.");
+            switchView('marketView');
+            
+            // Re-render marketplace to allow dynamic star triggers
+            renderMarketplace(hardwareDatabase.products);
+        }
+
+        function handleIdentityPurge() {
+            localStorage.removeItem('matoc_user_node');
+            authenticatedUser = null;
+            updateAuthInterfaceUI(false);
+            triggerToastAlert("Session purged successfully.");
+            renderMarketplace(hardwareDatabase.products);
+        }
+
+        function updateAuthInterfaceUI(isLoggedIn) {
+            const label = document.getElementById('authNavLabel');
+            const loggedOutBox = document.getElementById('loggedOutFormBlock');
+            const loggedInBox = document.getElementById('loggedInStatusBlock');
+
+            if(isLoggedIn) {
+                label.innerText = authenticatedUser.email.split('@')[0].toUpperCase();
+                loggedOutBox.style.display = "none";
+                loggedInBox.style.display = "block";
+                document.getElementById('userGreetingLine').innerText = "Matrix Profile Active";
+                document.getElementById('userEmailSubline').innerText = authenticatedUser.email;
+                document.getElementById('userProfileBadge').innerText = authenticatedUser.email.charAt(0).toUpperCase();
+            } else {
+                label.innerText = "Gate Sign-In";
+                loggedOutBox.style.display = "block";
+                loggedInBox.style.display = "none";
+                document.getElementById('authEmailInput').value = "";
+                document.getElementById('authPasswordInput').value = "";
+            }
+        }
+
+        /* --- MARKETPLACE RENDERING MATRIX --- */
         function renderMarketplace(productList) {
             const prodShelf = document.getElementById('productShelfDisplay');
             prodShelf.innerHTML = "";
@@ -635,10 +679,14 @@
                     <div>
                         <div class="pill-badge">${p.tags || 'Hardware Exchange'}</div>
                         <h4 style="margin:0 0 8px 0; font-size:15px; font-weight:600; line-height:1.4; color:var(--text);">${p.title}</h4>
+                        
                         <div class="rating-engine-row">
-                            <span class="stars-filled">${getStarString(p.stars)}</span>
-                            <span class="rating-volume">(${p.reviews})</span>
+                            <div class="interactive-stars" data-id="${p.id}" data-type="product">
+                                ${generateStarHTML(p.currentRating)}
+                            </div>
+                            <span class="rating-volume">(${p.totalRatingsCount} votes)</span>
                         </div>
+
                         <div class="premium-price-tag">$${p.price.toFixed(2)}</div>
                         <div class="shipping-sla-line">Express Freight: <strong>Verified Instantly</strong></div>
                     </div>
@@ -656,10 +704,14 @@
                     <div>
                         <div class="pill-badge" style="background:#fef2f2; color:#ef4444;">Optimized Core Bundle</div>
                         <h4 style="margin:0 0 8px 0; font-size:15px; font-weight:600; line-height:1.4; color:var(--text);">${c.title}</h4>
+                        
                         <div class="rating-engine-row">
-                            <span class="stars-filled">${getStarString(c.stars)}</span>
-                            <span class="rating-volume">(${c.reviews})</span>
+                            <div class="interactive-stars" data-id="${c.id}" data-type="combo">
+                                ${generateStarHTML(c.currentRating)}
+                            </div>
+                            <span class="rating-volume">(${c.totalRatingsCount} votes)</span>
                         </div>
+
                         <div class="premium-price-tag">$${c.price.toFixed(2)}</div>
                         <div class="shipping-sla-line">System Delivery Status: <strong>Priority Tier</strong></div>
                     </div>
@@ -667,13 +719,52 @@
                 `;
                 comboShelf.appendChild(card);
             });
+
+            bindRatingControls();
         }
 
-        function getStarString(stars) {
-            let starStr = "";
-            let count = parseInt(stars);
-            for(let i=0; i<5; i++) { starStr += i < count ? "★" : "☆"; }
-            return starStr;
+        /* --- DYNAMIC RATINGS ENGINE LOGIC --- */
+        function generateStarHTML(rating) {
+            let html = "";
+            for(let i = 1; i <= 5; i++) {
+                html += `<span class="star-node ${i <= rating ? 'active' : ''}" data-value="${i}">★</span>`;
+            }
+            return html;
+        }
+
+        function bindRatingControls() {
+            document.querySelectorAll('.star-node').forEach(star => {
+                star.addEventListener('click', function(e) {
+                    if(!authenticatedUser) {
+                        triggerToastAlert("Authentication required to submit tracking ratings.");
+                        switchView('authAuthView');
+                        return;
+                    }
+
+                    const selectedScore = parseInt(this.getAttribute('data-value'));
+                    const container = this.parentElement;
+                    const id = parseInt(container.getAttribute('data-id'));
+                    const type = container.getAttribute('data-type');
+
+                    if(type === 'product') {
+                        const product = hardwareDatabase.products.find(p => p.id === id);
+                        if(product) {
+                            product.currentRating = selectedScore;
+                            product.totalRatingsCount += 1;
+                            triggerToastAlert(`Rating successfully verified as ${selectedScore} stars!`);
+                            renderMarketplace(hardwareDatabase.products);
+                        }
+                    } else if(type === 'combo') {
+                        const combo = hardwareDatabase.combos.find(c => c.id === id);
+                        if(combo) {
+                            combo.currentRating = selectedScore;
+                            combo.totalRatingsCount += 1;
+                            triggerToastAlert(`Bundle array updated to ${selectedScore} stars!`);
+                            renderMarketplace(hardwareDatabase.products);
+                        }
+                    }
+                });
+            });
         }
 
         function filterMarketplaceSearch() {
@@ -767,8 +858,8 @@
                 title: `Pre-Owned ${name} (Matoc Labs Certified Integrity Core)`,
                 price: numericValue,
                 category: cat,
-                stars: "5",
-                reviews: "1",
+                currentRating: 0,
+                totalRatingsCount: 0,
                 tags: "User Node Swap"
             });
 
