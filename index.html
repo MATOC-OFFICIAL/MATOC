@@ -80,7 +80,6 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* NEW Professional & Clean Premium PC Build Inspired Auth Gate */
         .auth-gate { 
             position: fixed; 
             top:0; 
@@ -118,7 +117,6 @@
             opacity: 0.9;
         }
         
-        /* Clean line design input system based on your screenshot */
         .auth-input-wrapper {
             position: relative;
             margin-bottom: 28px;
@@ -152,7 +150,6 @@
             color: rgba(255, 255, 255, 0.5);
         }
 
-        /* Extra utilities row (Remember me / Forgot pass) */
         .auth-utilities {
             display: flex;
             justify-content: space-between;
@@ -174,7 +171,6 @@
             accent-color: var(--primary);
         }
 
-        /* Clean solid accent login action */
         .auth-submit-action {
             background: #1d4ed8; 
             color: white; 
@@ -210,7 +206,6 @@
             color: #fff;
         }
 
-        /* Main Application Frame */
         .header { 
             position: fixed; 
             top: 0; 
@@ -369,7 +364,6 @@
             border-color: var(--primary);
         }
 
-        /* Listing Grid Elements */
         .listing-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; position: relative; display: flex; flex-direction: column; justify-content: space-between; }
         .badge { position: absolute; top: 16px; right: 16px; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; }
         .badge.used { background: rgba(230, 126, 34, 0.15); color: #e67e22; }
@@ -447,6 +441,7 @@
 
         <div class="sidebar-section-title">Navigation</div>
         <div class="nav-item active-nav" id="nav-marketView" onclick="switchTab('marketView')">Browse Marketplace</div>
+        <div class="nav-item" id="nav-ordersView" onclick="switchTab('ordersView')">My Orders</div>
         <div class="nav-item" id="nav-p2pSellView" onclick="switchTab('p2pSellView')">Submit Used Asset</div>
         <div class="nav-item" id="nav-ownerProfileView" onclick="switchTab('ownerProfileView')">Profile Dossier</div>
         <div class="nav-item" id="nav-gameVaultView" onclick="switchTab('gameVaultView')">Arcade Vault</div>
@@ -493,6 +488,14 @@
         <h2 style="margin: 0 0 6px 0; font-size: 24px; font-weight: 700;">Marketplace Stream</h2>
         <p style="color:var(--text-muted); font-size:14px; margin: 0 0 24px 0;">Authorised brand releases alongside peer-reviewed systems configurations.</p>
         <div id="marketplaceProductsDisplay" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px;">
+        </div>
+    </div>
+
+    <div class="app-view" id="ordersView">
+        <h2 style="margin: 0 0 6px 0; font-size: 24px; font-weight: 700;">Purchase Ledger</h2>
+        <p style="color:var(--text-muted); font-size:14px; margin: 0 0 24px 0;">Track your requested asset keys, configurations, and deployment logs.</p>
+        <div id="ordersLogDisplay" style="display: flex; flex-direction: column; gap: 12px;">
+            <p style="color: var(--text-muted); font-size: 14px;">No transactions found in this session branch.</p>
         </div>
     </div>
 
@@ -651,6 +654,8 @@
             document.getElementById('terminalUserHandle').innerText = emailText;
             document.getElementById('adminSidebarLink').style.display = 'block';
             
+            loadUserOrders();
+
             if (emailText.toLowerCase() === "damnbuilders_official" || emailText.toLowerCase() === "official@damnbuilders.com" || emailText.toLowerCase() === "nz") {
                 document.getElementById('officialSectionTitle').style.display = 'block';
                 document.getElementById('officialPublishLink').style.display = 'block';
@@ -685,9 +690,65 @@
                     <span class="badge ${badgeClass}">${badgeText}</span>
                     <h3 style="margin: 24px 0 8px 0; font-size: 16px; font-weight: 600;">${p.title}</h3>
                     <p style="font-weight: 700; color: var(--primary); margin: 0 0 16px 0;">$${p.price}</p>
-                    <button class="omnifix-btn" style="width:100%; padding: 10px; font-size:13px;" onclick="deployNotificationGui('Asset added to queue processing queue.')">Order Module</button>
+                    <button class="omnifix-btn" style="width:100%; padding: 10px; font-size:13px;" onclick="placeOrder('${p.title}', ${p.price})">Order Module</button>
                 `;
                 display.appendChild(card);
+            });
+        }
+
+        function placeOrder(productTitle, price) {
+            const user = firebase.auth().currentUser;
+            if (!user) {
+                deployNotificationGui("You must be logged in to order assets.");
+                return;
+            }
+
+            const orderPayload = {
+                title: productTitle,
+                price: price,
+                timestamp: new Date().toISOString(),
+                status: "PROCESSING"
+            };
+
+            firebase.database().ref('users/' + user.uid + '/orders').push(orderPayload)
+                .then(() => {
+                    deployNotificationGui("Asset logged! Syncing ledger...");
+                    loadUserOrders();
+                })
+                .catch(err => deployNotificationGui("Order error: " + err.message));
+        }
+
+        function loadUserOrders() {
+            const user = firebase.auth().currentUser;
+            if (!user) return;
+
+            firebase.database().ref('users/' + user.uid + '/orders').on('value', (snapshot) => {
+                const display = document.getElementById('ordersLogDisplay');
+                display.innerHTML = "";
+                
+                const data = snapshot.val();
+                if (!data) {
+                    display.innerHTML = `<p style="color: var(--text-muted); font-size: 14px;">No transactions found in this session branch.</p>`;
+                    return;
+                }
+
+                Object.keys(data).forEach(key => {
+                    const order = data[key];
+                    const orderCard = document.createElement('div');
+                    orderCard.style = "background: var(--card); padding: 16px 20px; border-radius: var(--radius); border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;";
+                    
+                    orderCard.innerHTML = `
+                        <div>
+                            <h4 style="margin: 0 0 4px 0; font-size: 15px;">${order.title}</h4>
+                            <span style="font-size: 12px; color: var(--text-muted);">${new Date(order.timestamp).toLocaleString()}</span>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-weight: 700; color: var(--primary);">$${order.price}</div>
+                            <span style="font-size: 11px; font-weight: 700; color: #fbbf24; background: rgba(251, 191, 36, 0.1); padding: 2px 6px; border-radius: 4px;">${order.status}</span>
+                        </div>
+                    `;
+                    display.appendChild(orderCard);
+                });
             });
         }
 
