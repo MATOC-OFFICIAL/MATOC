@@ -304,6 +304,132 @@
         .app-view { display: none; }
         .app-view.active { display: block; }
 
+        /* --- SCREENSHOT-MATCHING LOGIN UI SYSTEM --- */
+        .screenshot-login-wrapper {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: radial-gradient(circle at top center, #1b3d7a 0%, #081326 70%, #030812 100%);
+            z-index: 5500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+            padding: 24px;
+        }
+        .screenshot-login-container {
+            width: 100%;
+            max-width: 380px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .screenshot-avatar-circle {
+            width: 90px;
+            height: 90px;
+            border: 2px solid rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 32px;
+            color: #ffffff;
+        }
+        .screenshot-login-title {
+            color: #ffffff;
+            font-size: 23px;
+            font-weight: 500;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin: 0 0 48px 0;
+            text-align: center;
+            font-family: var(--font);
+        }
+        .screenshot-input-group {
+            width: 100%;
+            position: relative;
+            margin-bottom: 36px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+            padding-bottom: 8px;
+        }
+        .screenshot-icon-vector {
+            color: rgba(255, 255, 255, 0.7);
+            margin-right: 14px;
+            display: flex;
+            align-items: center;
+        }
+        .screenshot-input-field {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #ffffff;
+            font-size: 15px;
+            font-family: var(--font);
+            outline: none;
+            width: 100%;
+        }
+        .screenshot-input-field::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+        .screenshot-utility-row {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: -12px;
+            margin-bottom: 40px;
+        }
+        .screenshot-checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            user-select: none;
+        }
+        .screenshot-checkbox-label input {
+            accent-color: #1a62ff;
+            cursor: pointer;
+        }
+        .screenshot-forgot-link {
+            color: rgba(255, 255, 255, 0.5);
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .screenshot-forgot-link:hover {
+            color: #ffffff;
+        }
+        .screenshot-submit-btn {
+            width: 100%;
+            background: #1a62ff;
+            color: #ffffff;
+            border: none;
+            padding: 16px;
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+            box-shadow: 0 4px 12px rgba(26, 98, 255, 0.3);
+            margin-bottom: 32px;
+        }
+        .screenshot-submit-btn:hover {
+            background: #004ae6;
+        }
+        .screenshot-footer-text {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 13px;
+            text-align: center;
+            cursor: pointer;
+        }
+        .screenshot-footer-text:hover {
+            color: #ffffff;
+        }
+
         /* --- SLIDING DRAWERS --- */
         .sliding-blur-panel {
             position: fixed; top: 0; width: 380px; height: 100%; background: rgba(255, 255, 255, 0.95);
@@ -319,12 +445,6 @@
         .global-curtain { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(15, 23, 42, 0.3); backdrop-filter: blur(4px); z-index: 4500; display: none; }
         .toast-engine-banner { position: fixed; bottom: 24px; right: 24px; background: var(--text); color: white; padding: 16px 24px; border-radius: var(--radius-main); box-shadow: var(--shadow-lg); font-size: 14px; font-weight: 600; z-index: 10000; transform: translateY(150px); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
         .toast-engine-banner.show { transform: translateY(0); }
-
-        /* --- FORMS --- */
-        .input-element {
-            width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius-main); font-family: var(--font); box-sizing: border-box; font-size: 14px; background: #f8fafc;
-        }
-        .input-element:focus { outline: none; border-color: var(--primary); background: white; }
 
         @media (max-width: 900px) {
             .premium-header { flex-direction: column; align-items: stretch; padding: 16px; gap: 16px; }
@@ -432,30 +552,70 @@
         </div>
     </div>
 
-    <!-- --- IDENTITY MATRIX GATEWAY (LOGIN VIEW) --- -->
-    <main class="app-view" id="authAuthView" style="max-width:440px; margin:60px auto; padding:0 16px;">
-        <div style="background:white; padding:32px; border-radius:var(--radius-large); box-shadow:var(--shadow-md); border:1px solid var(--border);" id="loggedOutFormBlock">
-            <h2 style="margin:0 0 8px 0; font-size:22px; letter-spacing:-0.5px;">Ecosystem Identity Login</h2>
-            <p style="color:var(--text-muted); font-size:13px; margin-bottom:24px;">Enter an active tracking email structure to compile your hardware nodes.</p>
-            
-            <div style="margin-bottom:16px;">
-                <label style="font-size:11px; font-weight:700; color:var(--text-muted); display:block; margin-bottom:6px; text-transform:uppercase;">Email Vector</label>
-                <input type="email" id="authEmailInput" placeholder="developer@gbwns.node" class="input-element">
-            </div>
+    <!-- --- IDENTITY MATRIX GATEWAY (MATCHES SCREENSHOT_2026-07-02-14-39-58-845_COM.ANDROID.CHROME.JPG) --- -->
+    <main class="app-view" id="authAuthView">
+        
+        <!-- Logged Out Module (Directly matching user image) -->
+        <div class="screenshot-login-wrapper" id="loggedOutFormBlock">
+            <div class="screenshot-login-container">
+                
+                <!-- Avatar Circular Frame -->
+                <div class="screenshot-avatar-circle">
+                    <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </div>
 
-            <div style="margin-bottom:24px;">
-                <label style="font-size:11px; font-weight:700; color:var(--text-muted); display:block; margin-bottom:6px; text-transform:uppercase;">Security Signature passphrase</label>
-                <input type="password" id="authPasswordInput" placeholder="••••••••" class="input-element">
-            </div>
+                <h2 class="screenshot-login-title">Customer Login</h2>
 
-            <button class="action-button-cta" style="background:var(--primary); color:white; border:none; padding:12px; margin-bottom:12px;" onclick="handleAccountSign()">Authenticate Account Node</button>
+                <!-- Email Form Vector Row -->
+                <div class="screenshot-input-group">
+                    <span class="screenshot-icon-vector">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                            <polyline points="22,6 12,13 2,6"></polyline>
+                        </svg>
+                    </span>
+                    <input type="email" id="authEmailInput" placeholder="Email ID" class="screenshot-input-field">
+                </div>
+
+                <!-- Password Form Vector Row -->
+                <div class="screenshot-input-group">
+                    <span class="screenshot-icon-vector">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                    </span>
+                    <input type="password" id="authPasswordInput" placeholder="Password" class="screenshot-input-field">
+                </div>
+
+                <!-- Utilities Control Row -->
+                <div class="screenshot-utility-row">
+                    <label class="screenshot-checkbox-label">
+                        <input type="checkbox" checked> Remember me
+                    </label>
+                    <span class="screenshot-forgot-link" onclick="triggerToastAlert('Redirecting to secure hash verification protocol...')">Forgot Password?</span>
+                </div>
+
+                <!-- Action Direct Trigger -->
+                <button class="screenshot-submit-btn" onclick="handleAccountSign()">Login</button>
+
+                <!-- Footer Redirection Text -->
+                <div class="screenshot-footer-text" onclick="triggerToastAlert('Account Node Registration is open.')">
+                    Need an account? Register credentials
+                </div>
+
+            </div>
         </div>
 
-        <div style="background:white; padding:32px; border-radius:var(--radius-large); box-shadow:var(--shadow-md); border:1px solid var(--border); display:none; text-align:center;" id="loggedInStatusBlock">
-            <div style="background:var(--primary-light); color:var(--primary); width:48px; height:48px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 16px auto; font-weight:800; font-size:18px;" id="userProfileBadge">U</div>
-            <h3 style="margin:0 0 4px 0;" id="userGreetingLine">Session Authenticated</h3>
-            <p style="color:var(--text-muted); font-size:13px; margin-bottom:24px;" id="userEmailSubline">node</p>
-            <button class="action-button-cta" style="background:#ef4444; color:white; border:none;" onclick="handleIdentityPurge()">Purge Runtime Authentication</button>
+        <!-- Logged In View Profile Banner State -->
+        <div style="background:white; max-width: 400px; margin: 80px auto; padding:40px 32px; border-radius:var(--radius-large); box-shadow:var(--shadow-md); border:1px solid var(--border); display:none; text-align:center;" id="loggedInStatusBlock">
+            <div style="background:var(--primary-light); color:var(--primary); width:64px; height:64px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 20px auto; font-weight:800; font-size:22px;" id="userProfileBadge">U</div>
+            <h3 style="margin:0 0 6px 0; font-size:20px;" id="userGreetingLine">Session Authenticated</h3>
+            <p style="color:var(--text-muted); font-size:14px; margin-bottom:32px;" id="userEmailSubline">node</p>
+            <button class="action-button-cta" style="background:#ef4444; color:white; border:none; padding:12px;" onclick="handleIdentityPurge()">Purge Runtime Authentication</button>
         </div>
     </main>
 
@@ -634,7 +794,6 @@
             triggerToastAlert("Identity vector verified. Session locked.");
             switchView('marketView');
             
-            // Re-render marketplace to allow dynamic star triggers
             renderMarketplace(hardwareDatabase.products);
         }
 
@@ -660,7 +819,7 @@
                 document.getElementById('userProfileBadge').innerText = authenticatedUser.email.charAt(0).toUpperCase();
             } else {
                 label.innerText = "Gate Sign-In";
-                loggedOutBox.style.display = "block";
+                loggedOutBox.style.display = "flex";
                 loggedInBox.style.display = "none";
                 document.getElementById('authEmailInput').value = "";
                 document.getElementById('authPasswordInput').value = "";
