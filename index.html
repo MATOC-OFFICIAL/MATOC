@@ -358,8 +358,8 @@
         .badge.used { background: rgba(230, 126, 34, 0.15); color: #e67e22; }
         .badge.official { background: rgba(37, 99, 235, 0.15); color: #60a5fa; }
         
-        .insta-btn { background: #e1306c; color: white !important; border: none; padding: 12px; border-radius: var(--radius); font-weight: 600; cursor: pointer; font-size: 13px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; margin-top: 10px; width: 100%; box-sizing: border-box; transition: opacity 0.2s; }
-        .insta-btn:hover { opacity: 0.9; }
+        .cart-item-row { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: var(--bg); border-radius: var(--radius); border: 1px solid var(--border); }
+        .log-card { background: var(--bg); border-left: 3px solid var(--primary); padding: 12px; font-size: 13px; line-height: 1.4; }
     </style>
 </head>
 <body>
@@ -451,6 +451,12 @@
             </span>
         </div>
         <div class="drawer-content-stream" id="cartItemsContainer"></div>
+        <div style="border-top:1px solid var(--border); padding-top:14px; margin-top:10px;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:12px; font-weight:700;">
+                <span>Total:</span><span id="cartTotalPrice">$0</span>
+            </div>
+            <button class="omnifix-btn" style="width:100%;" onclick="checkoutCart()">Confirm Purchase</button>
+        </div>
     </div>
 
     <div class="ai-support-panel" id="aiSupportPanel">
@@ -461,7 +467,7 @@
             </span>
         </div>
         <div class="drawer-content-stream" id="aiChatStream">
-            <div class="ai-msg agent">System connection successful. Cloud environment records fully loaded. Ready to perform codebase testing adjustments, layout reviews, or core logic diagnostics.</div>
+            <div class="ai-msg agent">System connection successful. Cloud environment records fully loaded. Ready to perform codebase testing adjustments or core logic diagnostics.</div>
         </div>
         <div class="drawer-input-footer">
             <input type="text" id="aiSupportInput" placeholder="Enter service request..." onkeydown="if(event.key === 'Enter') sendAiMessage()">
@@ -472,8 +478,7 @@
     <div class="app-view" id="marketView">
         <h2 style="margin: 0 0 6px 0; font-size: 24px; font-weight: 700;">Marketplace Stream</h2>
         <p style="color:var(--text-muted); font-size:14px; margin: 0 0 24px 0;">Authorised brand releases alongside peer-reviewed systems configurations.</p>
-        <div id="marketplaceProductsDisplay" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">
-        </div>
+        <div id="marketplaceProductsDisplay" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;"></div>
     </div>
 
     <div class="app-view" id="p2pSellView">
@@ -486,6 +491,9 @@
             
             <label style="font-size: 13px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Asset Evaluation Valuation ($)</label>
             <input type="number" id="p2pProdPrice" placeholder="Value Amount">
+
+            <label style="font-size: 13px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Hardware Asset Preview Image</label>
+            <input type="file" id="p2pProdImage" accept="image/*" style="padding:8px;">
 
             <label style="font-size: 13px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Enforced Condition Tier Flag</label>
             <input type="text" value="USED HARDWARE ASSET" disabled style="opacity: 0.5; background: var(--bg);">
@@ -518,8 +526,7 @@
     <div class="app-view" id="gameVaultView">
         <h2 style="margin: 0 0 6px 0; font-size: 24px; font-weight: 700;">Arcade Module Vault</h2>
         <p style="color:var(--text-muted); font-size:14px; margin: 0 0 24px 0;">Direct access ports to stable sandbox application runtime packages.</p>
-        <div id="vaultGamesDisplay" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">
-        </div>
+        <div id="vaultGamesDisplay" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;"></div>
     </div>
 
     <div class="app-view" id="ownerProfileView">
@@ -542,21 +549,16 @@
         </div>
     </div>
 
-    <div class="app-view" id="opsView"><h2 style="font-size: 22px; font-weight: 700;">Order Core Logs Stream</h2></div>
+    <div class="app-view" id="opsView">
+        <h2 style="font-size: 22px; font-weight: 700; margin-bottom:6px;">Order Core Logs Stream</h2>
+        <p style="color:var(--text-muted); font-size:14px; margin-bottom:20px;">Live pipeline transactions stream synchronized from Cloud Infrastructure logs.</p>
+        <div id="liveOrdersContainer" style="display:flex; flex-direction:column; gap:12px;"></div>
+    </div>
 
     <script>
         let isSignUpState = false;
         let currentUserSessionEmail = "";
-
-        let mockDatabase = {
-            products: [
-                { id: 1, title: "Official Dev Suite Asset Pack", price: 45, type: "official", condition: "NEW" },
-                { id: 2, title: "Used Intel i7-4790K Processor Node", price: 75, type: "peer", condition: "USED" }
-            ],
-            games: [
-                { id: 1, title: "Bermuda Mutation Simulator", description: "Alpha engine instance compilation" }
-            ]
-        };
+        let shoppingCartState = [];
 
         const firebaseConfig = {
             apiKey: "AIzaSyAIFblCANTOf6cS_wrY3LHzQvx7pdOIVaM",
@@ -569,6 +571,7 @@
         };
         
         firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
 
         function runInitialPreflightChecks() {
             if (typeof grecaptcha !== 'undefined' && grecaptcha.enterprise) {
@@ -576,7 +579,7 @@
                     grecaptcha.enterprise.execute('6LcAVCotAAAAAPtUw0X7fwbiaMOz68bew5HlRtpT', {action: 'login'})
                     .then(function(token) {
                         console.log("Background reCAPTCHA Token verified securely.");
-                    }).catch(err => console.warn("Background reCAPTCHA process bypassed: ", err));
+                    }).catch(err => console.warn("Background reCAPTCHA bypassed: ", err));
                 });
             }
             initSessionWatch();
@@ -590,6 +593,7 @@
                             currentUserSessionEmail = user.email;
                             handleSuccessfulLogin(user.email);
                             syncProfileToServer();
+                            listenToChatLogs(user.uid);
                         } else {
                             handleRequiredLogin();
                         }
@@ -597,35 +601,49 @@
                 })
                 .catch(err => console.error("Session persistence error: ", err));
                 
-            renderMarketplace();
-            renderGameVault();
+            initRealtimeSyncListeners();
+        }
+
+        function initRealtimeSyncListeners() {
+            db.ref('products').on('value', (snapshot) => {
+                const data = snapshot.val();
+                renderMarketplace(data ? Object.values(data) : []);
+            });
+
+            db.ref('games').on('value', (snapshot) => {
+                const data = snapshot.val();
+                renderGameVault(data ? Object.values(data) : []);
+            });
+
+            db.ref('orders').on('value', (snapshot) => {
+                const data = snapshot.val();
+                renderLiveOrders(data ? Object.values(data) : []);
+            });
         }
 
         function handleSuccessfulLogin(emailText) {
             document.getElementById('authGate').style.display = 'none';
             document.getElementById('terminalUserHandle').innerText = emailText;
-            document.getElementById('adminSidebarLink').style.display = 'block';
             
-            // Mark marketplace view active ONLY when login succeeds
             document.getElementById('marketView').classList.add('active');
 
             const lowerE = emailText.toLowerCase();
             if (lowerE === "official@matocbuilders.com" || lowerE === "nz") {
                 document.getElementById('officialSectionTitle').style.display = 'block';
                 document.getElementById('officialPublishLink').style.display = 'block';
+                document.getElementById('adminSidebarLink').style.display = 'block';
                 deployNotificationGui("System Publisher dashboard instance loaded successfully.");
             } else {
                 document.getElementById('officialSectionTitle').style.display = 'none';
                 document.getElementById('officialPublishLink').style.display = 'none';
+                document.getElementById('adminSidebarLink').style.display = 'none';
                 deployNotificationGui("Authentication access verified.");
             }
             computeNodeIdentityLifecycle();
         }
 
         function handleRequiredLogin() {
-            // Keep app views completely hidden if login is required
             document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
-
             document.getElementById('authGate').style.display = 'flex';
             document.getElementById('terminalUserHandle').innerText = "Not Connected";
             document.getElementById('adminSidebarLink').style.display = 'none';
@@ -633,13 +651,18 @@
             document.getElementById('officialPublishLink').style.display = 'none';
         }
 
-        function renderMarketplace() {
+        function renderMarketplace(productsArray) {
             const display = document.getElementById('marketplaceProductsDisplay');
             display.innerHTML = "";
-            mockDatabase.products.forEach(p => {
+            
+            if(productsArray.length === 0) {
+                display.innerHTML = `<p style="color:var(--text-muted);">No assets active in stream.</p>`;
+                return;
+            }
+
+            productsArray.forEach(p => {
                 const card = document.createElement('div');
                 card.className = "listing-card";
-                
                 const badgeClass = p.type === 'official' ? 'official' : 'used';
                 const badgeText = p.type === 'official' ? 'Brand New' : 'Verified Used';
                 
@@ -647,16 +670,22 @@
                     <span class="badge ${badgeClass}">${badgeText}</span>
                     <h3 style="margin: 24px 0 8px 0; font-size: 16px; font-weight: 600;">${p.title}</h3>
                     <p style="font-weight: 700; color: var(--primary); margin: 0 0 16px 0;">$${p.price}</p>
-                    <button class="omnifix-btn" style="width:100%; padding: 10px; font-size:13px;" onclick="deployNotificationGui('Asset added to queue processing queue.')">Order Module</button>
+                    <button class="omnifix-btn" style="width:100%; padding: 10px; font-size:13px;" onclick="addToCart('${p.title}', ${p.price})">Order Module</button>
                 `;
                 display.appendChild(card);
             });
         }
 
-        function renderGameVault() {
+        function renderGameVault(gamesArray) {
             const display = document.getElementById('vaultGamesDisplay');
             display.innerHTML = "";
-            mockDatabase.games.forEach(g => {
+            
+            if(gamesArray.length === 0) {
+                display.innerHTML = `<p style="color:var(--text-muted);">Vault inventory cleared.</p>`;
+                return;
+            }
+
+            gamesArray.forEach(g => {
                 const card = document.createElement('div');
                 card.className = "listing-card";
                 card.innerHTML = `
@@ -668,24 +697,96 @@
             });
         }
 
+        function renderLiveOrders(ordersArray) {
+            const display = document.getElementById('liveOrdersContainer');
+            display.innerHTML = "";
+            ordersArray.reverse().forEach(o => {
+                const row = document.createElement('div');
+                row.className = "log-card";
+                row.innerHTML = `
+                    <div style="display:flex; justify-content:between; color:var(--text-muted); font-size:11px; margin-bottom:4px;">
+                        <span>TX: ${o.orderId}</span><span style="margin-left:auto;">${o.timestamp}</span>
+                    </div>
+                    <div><strong>Account:</strong> ${o.buyer}</div>
+                    <div style="color: #38bdf8;"><strong>Items:</strong> ${o.itemsSummary}</div>
+                    <div style="font-weight:700; margin-top:4px;">Value Processed: $${o.totalCost}</div>
+                `;
+                display.appendChild(row);
+            });
+        }
+
+        function addToCart(title, price) {
+            shoppingCartState.push({ title, price });
+            updateCartUi();
+            deployNotificationGui(`Added ${title} to asset queue.`);
+        }
+
+        function updateCartUi() {
+            document.getElementById('cartCount').innerText = shoppingCartState.length;
+            const container = document.getElementById('cartItemsContainer');
+            container.innerHTML = "";
+            let sum = 0;
+
+            shoppingCartState.forEach((item, index) => {
+                sum += item.price;
+                const div = document.createElement('div');
+                div.className = "cart-item-row";
+                div.innerHTML = `
+                    <span style="font-size:13px; font-weight:600;">${item.title}</span>
+                    <span style="color:var(--primary); font-size:13px; font-weight:700; margin-left:auto; margin-right:12px;">$${item.price}</span>
+                    <span style="color:#f87171; cursor:pointer; font-size:12px;" onclick="removeFromCart(${index})">Drop</span>
+                `;
+                container.appendChild(div);
+            });
+            document.getElementById('cartTotalPrice').innerText = `$${sum}`;
+        }
+
+        function removeFromCart(index) {
+            shoppingCartState.splice(index, 1);
+            updateCartUi();
+        }
+
+        function checkoutCart() {
+            if(shoppingCartState.length === 0) return;
+            const user = firebase.auth().currentUser;
+            const itemsSummaryText = shoppingCartState.map(i => i.title).join(', ');
+            const finalCost = shoppingCartState.reduce((a, b) => a + b.price, 0);
+            const refId = "TX_" + Math.floor(Math.random() * 89999 + 10000);
+
+            const payload = {
+                orderId: refId,
+                buyer: user ? user.email : "Anonymous Port",
+                itemsSummary: itemsSummaryText,
+                totalCost: finalCost,
+                timestamp: new Date().toLocaleTimeString()
+            };
+
+            db.ref('orders/' + refId).set(payload).then(() => {
+                shoppingCartState = [];
+                updateCartUi();
+                toggleCart();
+                deployNotificationGui("Asset pipeline purchase authorized successfully.");
+            });
+        }
+
         function submitPeerUsedListing() {
             const name = document.getElementById('p2pProdName').value.trim();
             const price = document.getElementById('p2pProdPrice').value;
             if(!name || !price) { deployNotificationGui("Configuration entries invalid."); return; }
             
-            mockDatabase.products.push({
-                id: mockDatabase.products.length + 1,
+            const newId = "prod_" + Date.now();
+            db.ref('products/' + newId).set({
+                id: newId,
                 title: name,
                 price: parseInt(price),
                 type: "peer",
                 condition: "USED"
+            }).then(() => {
+                document.getElementById('p2pProdName').value = "";
+                document.getElementById('p2pProdPrice').value = "";
+                deployNotificationGui("Used asset safely synchronized to live stream.");
+                switchTab('marketView');
             });
-            
-            document.getElementById('p2pProdName').value = "";
-            document.getElementById('p2pProdPrice').value = "";
-            deployNotificationGui("Used asset safely logged to stream.");
-            renderMarketplace();
-            switchTab('marketView');
         }
 
         function publishOfficialGame() {
@@ -693,17 +794,17 @@
             const desc = document.getElementById('gameMetaInput').value.trim();
             if(!title) return;
 
-            mockDatabase.games.push({
-                id: mockDatabase.games.length + 1,
+            const newId = "game_" + Date.now();
+            db.ref('games/' + newId).set({
+                id: newId,
                 title: title,
                 description: desc || "No parameters specified."
+            }).then(() => {
+                document.getElementById('gameTitleInput').value = "";
+                document.getElementById('gameMetaInput').value = "";
+                deployNotificationGui("Module deployed to vault infrastructure.");
+                switchTab('gameVaultView');
             });
-
-            document.getElementById('gameTitleInput').value = "";
-            document.getElementById('gameMetaInput').value = "";
-            deployNotificationGui("Module deployed to environment.");
-            renderGameVault();
-            switchTab('gameVaultView');
         }
 
         function publishOfficialProduct() {
@@ -711,19 +812,19 @@
             const price = document.getElementById('offProdPrice').value;
             if(!name || !price) return;
 
-            mockDatabase.products.push({
-                id: mockDatabase.products.length + 1,
+            const newId = "prod_" + Date.now();
+            db.ref('products/' + newId).set({
+                id: newId,
                 title: name,
                 price: parseInt(price),
                 type: "official",
                 condition: "NEW"
+            }).then(() => {
+                document.getElementById('offProdName').value = "";
+                document.getElementById('offProdPrice').value = "";
+                deployNotificationGui("New retail catalog item synchronized.");
+                switchTab('marketView');
             });
-
-            document.getElementById('offProdName').value = "";
-            document.getElementById('offProdPrice').value = "";
-            deployNotificationGui("New retail catalog item synchronized.");
-            renderMarketplace();
-            switchTab('marketView');
         }
 
         function computeNodeIdentityLifecycle() {
@@ -749,14 +850,62 @@
             const user = firebase.auth().currentUser;
             if (user) {
                 const targetAge = document.getElementById('profileAgeDisplay').innerText;
-                const profilePayload = {
+                db.ref('users/' + user.uid + '/about_owner').set({
                     name: "Mohamed Nafeez",
                     calculatedAge: targetAge,
                     clientSyncTime: new Date().toISOString()
-                };
-                firebase.database().ref('users/' + user.uid + '/about_owner').set(profilePayload)
-                    .catch(err => console.error("Sync payload execution error: " + err.message));
+                });
             }
+        }
+
+        function listenToChatLogs(uid) {
+            db.ref('users/' + uid + '/chat_history').on('value', (snapshot) => {
+                const history = snapshot.val();
+                if(!history) return;
+                const stream = document.getElementById('aiChatStream');
+                stream.innerHTML = "";
+                Object.values(history).forEach(msg => {
+                    const box = document.createElement('div');
+                    box.className = msg.sender === 'user' ? 'ai-msg user' : 'ai-msg agent';
+                    box.innerText = msg.text;
+                    stream.appendChild(box);
+                });
+                stream.scrollTop = stream.scrollHeight;
+            });
+        }
+
+        function sendAiMessage() {
+            const inputField = document.getElementById('aiSupportInput');
+            const query = inputField.value.trim();
+            if (!query) return;
+
+            const user = firebase.auth().currentUser;
+            if(!user) return;
+
+            const userMsgId = "msg_" + Date.now();
+            db.ref('users/' + user.uid + '/chat_history/' + userMsgId).set({
+                sender: "user",
+                text: query
+            });
+            inputField.value = '';
+
+            setTimeout(() => {
+                let reply = "Statement analyzed within ecosystem architecture constraints.";
+                const lower = query.toLowerCase();
+                if (lower.includes('godot') || lower.includes('physics') || lower.includes('script') || lower.includes('game')) {
+                    reply = "[Diagnostic Subsystem]: Streamline asset hierarchy matrices. Run physics steps asynchronously for mobile optimization branches.";
+                } else if (lower.includes('gpu') || lower.includes('hardware') || lower.includes('ram') || lower.includes('ssd') || lower.includes('pc')) {
+                    reply = "[Hardware Diagnostic Subsystem]: Resource mapping calculations completed successfully.";
+                } else if (lower.includes('profile') || lower.includes('about') || lower.includes('owner') || lower.includes('nafeez')) {
+                    reply = "[Registry Subsystem]: Record verification for Mohamed Nafeez complete. Age value parameters verified at level 16.";
+                }
+
+                const agentMsgId = "msg_" + (Date.now() + 1);
+                db.ref('users/' + user.uid + '/chat_history/' + agentMsgId).set({
+                    sender: "agent",
+                    text: reply
+                });
+            }, 600);
         }
 
         function toggleAuthState() {
@@ -776,27 +925,13 @@
             const email = document.getElementById('authEmail').value.trim();
             const password = document.getElementById('authPassword').value;
             if (!email || !password) { deployNotificationGui("Input entries cannot be blank."); return; }
-            
-            if (email.includes('@') === false) {
-                deployNotificationGui("Syntax error. Standard corporate email format required.");
-                return;
-            }
+            if (!email.includes('@')) { deployNotificationGui("Corporate email format required."); return; }
 
             if (isSignUpState) {
                 firebase.auth().createUserWithEmailAndPassword(email, password)
-                    .then((userCredential) => {
-                        deployNotificationGui("Credentials mapped and synchronized.");
-                        currentUserSessionEmail = userCredential.user.email;
-                        handleSuccessfulLogin(userCredential.user.email);
-                    })
                     .catch(err => deployNotificationGui("Creation fault: " + err.message));
             } else {
                 firebase.auth().signInWithEmailAndPassword(email, password)
-                    .then((userCredential) => {
-                        deployNotificationGui("Session token generated.");
-                        currentUserSessionEmail = userCredential.user.email;
-                        handleSuccessfulLogin(userCredential.user.email);
-                    })
                     .catch(err => deployNotificationGui("Access Denied: " + err.message));
             }
         }
@@ -805,10 +940,9 @@
             firebase.auth().signOut().then(() => {
                 deployNotificationGui("Session dropped.");
                 toggleSidebar();
-            }).catch(err => deployNotificationGui("Disconnection fault: " + err.message));
+            });
         }
 
-        // Updated switcher function to ensure view classes update smoothly
         function switchTab(viewId) {
             document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
             document.querySelectorAll('.sidebar .nav-item').forEach(n => n.classList.remove('active-nav'));
@@ -823,44 +957,9 @@
 
         function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
         function toggleCart() { document.getElementById('cartPanel').classList.toggle('active'); }
-        
         function toggleAiSupport() { 
             document.getElementById('aiSupportPanel').classList.toggle('active'); 
             if(document.getElementById('sidebar').classList.contains('active')) toggleSidebar();
-        }
-
-        function sendAiMessage() {
-            const inputField = document.getElementById('aiSupportInput');
-            const query = inputField.value.trim();
-            if (!query) return;
-
-            const stream = document.getElementById('aiChatStream');
-            
-            const userBox = document.createElement('div');
-            userBox.className = 'ai-msg user';
-            userBox.innerText = query;
-            stream.appendChild(userBox);
-            inputField.value = '';
-            stream.scrollTop = stream.scrollHeight;
-
-            setTimeout(() => {
-                const agentBox = document.createElement('div');
-                agentBox.className = 'ai-msg agent';
-                let reply = "Statement analyzed within ecosystem architecture constraints.";
-                
-                const lower = query.toLowerCase();
-                if (lower.includes('godot') || lower.includes('physics') || lower.includes('script') || lower.includes('game')) {
-                    reply = "[Diagnostic Subsystem]: Streamline asset hierarchy matrices. Run physics steps asynchronously for mobile optimization branches.";
-                } else if (lower.includes('gpu') || lower.includes('hardware') || lower.includes('ram') || lower.includes('ssd') || lower.includes('pc')) {
-                    reply = "[Hardware Diagnostic Subsystem]: Resource mapping and storage bandwidth calculations completed successfully.";
-                } else if (lower.includes('profile') || lower.includes('about') || lower.includes('owner') || lower.includes('nafeez')) {
-                    reply = "[Registry Subsystem]: Record verification for Mohamed Nafeez complete. Age value parameters verified at level 16.";
-                }
-
-                agentBox.innerText = reply;
-                stream.appendChild(agentBox);
-                stream.scrollTop = stream.scrollHeight;
-            }, 600);
         }
 
         function deployNotificationGui(msg) {
