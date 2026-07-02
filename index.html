@@ -2,31 +2,32 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="google-site-verification" content="kxN6PFyFMD2O4fn_ktqGmQGFkKjtf206DfUuvJXOYv0" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MATOC BUILDERS - Premium Hardware Exchange</title>
+    <title>MATOC BUILDERS</title>
    
+    <link rel="manifest" href="manifest.json">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    
+    <script src="https://www.google.com/recaptcha/enterprise.js?render=6LcAVCotAAAAAPtUw0X7fwbiaMOz68bew5HlRtpT"></script>
+
     <style>
         :root { 
             --primary: #2563eb; 
-            --primary-light: #eff6ff;
-            --bg: #f8fafc; 
-            --card: #ffffff; 
-            --text: #0f172a; 
-            --text-muted: #64748b; 
-            --border: #e2e8f0; 
-            --radius-large: 16px;
-            --radius-main: 12px;
-            --radius-small: 8px;
+            --primary-hover: #1d4ed8;
+            --bg: #0f172a; 
+            --card: #1e293b; 
+            --text: #f8fafc; 
+            --text-muted: #94a3b8;
+            --border: #334155; 
+            --radius: 8px; 
             --font: 'Plus Jakarta Sans', sans-serif;
-            --accent-price: #dc2626; 
-            --accent-gold: #eab308;
-            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
         }
 
         body { 
@@ -34,1126 +35,879 @@
             background: var(--bg); 
             color: var(--text); 
             margin: 0; 
-            padding: 0;
             overflow-x: hidden; 
             min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* --- NAVIGATION LAYOUT --- */
-        .premium-header {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--border);
-            padding: 16px 32px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 24px;
-            position: sticky;
-            top: 0;
-            z-index: 5000;
-            box-shadow: var(--shadow-sm);
-        }
+        .dm-input-area input { margin: 0; border: none; border-radius: 0; background: var(--card); color: #fff; }
+        .dm-input-area button { background: var(--primary); border: none; color: white; padding: 8px; }
 
-        .header-left-cluster {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .brand-identity {
-            font-weight: 800;
-            font-size: 22px;
-            letter-spacing: -0.5px;
-            cursor: pointer;
-            color: var(--text);
-            white-space: nowrap;
-        }
-        .brand-identity span { color: var(--primary); }
-
-        .location-badge {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: var(--primary-light);
-            padding: 8px 12px;
-            border-radius: var(--radius-small);
-            font-size: 13px;
-            color: var(--primary);
-            font-weight: 600;
-            white-space: nowrap;
-        }
-
-        .search-engine-bay {
-            display: flex;
-            flex: 1;
-            max-width: 500px;
-            height: 46px;
-            background: #f1f5f9;
-            border-radius: var(--radius-main);
-            padding: 2px;
-            box-sizing: border-box;
-            transition: all 0.2s ease;
-            border: 1px solid transparent;
-        }
-        .search-engine-bay:focus-within {
-            background: white;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
-        }
-        .search-select {
-            background: transparent;
-            border: none;
-            padding: 0 16px;
-            font-family: var(--font);
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text-muted);
-            cursor: pointer;
-        }
-        .search-input {
-            flex: 1;
-            background: transparent;
-            border: none;
-            padding: 0 16px;
-            font-size: 14px;
-            font-family: var(--font);
-            color: var(--text);
-            width: 100%;
-        }
-        .search-input:focus { outline: none; }
-        .search-action-btn {
-            background: var(--primary);
-            border: none;
-            border-radius: var(--radius-small);
-            width: 42px;
-            height: 42px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .nav-utility-cluster {
-            display: flex;
-            align-items: center;
-            gap: 24px;
-        }
-        .utility-node {
-            display: flex;
-            flex-direction: column;
-            cursor: pointer;
-            text-decoration: none;
-            color: var(--text);
-            font-size: 13px;
-        }
-        .utility-node span { color: var(--text-muted); font-size: 11px; }
-        .utility-node strong { font-weight: 600; }
-
-        .premium-cart-trigger {
-            background: var(--text);
-            color: white;
-            padding: 10px 16px;
-            border-radius: var(--radius-main);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 14px;
-            transition: transform 0.2s, opacity 0.2s;
-        }
-        .premium-cart-trigger:hover { transform: translateY(-1px); opacity: 0.9; }
-        .cart-pill-count {
-            background: var(--primary);
-            color: white;
-            font-size: 11px;
-            font-weight: 700;
-            padding: 2px 6px;
-            border-radius: 20px;
-        }
-
-        .premium-subbar {
-            background: white;
-            border-bottom: 1px solid var(--border);
-            padding: 12px 32px;
-            display: flex;
-            gap: 24px;
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-muted);
-            align-items: center;
-        }
-        .subbar-link { cursor: pointer; transition: color 0.2s; display: flex; align-items: center; gap: 6px; }
-        .subbar-link:hover { color: var(--primary); }
-
-        /* --- HERO DISPLAY --- */
-        .hero-showcase {
-            width: 100%;
-            height: 280px;
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            position: relative;
-            display: flex;
-            align-items: center;
-            padding: 0 48px;
-            box-sizing: border-box;
-            color: white;
-            overflow: hidden;
-        }
-        .hero-showcase::after {
-            content: '';
-            position: absolute;
-            right: -10%; top: -20%; width: 50%; height: 140%;
-            background: radial-gradient(circle, rgba(37,99,235,0.2) 0%, transparent 70%);
-            transform: rotate(-15deg);
-        }
-        .hero-text h1 { font-size: 32px; margin: 0 0 8px 0; font-weight: 800; letter-spacing: -1px; }
-        .hero-text p { font-size: 16px; margin: 0; color: #94a3b8; }
-
-        /* --- MAIN CORE PANELS --- */
-        .main-layout-stream {
-            max-width: 1440px;
-            margin: -40px auto 60px auto;
-            position: relative;
-            padding: 0 32px;
-            box-sizing: border-box;
-            z-index: 10;
-        }
-
-        .dashboard-masonry {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 24px;
-            margin-bottom: 40px;
-        }
-
-        .interactive-feature-card {
-            background: var(--card);
-            padding: 24px;
-            border-radius: var(--radius-large);
-            box-shadow: var(--shadow-md);
-            border: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .interactive-feature-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
-        .interactive-feature-card h3 { margin: 0 0 12px 0; font-size: 18px; font-weight: 700; }
-        .interactive-feature-card p { font-size: 14px; color: var(--text-muted); line-height: 1.5; margin: 0 0 20px 0; }
-        
-        .card-action-trigger { color: var(--primary); text-decoration: none; font-size: 14px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; }
-
-        .showcase-shelf {
-            background: var(--card);
-            padding: 32px;
-            border-radius: var(--radius-large);
-            box-shadow: var(--shadow-md);
-            border: 1px solid var(--border);
-            margin-bottom: 32px;
-        }
-        .showcase-shelf h3 { margin: 0 0 24px 0; font-size: 20px; font-weight: 800; }
-        .shelf-flex-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 24px;
-        }
-
-        .premium-product-card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-main);
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            transition: all 0.2s ease;
-        }
-        .premium-product-card:hover { border-color: var(--primary); box-shadow: var(--shadow-md); }
-        
-        .pill-badge { background: var(--primary-light); color: var(--primary); font-size: 11px; padding: 4px 10px; width: fit-content; font-weight: 700; margin-bottom: 14px; border-radius: 20px; }
-        
-        /* --- RATING INTERACTIVE ARCHITECTURE --- */
-        .rating-engine-row { display: flex; align-items: center; gap: 8px; margin: 8px 0 14px 0; }
-        .interactive-stars { display: inline-flex; gap: 2px; }
-        .star-node { color: #cbd5e1; font-size: 18px; cursor: pointer; transition: color 0.15s; }
-        .star-node.active { color: var(--accent-gold); }
-        .rating-volume { color: var(--text-muted); font-size: 12px; font-weight: 500; }
-
-        .premium-price-tag { color: var(--text); font-size: 22px; font-weight: 800; margin-bottom: 4px; }
-        .shipping-sla-line { font-size: 12px; color: var(--text-muted); margin-bottom: 18px; }
-        .shipping-sla-line strong { color: #10b981; }
-
-        .action-button-cta {
-            background: #f1f5f9;
-            border: 1px solid #e2e8f0;
-            color: var(--text);
-            border-radius: var(--radius-small);
-            padding: 10px 16px;
-            font-size: 13px;
-            font-weight: 700;
-            cursor: pointer;
-            text-align: center;
-            width: 100%;
-            transition: all 0.15s ease;
-            box-sizing: border-box;
-        }
-        .action-button-cta:hover { background: var(--primary); border-color: var(--primary); color: white; }
-
-        .app-view { display: none; }
-        .app-view.active { display: block; }
-
-        /* --- SCREENSHOT-MATCHING LOGIN UI SYSTEM --- */
-        .screenshot-login-wrapper {
+        .gui-alert-container {
             position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background: radial-gradient(circle at top center, #1b3d7a 0%, #081326 70%, #030812 100%);
-            z-index: 5500;
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--card);
+            color: var(--text);
+            padding: 14px 24px;
+            border-radius: 8px;
+            border: 1px solid var(--primary);
+            box-shadow: 0 10px 30px rgba(37, 99, 235, 0.2);
+            font-size: 14px;
+            font-weight: 600;
             display: flex;
             align-items: center;
-            justify-content: center;
+            gap: 12px;
+            z-index: 999999;
+            transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .gui-alert-container.show {
+            top: 25px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(37, 99, 235, 0.1);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* NEW Professional & Clean Premium PC Build Inspired Auth Gate */
+        .auth-gate { 
+            position: fixed; 
+            top:0; 
+            left:0; 
+            width:100%; 
+            height:100%; 
+            background: radial-gradient(circle at 30% 20%, #1e3a8a 0%, #0f172a 60%, #020617 100%);
+            z-index: 9999; 
+            display: none; 
+            align-items: center; 
+            justify-content: center; 
+        }
+        .auth-card { 
+            background: transparent; 
+            padding: 20px 40px; 
+            width: 100%; 
+            max-width: 380px; 
             box-sizing: border-box;
-            padding: 24px;
+            text-align: center;
         }
-        .screenshot-login-container {
-            width: 100%;
-            max-width: 380px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .screenshot-avatar-circle {
-            width: 90px;
-            height: 90px;
-            border: 2px solid rgba(255, 255, 255, 0.7);
+        .auth-user-icon {
+            width: 80px;
+            height: 80px;
+            border: 2px solid rgba(255, 255, 255, 0.8);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 32px;
-            color: #ffffff;
+            color: #fff;
+            margin: 0 auto 24px auto;
         }
-        .screenshot-login-title {
-            color: #ffffff;
-            font-size: 23px;
-            font-weight: 500;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            margin: 0 0 48px 0;
-            text-align: center;
-            font-family: var(--font);
+        .auth-user-icon svg {
+            width: 40px;
+            height: 40px;
+            opacity: 0.9;
         }
-        .screenshot-input-group {
-            width: 100%;
+        
+        /* Clean line design input system based on your screenshot */
+        .auth-input-wrapper {
             position: relative;
-            margin-bottom: 36px;
+            margin-bottom: 28px;
             display: flex;
             align-items: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.4);
-            padding-bottom: 8px;
         }
-        .screenshot-icon-vector {
+        .auth-input-wrapper svg {
+            position: absolute;
+            left: 4px;
             color: rgba(255, 255, 255, 0.7);
-            margin-right: 14px;
+            width: 18px;
+            height: 18px;
+        }
+        .auth-clean-input {
+            width: 100%;
+            background: transparent !important;
+            border: none !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.4) !important;
+            border-radius: 0 !important;
+            padding: 10px 10px 10px 36px !important;
+            color: #fff !important;
+            font-size: 15px !important;
+            margin-bottom: 0 !important;
+            transition: border-color 0.3s ease;
+        }
+        .auth-clean-input:focus {
+            outline: none !important;
+            border-bottom-color: #fff !important;
+        }
+        .auth-clean-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Extra utilities row (Remember me / Forgot pass) */
+        .auth-utilities {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 32px;
+        }
+        .auth-checkbox-label {
             display: flex;
             align-items: center;
+            gap: 6px;
+            cursor: pointer;
         }
-        .screenshot-input-field {
-            flex: 1;
+        .auth-checkbox-label input {
+            margin: 0;
+            width: 14px;
+            height: 14px;
+            accent-color: var(--primary);
+        }
+
+        /* Clean solid accent login action */
+        .auth-submit-action {
+            background: #1d4ed8; 
+            color: white; 
+            border: none; 
+            padding: 14px; 
+            width: 100%; 
+            border-radius: 4px; 
+            font-weight: 600; 
+            cursor: pointer; 
+            font-size: 14px; 
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            transition: background 0.2s, transform 0.1s;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        .auth-submit-action:hover {
+            background: #2563eb;
+        }
+        .auth-submit-action:active {
+            transform: scale(0.99);
+        }
+
+        .auth-toggle-link { 
+            color: rgba(255, 255, 255, 0.6); 
+            font-size: 13px; 
+            text-decoration: none; 
+            cursor: pointer; 
+            display: inline-block; 
+            margin-top: 24px; 
+            transition: color 0.2s;
+        }
+        .auth-toggle-link:hover {
+            color: #fff;
+        }
+
+        /* Main Application Frame */
+        .header { 
+            position: fixed; 
+            top: 0; 
+            width: 100%; 
+            height: 64px; 
+            background: rgba(15, 23, 42, 0.85); 
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            padding: 0 24px; 
+            z-index: 1000; 
+            border-bottom: 1px solid var(--border); 
+            box-sizing: border-box; 
+        }
+        
+        .hamburger-btn {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px;
             background: transparent;
-            border: none;
-            color: #ffffff;
-            font-size: 15px;
-            font-family: var(--font);
-            outline: none;
-            width: 100%;
+            border-radius: 6px;
+            color: var(--text);
+            transition: background 0.2s;
         }
-        .screenshot-input-field::placeholder {
-            color: rgba(255, 255, 255, 0.4);
+        .hamburger-btn:hover {
+            background: var(--card);
         }
-        .screenshot-utility-row {
-            width: 100%;
+
+        .app-view { display: none; max-width: 1000px; margin: 100px auto 40px auto; padding: 0 24px; box-sizing: border-box; }
+        .app-view.active { display: block; }
+
+        .sidebar { 
+            position: fixed; 
+            top: 0; 
+            left: -300px; 
+            width: 280px; 
+            height: 100%; 
+            background: var(--card); 
+            border-right: 1px solid var(--border); 
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            z-index: 2000; 
+            padding: 80px 20px 20px 20px; 
+            overflow-y: auto; 
+            box-sizing: border-box; 
+            visibility: hidden; 
+        }
+        .sidebar.active { left: 0; visibility: visible; }
+        
+        .sidebar-section-title { 
+            font-size: 11px; 
+            color: var(--text-muted); 
+            font-weight: 700; 
+            text-transform: uppercase; 
+            margin: 24px 0 12px 0; 
+            padding-bottom: 6px; 
+            letter-spacing: 0.5px; 
+        }
+
+        .nav-item { 
+            padding: 10px 14px; 
+            cursor: pointer; 
+            font-weight: 500; 
+            font-size: 14px; 
+            border-radius: var(--radius); 
+            transition: all 0.2s; 
+            margin-bottom: 4px; 
+            color: var(--text-muted);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            font-size: 13px;
-            color: rgba(255, 255, 255, 0.5);
-            margin-top: -12px;
-            margin-bottom: 40px;
         }
-        .screenshot-checkbox-label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            user-select: none;
+        .nav-item:hover { 
+            color: var(--text); 
+            background: rgba(255, 255, 255, 0.04); 
         }
-        .screenshot-checkbox-label input {
-            accent-color: #1a62ff;
-            cursor: pointer;
+        .nav-item.active-nav {
+            color: #fff;
+            background: var(--primary);
         }
-        .screenshot-forgot-link {
-            color: rgba(255, 255, 255, 0.5);
-            text-decoration: none;
-            cursor: pointer;
+        .nav-item.active-nav:hover {
+            background: var(--primary-hover);
         }
-        .screenshot-forgot-link:hover {
-            color: #ffffff;
-        }
-        .screenshot-submit-btn {
-            width: 100%;
-            background: #1a62ff;
-            color: #ffffff;
-            border: none;
-            padding: 16px;
-            font-size: 15px;
-            font-weight: 600;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background 0.2s;
-            box-shadow: 0 4px 12px rgba(26, 98, 255, 0.3);
-            margin-bottom: 32px;
-        }
-        .screenshot-submit-btn:hover {
-            background: #004ae6;
-        }
-        .screenshot-footer-text {
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 13px;
-            text-align: center;
-            cursor: pointer;
-        }
-        .screenshot-footer-text:hover {
-            color: #ffffff;
-        }
-
-        /* --- SLIDING DRAWERS --- */
-        .sliding-blur-panel {
-            position: fixed; top: 0; width: 380px; height: 100%; background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); z-index: 6000; padding: 32px; box-sizing: border-box;
-            display: flex; flex-direction: column; box-shadow: var(--shadow-lg);
-        }
-        .sliding-blur-panel.left-side { left: 0; transform: translateX(-100%); border-right: 1px solid var(--border); }
-        .sliding-blur-panel.right-side { right: 0; transform: translateX(100%); border-left: 1px solid var(--border); }
-        .sliding-blur-panel.active { transform: translateX(0); }
         
-        .panel-headline { font-size: 20px; font-weight: 800; padding-bottom: 16px; margin-bottom: 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-        .global-curtain { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(15, 23, 42, 0.3); backdrop-filter: blur(4px); z-index: 4500; display: none; }
-        .toast-engine-banner { position: fixed; bottom: 24px; right: 24px; background: var(--text); color: white; padding: 16px 24px; border-radius: var(--radius-main); box-shadow: var(--shadow-lg); font-size: 14px; font-weight: 600; z-index: 10000; transform: translateY(150px); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
-        .toast-engine-banner.show { transform: translateY(0); }
-
-        @media (max-width: 900px) {
-            .premium-header { flex-direction: column; align-items: stretch; padding: 16px; gap: 16px; }
-            .header-left-cluster { justify-content: space-between; width: 100%; }
-            .location-badge { display: none !important; }
-            .search-engine-bay { max-width: 100%; width: 100%; }
-            .nav-utility-cluster { width: 100%; justify-content: space-between; border-top: 1px solid var(--border); padding-top: 12px; }
-            .utility-node { display: none !important; }
-            .premium-cart-trigger { width: 100%; justify-content: center; box-sizing: border-box; }
-            .premium-subbar { padding: 12px 16px; gap: 16px; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
-            .hero-showcase { height: 180px; padding: 0 20px; }
-            .hero-text h1 { font-size: 22px; }
-            .hero-text p { font-size: 13px; }
-            .main-layout-stream { padding: 0 16px; margin-top: -24px; }
-            .dashboard-masonry { grid-template-columns: 1fr; gap: 16px; }
-            .shelf-flex-grid { grid-template-columns: 1fr; gap: 16px; }
-            .showcase-shelf { padding: 20px; }
-            .sliding-blur-panel { width: 85%; }
+        .cart-trigger-menu .cart-count {
+            background: var(--primary);
+            color: white;
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: bold;
         }
+
+        .admin-only-nav { display: none; color: #38bdf8; }
+        .official-only-nav { display: none; color: #fbbf24; font-weight: 600; }
+        .logout-nav-item { color: #f87171 !important; margin-top: 30px; border-top: 1px solid var(--border); padding-top: 20px; }
+
+        .cart-panel, .ai-support-panel { 
+            position: fixed; 
+            top: 0; 
+            width: 340px; 
+            height: 100%; 
+            background: var(--card); 
+            border-left: 1px solid var(--border); 
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            z-index: 2000; 
+            padding: 80px 24px 24px 24px; 
+            box-sizing: border-box; 
+            display: flex; 
+            flex-direction: column; 
+            visibility: hidden; 
+        }
+        .cart-panel { right: -360px; }
+        .cart-panel.active { right: 0; visibility: visible; }
+        
+        .ai-support-panel { right: -360px; }
+        .ai-support-panel.active { right: 0; visibility: visible; }
+
+        .drawer-header-title { font-size: 16px; font-weight: 700; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+        .drawer-content-stream { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding-right: 4px; }
+        
+        .ai-msg { padding: 12px 16px; border-radius: var(--radius); font-size: 13.5px; line-height: 1.5; max-width: 85%; word-wrap: break-word; }
+        .ai-msg.user { background: var(--primary); color: #fff; align-self: flex-end; border-bottom-right-radius: 2px; }
+        .ai-msg.agent { background: var(--bg); color: var(--text); align-self: flex-start; border-bottom-left-radius: 2px; border: 1px solid var(--border); }
+
+        .drawer-input-footer { border-top: 1px solid var(--border); padding-top: 16px; margin-top: 16px; display: flex; gap: 8px; }
+        .drawer-input-footer input { margin-bottom: 0; flex: 1; padding: 10px 14px; }
+        .drawer-send-btn { background: var(--primary); border: none; color: white; padding: 0 16px; border-radius: var(--radius); font-weight: 600; cursor: pointer; font-size: 13px; transition: background 0.2s; }
+        .drawer-send-btn:hover { background: var(--primary-hover); }
+
+        .omnifix-btn { background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: var(--radius); font-weight: 600; cursor: pointer; font-size: 14px; transition: background 0.2s; }
+        .omnifix-btn:hover { background: var(--primary-hover); }
+        
+        .owner-container { padding: 12px 0; }
+        .owner-subtext { font-size: 12px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; font-weight: 700; letter-spacing: 0.5px; }
+        .owner-status-text { font-size: 13px; color: var(--primary); margin-left: 8px; font-weight: 500; }
+
+        input, select, textarea { 
+            width: 100%; 
+            padding: 12px 16px; 
+            background: var(--bg); 
+            border: 1px solid var(--border); 
+            color: var(--text); 
+            border-radius: var(--radius); 
+            margin-bottom: 16px; 
+            box-sizing: border-box; 
+            font-size: 14px; 
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* Listing Grid Elements */
+        .listing-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; position: relative; display: flex; flex-direction: column; justify-content: space-between; }
+        .badge { position: absolute; top: 16px; right: 16px; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; }
+        .badge.used { background: rgba(230, 126, 34, 0.15); color: #e67e22; }
+        .badge.official { background: rgba(37, 99, 235, 0.15); color: #60a5fa; }
+        
+        .insta-btn { background: #e1306c; color: white !important; border: none; padding: 12px; border-radius: var(--radius); font-weight: 600; cursor: pointer; font-size: 13px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; margin-top: 10px; width: 100%; box-sizing: border-box; transition: opacity 0.2s; }
+        .insta-btn:hover { opacity: 0.9; }
     </style>
 </head>
 <body>
 
-    <div id="toastNotification" class="toast-engine-banner">System Notification Engine Online</div>
-    <div id="globalCurtain" class="global-curtain" onclick="closeAllDrawers()"></div>
-
-    <!-- --- PREMIUM NAVIGATION LAYER --- -->
-    <header class="premium-header">
-        <div class="header-left-cluster">
-            <div class="brand-identity" onclick="switchView('marketView')">matoc<span>.builders</span></div>
-            <div class="location-badge">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                <span>GBWNS Main Node</span>
-            </div>
-        </div>
-
-        <div class="search-engine-bay">
-            <select class="search-select" id="searchCategory">
-                <option value="all">All Cores</option>
-                <option value="cpu">Processors</option>
-                <option value="gpu">Graphics Engine</option>
-                <option value="ram">Memory Arrays</option>
-            </select>
-            <input type="text" class="search-input" id="searchField" placeholder="Query custom system hardware profiles..." oninput="filterMarketplaceSearch()">
-            <button class="search-action-btn">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-            </button>
-        </div>
-
-        <div class="nav-utility-cluster">
-            <div class="utility-node" onclick="switchView('p2pSellView')">
-                <span>Asset Loop</span>
-                <strong>Trade-Ins</strong>
-            </div>
-            <!-- Identity Control Dynamic Node -->
-            <div class="utility-node" id="authNavTrigger" onclick="switchView('authAuthView')">
-                <span>Secure Matrix</span>
-                <strong id="authNavLabel">Gate Sign-In</strong>
-            </div>
-            <div class="premium-cart-trigger" onclick="toggleCartPanel()">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
-                <span>Allocation</span>
-                <span class="cart-pill-count" id="headerCartCount">0</span>
-            </div>
-        </div>
-    </header>
-
-    <div class="premium-subbar">
-        <div class="subbar-link" onclick="toggleSidebarDrawer()">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-            <span>Departments</span>
-        </div>
-        <div class="subbar-link" onclick="switchView('pickerView')">Rig Configurator</div>
-        <div class="subbar-link" onclick="switchView('p2pSellView')">Buyback Matrix</div>
-        <div class="subbar-link" onclick="switchView('gameVaultView')">Runtime Sandbox</div>
+    <div id="terminalAlertGui" class="gui-alert-container">
+        <span id="guiAlertMessage">Initialising system architecture...</span>
     </div>
 
-    <!-- --- LEFT SLIDING DEPARTMENTS DRAWER --- -->
-    <div class="sliding-blur-panel left-side" id="sidebarDrawer">
-        <div class="panel-headline">
-            <span>Explore Ecosystem</span>
-            <span style="cursor:pointer; font-weight:300;" onclick="toggleSidebarDrawer()">&times;</span>
-        </div>
-        <div style="display:flex; flex-direction:column; gap:8px;">
-            <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;">Silicon Sectors</div>
-            <div class="action-button-cta" style="text-align:left; border:none;" onclick="filterDepartment('cpu')">Central Processing Units (CPUs)</div>
-            <div class="action-button-cta" style="text-align:left; border:none;" onclick="filterDepartment('gpu')">Graphics Accelerators (GPUs)</div>
-            <div class="action-button-cta" style="text-align:left; border:none;" onclick="filterDepartment('ram')">Dynamic Volatile RAM Arrays</div>
-        </div>
-    </div>
-
-    <!-- --- RIGHT SLIDING CART PANEL --- -->
-    <div class="sliding-blur-panel right-side" id="cartPanel">
-        <div class="panel-headline">
-            <span>Selected Logistics</span>
-            <span style="cursor:pointer; font-weight:300;" onclick="toggleCartPanel()">&times;</span>
-        </div>
-        <div id="cartItemsStream" style="flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:12px;"></div>
-        <div id="cartSummarySection" style="border-top:1px solid var(--border); padding-top:20px; margin-top:auto; display:none;">
-            <div style="display:flex; justify-content:space-between; font-size:15px; margin-bottom:20px; font-weight:600;">
-                <span style="color:var(--text-muted);">Est. Subtotal:</span>
-                <strong id="cartSubtotalValue" style="font-size:20px; color:var(--text);">$0.00</strong>
+    <div class="auth-gate" id="authGate">
+        <div class="auth-card" id="loginFormContainer">
+            <div class="auth-user-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
             </div>
-            <button class="action-button-cta" style="background:var(--primary); color:white; border:none; padding:12px;" onclick="executeAmazonCheckout()">Commit Subtotal to Build Manifest</button>
-        </div>
-    </div>
-
-    <!-- --- IDENTITY MATRIX GATEWAY (MATCHES SCREENSHOT_2026-07-02-14-39-58-845_COM.ANDROID.CHROME.JPG) --- -->
-    <main class="app-view" id="authAuthView">
-        
-        <!-- Logged Out Module (Directly matching user image) -->
-        <div class="screenshot-login-wrapper" id="loggedOutFormBlock">
-            <div class="screenshot-login-container">
-                
-                <!-- Avatar Circular Frame -->
-                <div class="screenshot-avatar-circle">
-                    <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="12" cy="7" r="4"></circle>
-                    </svg>
-                </div>
-
-                <h2 class="screenshot-login-title">Customer Login</h2>
-
-                <!-- Email Form Vector Row -->
-                <div class="screenshot-input-group">
-                    <span class="screenshot-icon-vector">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                            <polyline points="22,6 12,13 2,6"></polyline>
-                        </svg>
-                    </span>
-                    <input type="email" id="authEmailInput" placeholder="Email ID" class="screenshot-input-field">
-                </div>
-
-                <!-- Password Form Vector Row -->
-                <div class="screenshot-input-group">
-                    <span class="screenshot-icon-vector">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                        </svg>
-                    </span>
-                    <input type="password" id="authPasswordInput" placeholder="Password" class="screenshot-input-field">
-                </div>
-
-                <!-- Utilities Control Row -->
-                <div class="screenshot-utility-row">
-                    <label class="screenshot-checkbox-label">
-                        <input type="checkbox" checked> Remember me
-                    </label>
-                    <span class="screenshot-forgot-link" onclick="triggerToastAlert('Redirecting to secure hash verification protocol...')">Forgot Password?</span>
-                </div>
-
-                <!-- Action Direct Trigger -->
-                <button class="screenshot-submit-btn" onclick="handleAccountSign()">Login</button>
-
-                <!-- Footer Redirection Text -->
-                <div class="screenshot-footer-text" onclick="triggerToastAlert('Account Node Registration is open.')">
-                    Need an account? Register credentials
-                </div>
-
-            </div>
-        </div>
-
-        <!-- Logged In View Profile Banner State -->
-        <div style="background:white; max-width: 400px; margin: 80px auto; padding:40px 32px; border-radius:var(--radius-large); box-shadow:var(--shadow-md); border:1px solid var(--border); display:none; text-align:center;" id="loggedInStatusBlock">
-            <div style="background:var(--primary-light); color:var(--primary); width:64px; height:64px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 20px auto; font-weight:800; font-size:22px;" id="userProfileBadge">U</div>
-            <h3 style="margin:0 0 6px 0; font-size:20px;" id="userGreetingLine">Session Authenticated</h3>
-            <p style="color:var(--text-muted); font-size:14px; margin-bottom:32px;" id="userEmailSubline">node</p>
-            <button class="action-button-cta" style="background:#ef4444; color:white; border:none; padding:12px;" onclick="handleIdentityPurge()">Purge Runtime Authentication</button>
-        </div>
-    </main>
-
-    <!-- --- MARKET STAGE VIEW --- -->
-    <main class="app-view active" id="marketView">
-        <div class="hero-showcase">
-            <div class="hero-text">
-                <h1>Next-Gen Component Sourcing</h1>
-                <p>Track architecture parameters and manage system logic frameworks instantly.</p>
-            </div>
-        </div>
-        
-        <div class="main-layout-stream">
-            <div class="dashboard-masonry">
-                <div class="interactive-feature-card">
-                    <div>
-                        <h3>Integrated Bundles</h3>
-                        <p>Optimize framework deployment with pre-verified core silicon arrays.</p>
-                    </div>
-                    <a href="#" class="card-action-trigger" onclick="filterDepartment('all')">View bundles &rsaquo;</a>
-                </div>
-                <div class="interactive-feature-card">
-                    <div>
-                        <h3>Buyback Sourcing</h3>
-                        <p>Extract direct liquidity assets from legacy infrastructure blocks.</p>
-                    </div>
-                    <button class="action-button-cta" onclick="switchView('p2pSellView')">Launch Valuation</button>
-                </div>
-                <div class="interactive-feature-card">
-                    <div>
-                        <h3>Rig Configurator</h3>
-                        <p>Examine component lane constraints with structural compatibility layers.</p>
-                    </div>
-                    <a href="#" class="card-action-trigger" onclick="switchView('pickerView')">Open Matrix Builder &rsaquo;</a>
-                </div>
-            </div>
-
-            <div class="showcase-shelf">
-                <h3>Top Configuration Bundles</h3>
-                <div id="comboShelfDisplay" class="shelf-flex-grid"></div>
-            </div>
-
-            <div class="showcase-shelf">
-                <h3>Silicon Processing Nodes</h3>
-                <div id="productShelfDisplay" class="shelf-flex-grid"></div>
-            </div>
-        </div>
-    </main>
-
-    <!-- --- RIG CONFIGURATOR MATRIX --- -->
-    <main class="app-view" id="pickerView" style="max-width:1000px; margin:40px auto; padding:0 16px;">
-        <div style="background: white; padding: 24px; border-radius: var(--radius-large); box-shadow: var(--shadow-md); border:1px solid var(--border);">
-            <h2 style="margin:0 0 8px 0; font-size:24px; letter-spacing:-0.5px;">Rig Architecture Configuration System</h2>
-            <p style="color:var(--text-muted); font-size:14px; margin-bottom:32px;">Map hardware logic gates efficiently.</p>
             
-            <div style="background: var(--primary-light); border-radius: var(--radius-main); padding: 24px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; flex-wrap: wrap; gap: 16px;">
-                <div><span style="font-size:11px; color:var(--primary); font-weight:700; letter-spacing:0.5px; text-transform:uppercase;">Invoice Allocation Estimate</span><h3 id="pickerCostOutput" style="margin:4px 0 0 0; color:var(--text); font-size:28px; font-weight:800;">$0.00</h3></div>
-                <button class="action-button-cta" style="width:auto; background:var(--primary); color:white; border:none; padding:12px 24px;" onclick="addAllConfiguredToCart()">Deploy Setup to Logistics Block</button>
-            </div>
-
-            <div style="display:flex; flex-direction:column; gap:16px;">
-                <div style="background:white; border:1px solid var(--border); border-radius:var(--radius-main); padding:20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
-                    <div><strong style="font-size:15px;">Logic Unit Node (CPU)</strong><p id="slotText-cpu" style="margin:4px 0 0 0; font-size:13px; color:var(--text-muted);">Awaiting choice mapping.</p></div>
-                    <select id="select-cpu" onchange="mapConfiguratorNode('cpu')" style="padding:8px; border-radius:6px; border-color:var(--border); width:240px; font-family:var(--font);"></select>
-                </div>
-                <div style="background:white; border:1px solid var(--border); border-radius:var(--radius-main); padding:20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
-                    <div><strong style="font-size:15px;">Graphics Core Bus (GPU)</strong><p id="slotText-gpu" style="margin:4px 0 0 0; font-size:13px; color:var(--text-muted);">Awaiting choice mapping.</p></div>
-                    <select id="select-gpu" onchange="mapConfiguratorNode('gpu')" style="padding:8px; border-radius:6px; border-color:var(--border); width:240px; font-family:var(--font);"></select>
-                </div>
-                <div style="background:white; border:1px solid var(--border); border-radius:var(--radius-main); padding:20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
-                    <div><strong style="font-size:15px;">Volatile Buffer Cache (RAM)</strong><p id="slotText-ram" style="margin:4px 0 0 0; font-size:13px; color:var(--text-muted);">Awaiting choice mapping.</p></div>
-                    <select id="select-ram" onchange="mapConfiguratorNode('ram')" style="padding:8px; border-radius:6px; border-color:var(--border); width:240px; font-family:var(--font);"></select>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <!-- --- BUYBACK INTERFACE MATRIX --- -->
-    <main class="app-view" id="p2pSellView" style="max-width:640px; margin:40px auto; padding:0 16px;">
-        <div style="background:white; padding:24px; border-radius:var(--radius-large); box-shadow:var(--shadow-md); border:1px solid var(--border);">
-            <h2 style="margin:0 0 8px 0; font-size:24px; letter-spacing:-0.5px;">Hardware Buyback Interface Matrix</h2>
-            <p style="color:var(--text-muted); font-size:14px; margin-bottom:32px;">Inject your pre-owned architecture elements directly into the active pool index.</p>
+            <h2 id="authTitle" style="margin: 0 0 36px 0; font-size: 18px; font-weight: 400; text-align: center; text-transform: uppercase; letter-spacing: 3px; color: #fff;">Customer Login</h2>
             
-            <div style="margin-bottom:20px;">
-                <label style="font-size:12px; font-weight:700; color:var(--text-muted); display:block; margin-bottom:6px; text-transform:uppercase;">Component Category</label>
-                <select id="valCat" onchange="recalculateInstantQuote()" style="width:100%; padding:12px; border:1px solid var(--border); border-radius:var(--radius-main); font-family:var(--font);">
-                    <option value="cpu">Processor Array (CPU)</option>
-                    <option value="gpu">Discrete Framework Core (GPU)</option>
-                    <option value="ram">Volatile Memory Rail (RAM)</option>
-                </select>
+            <div class="auth-input-wrapper">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                <input type="email" id="authEmail" class="auth-clean-input" placeholder="Email ID">
             </div>
-
-            <div style="margin-bottom:20px;">
-                <label style="font-size:12px; font-weight:700; color:var(--text-muted); display:block; margin-bottom:6px; text-transform:uppercase;">Silicon Identifier String</label>
-                <input type="text" id="valName" placeholder="e.g. Core i7-4790K / Sapphire RX 580" oninput="recalculateInstantQuote()" style="width:100%; padding:12px; border:1px solid var(--border); border-radius:var(--radius-main); font-family:var(--font); box-sizing:border-box;">
+            
+            <div class="auth-input-wrapper">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                <input type="password" id="authPassword" class="auth-clean-input" placeholder="Password">
             </div>
-
-            <div style="margin-bottom:32px;">
-                <label style="font-size:12px; font-weight:700; color:var(--text-muted); display:block; margin-bottom:6px; text-transform:uppercase;">Silicon Run-Hour Integrity</label>
-                <select id="valCond" onchange="recalculateInstantQuote()" style="width:100%; padding:12px; border:1px solid var(--border); border-radius:var(--radius-main); font-family:var(--font);">
-                    <option value="pristine">Grade A++ Verified (Original retail presentation frame)</option>
-                    <option value="good">Grade A Standard Operational (Clean profile logic)</option>
-                    <option value="legacy">Legacy Operational Run Hours (Substantial data cycles verified)</option>
-                </select>
+            
+            <div class="auth-utilities">
+                <label class="auth-checkbox-label">
+                    <input type="checkbox" checked> Remember me
+                </label>
+                <span style="cursor: pointer; opacity: 0.8;" onclick="deployNotificationGui('Password reset matrix triggered.')">Forgot Password?</span>
             </div>
-
-            <div style="background:#f8fafc; border:1px solid var(--border); padding:24px; text-align:center; border-radius:var(--radius-main); margin-bottom:24px;">
-                <span style="font-size:11px; font-weight:700; color:var(--text-muted); display:block; margin-bottom:6px; letter-spacing:0.5px; text-transform:uppercase;">Algorithmic Valuation Yield</span>
-                <h2 id="quoteOutput" style="margin:0; font-size:36px; font-weight:800; color:var(--text);">$0.00</h2>
+            
+            <button id="authPrimaryBtn" class="auth-submit-action" onclick="executeEmailAuth()">Login</button>
+            
+            <div>
+                <span class="auth-toggle-link" id="authStateToggle" onclick="toggleAuthState()">Need an account? Register credentials</span>
             </div>
-
-            <button class="action-button-cta" style="background:var(--text); color:white; border:none; padding:14px; border-radius:var(--radius-main);" onclick="commitPeerHardwareToGlobalPool()">Publish Component Parameter Node</button>
         </div>
-    </main>
+    </div>
 
-    <!-- --- RUNTIME TESTING SANDBOX --- -->
-    <main class="app-view" id="gameVaultView" style="max-width:1200px; margin:40px auto; padding:0 16px;">
-        <h2 style="margin:0 0 6px 0; font-size:24px; letter-spacing:-0.5px;">Interactive Module Testing Arenas</h2>
-        <p style="color:var(--text-muted); font-size:14px; margin-bottom:32px;">Execute architecture runtime test simulations inside isolated asset containers.</p>
-        <div id="arcadeShelfDisplay" class="shelf-flex-grid"></div>
-    </main>
+    <div class="header">
+        <div onclick="toggleSidebar()" class="hamburger-btn">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 16px;">
+            <div style="width: 28px; height: 28px; background: var(--primary); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 13px; font-weight: bold;">DB</div>
+            <span>DamnBuilders <span style="color:var(--primary)">Official</span></span>
+        </div>
+        <div style="display:flex; gap:16px; align-items:center;">
+            <div id="terminalUserHandle" style="font-size:13px; color:var(--text-muted); max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Loading...</div>
+        </div>
+    </div>
+
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-section-title">Quick Actions</div>
+        <div class="nav-item cart-trigger-menu" onclick="toggleCart()">
+            <span>Shopping Cart</span>
+            <span class="cart-count" id="cartCount">0</span>
+        </div>
+
+        <div class="sidebar-section-title">Navigation</div>
+        <div class="nav-item active-nav" id="nav-marketView" onclick="switchTab('marketView')">Browse Marketplace</div>
+        <div class="nav-item" id="nav-p2pSellView" onclick="switchTab('p2pSellView')">Submit Used Asset</div>
+        <div class="nav-item" id="nav-ownerProfileView" onclick="switchTab('ownerProfileView')">Profile Dossier</div>
+        <div class="nav-item" id="nav-gameVaultView" onclick="switchTab('gameVaultView')">Arcade Vault</div>
+        
+        <div class="sidebar-section-title">External Access</div>
+        <a href="https://www.instagram.com/damnbuilders_official?igsh=Z2hiZGVjbnpmMXQ1" target="_blank" class="nav-item" style="color: #e1306c; text-decoration: none;">Official Instagram</a>
+
+        <div class="sidebar-section-title official-only-nav" id="officialSectionTitle">Publisher Controls</div>
+        <div class="nav-item official-only-nav" id="officialPublishLink" onclick="switchTab('officialPublishView')">Management Core</div>
+        <div class="nav-item admin-only-nav" id="adminSidebarLink" onclick="switchTab('opsView')">Live Order Stream</div>
+        
+        <div class="nav-item" onclick="toggleAiSupport()" style="color: #38bdf8; margin-top: 10px; background: rgba(56, 189, 248, 0.05);">AI Engineering Assistant</div>
+
+        <div class="nav-item logout-nav-item" onclick="logoutTerminal()">Disconnect Session</div>
+    </div>
+
+    <div class="cart-panel" id="cartPanel">
+        <div class="drawer-header-title">
+            <span>Selected Assets</span>
+            <span style="cursor:pointer; color:var(--text-muted);" onclick="toggleCart()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </span>
+        </div>
+        <div class="drawer-content-stream" id="cartItemsContainer"></div>
+    </div>
+
+    <div class="ai-support-panel" id="aiSupportPanel">
+        <div class="drawer-header-title">
+            <span>AI Assistant Interface</span>
+            <span style="cursor:pointer; color:var(--text-muted);" onclick="toggleAiSupport()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </span>
+        </div>
+        <div class="drawer-content-stream" id="aiChatStream">
+            <div class="ai-msg agent">System connection successful. Cloud environment records fully loaded. Ready to perform codebase testing adjustments, layout reviews, or core logic diagnostics.</div>
+        </div>
+        <div class="drawer-input-footer">
+            <input type="text" id="aiSupportInput" placeholder="Enter service request..." onkeydown="if(event.key === 'Enter') sendAiMessage()">
+            <button class="drawer-send-btn" onclick="sendAiMessage()">Execute</button>
+        </div>
+    </div>
+
+    <div class="app-view active" id="marketView">
+        <h2 style="margin: 0 0 6px 0; font-size: 24px; font-weight: 700;">Marketplace Stream</h2>
+        <p style="color:var(--text-muted); font-size:14px; margin: 0 0 24px 0;">Authorised brand releases alongside peer-reviewed systems configurations.</p>
+        <div id="marketplaceProductsDisplay" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px;">
+        </div>
+    </div>
+
+    <div class="app-view" id="p2pSellView">
+        <h2 style="margin: 0 0 6px 0; font-size: 24px; font-weight: 700;">List Used Product</h2>
+        <p style="color:var(--text-muted); font-size:14px; margin: 0 0 24px 0;">Peer submissions are systematically verified for strict hardware operational performance metrics.</p>
+        
+        <div style="max-width: 500px; background: var(--card); padding: 32px; border-radius: var(--radius); border: 1px solid var(--border);">
+            <label style="font-size: 13px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Product Specifications Title</label>
+            <input type="text" id="p2pProdName" placeholder="e.g., Used Intel i7-4790K Node">
+            
+            <label style="font-size: 13px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Asset Evaluation Valuation ($)</label>
+            <input type="number" id="p2pProdPrice" placeholder="Value Amount">
+
+            <label style="font-size: 13px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Enforced Condition Tier Flag</label>
+            <input type="text" value="USED HARDWARE ASSET" disabled style="opacity: 0.5; background: var(--bg);">
+            
+            <button class="omnifix-btn" onclick="submitPeerUsedListing()" style="width: 100%;">Commit Asset Submission</button>
+        </div>
+    </div>
+
+    <div class="app-view" id="officialPublishView">
+        <h2 style="margin: 0 0 6px 0; font-size: 24px; font-weight: 700; color: #fbbf24;">Publisher Control Center</h2>
+        <p style="color:var(--text-muted); font-size:14px; margin: 0 0 24px 0;">Privileged administrative environment built to manipulate arcade engine pipelines.</p>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;">
+            <div style="background: var(--card); padding: 28px; border-radius: var(--radius); border: 1px solid var(--border);">
+                <h3 style="margin: 0 0 16px 0; font-size: 16px; color: #fbbf24;">Inject Arcade Module</h3>
+                <input type="text" id="gameTitleInput" placeholder="Engine Instance Name">
+                <textarea id="gameMetaInput" placeholder="System Configuration Matrix Parameters (JSON)" rows="4"></textarea>
+                <button class="omnifix-btn" onclick="publishOfficialGame()" style="background: #fbbf24; color: #000; width: 100%;">Deploy to Vault</button>
+            </div>
+            
+            <div style="background: var(--card); padding: 28px; border-radius: var(--radius); border: 1px solid var(--border);">
+                <h3 style="margin: 0 0 16px 0; font-size: 16px; color: #fbbf24;">Launch Brand Product</h3>
+                <input type="text" id="offProdName" placeholder="Product Asset Model">
+                <input type="number" id="offProdPrice" placeholder="Wholesale Value Profile">
+                <button class="omnifix-btn" onclick="publishOfficialProduct()" style="background: #fbbf24; color: #000; width: 100%;">Authorize Release</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="app-view" id="gameVaultView">
+        <h2 style="margin: 0 0 6px 0; font-size: 24px; font-weight: 700;">Arcade Module Vault</h2>
+        <p style="color:var(--text-muted); font-size:14px; margin: 0 0 24px 0;">Direct access ports to stable sandbox application runtime packages.</p>
+        <div id="vaultGamesDisplay" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">
+        </div>
+    </div>
+
+    <div class="app-view" id="ownerProfileView">
+        <div class="owner-container">
+            <h2 style="margin: 0 0 4px 0; font-size: 24px; font-weight: 700;">
+                Mohamed Nafeez <span id="profileNodeStatus" class="owner-status-text">(Verifying Verification...)</span>
+            </h2>
+            <p style="color: var(--text-muted); font-size: 13px; margin: 0 0 28px 0; text-transform: uppercase; letter-spacing: 0.5px;">System Security Lead Registry</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 20px; max-width: 400px; background: var(--card); padding: 24px; border-radius: var(--radius); border: 1px solid var(--border);">
+                <div>
+                    <span class="owner-subtext">Age Node Metric</span>
+                    <span style="font-size: 18px; font-weight: 700;" id="profileAgeDisplay">15</span>
+                </div>
+                <div>
+                    <span class="owner-subtext">Core Framework Status Log</span>
+                    <span style="font-size: 14px; color: var(--text-muted);" id="profileTimeGateStatus">Parsing cloud clock configurations...</span>
+                </div>
+                <div>
+                    <span class="owner-subtext">Operational Portal Link</span>
+                    <a href="https://www.instagram.com/damnbuilders_official?igsh=Z2hiZGVjbnpmMXQ1" target="_blank" class="insta-btn">
+                        Open Instagram Link
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="app-view" id="opsView"><h2 style="font-size: 22px; font-weight: 700;">Order Core Logs Stream</h2></div>
 
     <script>
-        let amazonCart = [];
-        let pickerRig = { cpu: null, gpu: null, ram: null };
-        let authenticatedUser = null;
+        let isSignUpState = false;
+        let currentUserSessionEmail = "";
 
-        // Structured Component Engine Data Framework
-        let hardwareDatabase = {
+        let mockDatabase = {
             products: [
-                { id: 301, title: "Intel Core i7-4790K Processor Node (4.0 GHz, Core Cache)", price: 85.00, category: "cpu", currentRating: 0, totalRatingsCount: 0, tags: "Top Rated" },
-                { id: 302, title: "Sapphire Radeon RX 580 Pulse 8GB Frame Buffer Acceleration Module", price: 110.00, category: "gpu", currentRating: 0, totalRatingsCount: 0, tags: "Value Pick" },
-                { id: 303, title: "Corsair Vengeance Pro Series 16GB DDR3 Volatile Cache Array", price: 40.00, category: "ram", currentRating: 0, totalRatingsCount: 0, tags: "Stable Match" },
-                { id: 304, title: "Crucial MX500 1TB M.2 Internal Solid State Drive Architecture Node", price: 55.00, category: "ssd", currentRating: 0, totalRatingsCount: 0, tags: "High Speed" }
-            ],
-            combos: [
-                { id: 401, title: "Intel i7-4790K Core CPU + Performance Tuning Z97 Platform Architecture Matrix", price: 210.00, currentRating: 0, totalRatingsCount: 0 }
+                { id: 1, title: "Official Dev Suite Asset Pack", price: 45, type: "official", condition: "NEW" },
+                { id: 2, title: "Used Intel i7-4790K Processor Node", price: 75, type: "peer", condition: "USED" }
             ],
             games: [
-                { id: 1, title: "Bermuda Mutant Matrix Logic Simulator", info: "Isolated vehicle physics vector runtime testing script." }
+                { id: 1, title: "Bermuda Mutation Simulator", description: "Alpha engine instance compilation" }
             ]
         };
 
-        function initApp() {
-            loadUserSession();
-            renderMarketplace(hardwareDatabase.products);
-            populateConfiguratorDropdowns();
-            recalculateInstantQuote();
-            renderArcadeVault();
-        }
+        const firebaseConfig = {
+            apiKey: "AIzaSyAIFblCANTOf6cS_wrY3LHzQvx7pdOIVaM",
+            authDomain: "nigbwns.firebaseapp.com",
+            databaseURL: "https://nigbwns-default-rtdb.firebaseio.com",
+            projectId: "nigbwns",
+            storageBucket: "nigbwns.firebasestorage.app",
+            messagingSenderId: "192952183208",
+            appId: "1:192952183208:web:3b019658f67770a909d59d"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
 
-        /* --- AUTHENTICATION CONTROLLER SYSTEM --- */
-        function loadUserSession() {
-            const savedUser = localStorage.getItem('matoc_user_node');
-            if(savedUser) {
-                authenticatedUser = JSON.parse(savedUser);
-                updateAuthInterfaceUI(true);
-            } else {
-                updateAuthInterfaceUI(false);
-            }
-        }
-
-        function handleAccountSign() {
-            const email = document.getElementById('authEmailInput').value.trim();
-            const pass = document.getElementById('authPasswordInput').value.trim();
-
-            if(!email || !pass) {
-                triggerToastAlert("Sign-in credential validation dropped.");
-                return;
-            }
-
-            authenticatedUser = { email: email };
-            localStorage.setItem('matoc_user_node', JSON.stringify(authenticatedUser));
-            
-            updateAuthInterfaceUI(true);
-            triggerToastAlert("Identity vector verified. Session locked.");
-            switchView('marketView');
-            
-            renderMarketplace(hardwareDatabase.products);
-        }
-
-        function handleIdentityPurge() {
-            localStorage.removeItem('matoc_user_node');
-            authenticatedUser = null;
-            updateAuthInterfaceUI(false);
-            triggerToastAlert("Session purged successfully.");
-            renderMarketplace(hardwareDatabase.products);
-        }
-
-        function updateAuthInterfaceUI(isLoggedIn) {
-            const label = document.getElementById('authNavLabel');
-            const loggedOutBox = document.getElementById('loggedOutFormBlock');
-            const loggedInBox = document.getElementById('loggedInStatusBlock');
-
-            if(isLoggedIn) {
-                label.innerText = authenticatedUser.email.split('@')[0].toUpperCase();
-                loggedOutBox.style.display = "none";
-                loggedInBox.style.display = "block";
-                document.getElementById('userGreetingLine').innerText = "Matrix Profile Active";
-                document.getElementById('userEmailSubline').innerText = authenticatedUser.email;
-                document.getElementById('userProfileBadge').innerText = authenticatedUser.email.charAt(0).toUpperCase();
-            } else {
-                label.innerText = "Gate Sign-In";
-                loggedOutBox.style.display = "flex";
-                loggedInBox.style.display = "none";
-                document.getElementById('authEmailInput').value = "";
-                document.getElementById('authPasswordInput').value = "";
-            }
-        }
-
-        /* --- MARKETPLACE RENDERING MATRIX --- */
-        function renderMarketplace(productList) {
-            const prodShelf = document.getElementById('productShelfDisplay');
-            prodShelf.innerHTML = "";
-            
-            productList.forEach(p => {
-                const card = document.createElement('div');
-                card.className = "premium-product-card";
-                card.innerHTML = `
-                    <div>
-                        <div class="pill-badge">${p.tags || 'Hardware Exchange'}</div>
-                        <h4 style="margin:0 0 8px 0; font-size:15px; font-weight:600; line-height:1.4; color:var(--text);">${p.title}</h4>
-                        
-                        <div class="rating-engine-row">
-                            <div class="interactive-stars" data-id="${p.id}" data-type="product">
-                                ${generateStarHTML(p.currentRating)}
-                            </div>
-                            <span class="rating-volume">(${p.totalRatingsCount} votes)</span>
-                        </div>
-
-                        <div class="premium-price-tag">$${p.price.toFixed(2)}</div>
-                        <div class="shipping-sla-line">Express Freight: <strong>Verified Instantly</strong></div>
-                    </div>
-                    <button class="action-button-cta" onclick="addHardwareToCart(${p.id}, false)">Add Unit to Configuration</button>
-                `;
-                prodShelf.appendChild(card);
-            });
-
-            const comboShelf = document.getElementById('comboShelfDisplay');
-            comboShelf.innerHTML = "";
-            hardwareDatabase.combos.forEach(c => {
-                const card = document.createElement('div');
-                card.className = "premium-product-card";
-                card.innerHTML = `
-                    <div>
-                        <div class="pill-badge" style="background:#fef2f2; color:#ef4444;">Optimized Core Bundle</div>
-                        <h4 style="margin:0 0 8px 0; font-size:15px; font-weight:600; line-height:1.4; color:var(--text);">${c.title}</h4>
-                        
-                        <div class="rating-engine-row">
-                            <div class="interactive-stars" data-id="${c.id}" data-type="combo">
-                                ${generateStarHTML(c.currentRating)}
-                            </div>
-                            <span class="rating-volume">(${c.totalRatingsCount} votes)</span>
-                        </div>
-
-                        <div class="premium-price-tag">$${c.price.toFixed(2)}</div>
-                        <div class="shipping-sla-line">System Delivery Status: <strong>Priority Tier</strong></div>
-                    </div>
-                    <button class="action-button-cta" onclick="addHardwareToCart(${c.id}, true)">Add Bundle Matrix</button>
-                `;
-                comboShelf.appendChild(card);
-            });
-
-            bindRatingControls();
-        }
-
-        /* --- DYNAMIC RATINGS ENGINE LOGIC --- */
-        function generateStarHTML(rating) {
-            let html = "";
-            for(let i = 1; i <= 5; i++) {
-                html += `<span class="star-node ${i <= rating ? 'active' : ''}" data-value="${i}">★</span>`;
-            }
-            return html;
-        }
-
-        function bindRatingControls() {
-            document.querySelectorAll('.star-node').forEach(star => {
-                star.addEventListener('click', function(e) {
-                    if(!authenticatedUser) {
-                        triggerToastAlert("Authentication required to submit tracking ratings.");
-                        switchView('authAuthView');
-                        return;
-                    }
-
-                    const selectedScore = parseInt(this.getAttribute('data-value'));
-                    const container = this.parentElement;
-                    const id = parseInt(container.getAttribute('data-id'));
-                    const type = container.getAttribute('data-type');
-
-                    if(type === 'product') {
-                        const product = hardwareDatabase.products.find(p => p.id === id);
-                        if(product) {
-                            product.currentRating = selectedScore;
-                            product.totalRatingsCount += 1;
-                            triggerToastAlert(`Rating successfully verified as ${selectedScore} stars!`);
-                            renderMarketplace(hardwareDatabase.products);
+        function runInitialPreflightChecks() {
+            grecaptcha.enterprise.ready(async () => {
+                try {
+                    const token = await grecaptcha.enterprise.execute('6LcAVCotAAAAAPtUw0X7fwbiaMOz68bew5HlRtpT', { action: 'PORTAL_ACCESS' });
+                    
+                    const assessmentPayload = {
+                        "event": {
+                            "token": token,
+                            "expectedAction": "PORTAL_ACCESS",
+                            "siteKey": "6LcAVCotAAAAAPtUw0X7fwbiaMOz68bew5HlRtpT"
                         }
-                    } else if(type === 'combo') {
-                        const combo = hardwareDatabase.combos.find(c => c.id === id);
-                        if(combo) {
-                            combo.currentRating = selectedScore;
-                            combo.totalRatingsCount += 1;
-                            triggerToastAlert(`Bundle array updated to ${selectedScore} stars!`);
-                            renderMarketplace(hardwareDatabase.products);
-                        }
-                    }
-                });
-            });
-        }
+                    };
 
-        function filterMarketplaceSearch() {
-            const query = document.getElementById('searchField').value.toLowerCase().trim();
-            const category = document.getElementById('searchCategory').value;
+                    const API_KEY = "AIzaSyAhnYH_rj7VkdcshB_g3QO2LU9KUmwGtHk"; 
+                    const targetEndpoint = `https://recaptchaenterprise.googleapis.com/v1/projects/nigbwns/assessments?key=${API_KEY}`;
 
-            let results = hardwareDatabase.products;
-            if (category !== 'all') results = results.filter(p => p.category === category);
-            if (query !== "") results = results.filter(p => p.title.toLowerCase().includes(query));
-            renderMarketplace(results);
-        }
+                    fetch(targetEndpoint, {
+                        method: "POST",
+                        mode: "cors",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(assessmentPayload)
+                    }).catch(err => console.error("Background assessment error:", err));
 
-        function filterDepartment(catId) {
-            if (catId === 'all') renderMarketplace(hardwareDatabase.products);
-            else renderMarketplace(hardwareDatabase.products.filter(p => p.category === catId));
-            switchView('marketView');
-            closeAllDrawers();
-        }
-
-        function populateConfiguratorDropdowns() {
-            ['cpu', 'gpu', 'ram'].forEach(cat => {
-                const select = document.getElementById(`select-${cat}`);
-                select.innerHTML = `<option value="">-- Connect Silicon Core --</option>`;
-                hardwareDatabase.products.filter(p => p.category === cat).forEach(p => {
-                    select.innerHTML += `<option value="${p.id}">${p.title} (+$${p.price.toFixed(2)})</option>`;
-                });
-            });
-        }
-
-        function mapConfiguratorNode(category) {
-            const val = document.getElementById(`select-${category}`).value;
-            const textSlot = document.getElementById(`slotText-${category}`);
-
-            if(!val) {
-                pickerRig[category] = null;
-                textSlot.innerText = "Awaiting choice mapping.";
-            } else {
-                const product = hardwareDatabase.products.find(p => p.id == val);
-                pickerRig[category] = product;
-                textSlot.innerText = `${product.title} locked into local system lane.`;
-            }
-
-            let cumulativeCost = 0;
-            Object.keys(pickerRig).forEach(k => { if(pickerRig[k]) cumulativeCost += pickerRig[k].price; });
-            document.getElementById('pickerCostOutput').innerText = `$${cumulativeCost.toFixed(2)}`;
-        }
-
-        function addAllConfiguredToCart() {
-            let addedAny = false;
-            Object.keys(pickerRig).forEach(k => {
-                if (pickerRig[k]) {
-                    addHardwareToCart(pickerRig[k].id, false);
-                    addedAny = true;
+                    initSessionWatch();
+                } catch (err) {
+                    console.error("Initial Captcha verification fault:", err);
+                    initSessionWatch();
                 }
             });
-            if(addedAny) {
-                switchView('marketView');
-                toggleCartPanel();
+        }
+
+        function initSessionWatch() {
+            firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+                .then(() => {
+                    firebase.auth().onAuthStateChanged((user) => {
+                        if (user) {
+                            currentUserSessionEmail = user.email;
+                            handleSuccessfulLogin(user.email);
+                            syncProfileToServer();
+                        } else {
+                            handleRequiredLogin();
+                        }
+                    });
+                })
+                .catch(err => console.error("Session persistence error: ", err));
+                
+            renderMarketplace();
+            renderGameVault();
+        }
+
+        function handleSuccessfulLogin(emailText) {
+            document.getElementById('authGate').style.display = 'none';
+            document.getElementById('terminalUserHandle').innerText = emailText;
+            document.getElementById('adminSidebarLink').style.display = 'block';
+            
+            if (emailText.toLowerCase() === "damnbuilders_official" || emailText.toLowerCase() === "official@damnbuilders.com" || emailText.toLowerCase() === "nz") {
+                document.getElementById('officialSectionTitle').style.display = 'block';
+                document.getElementById('officialPublishLink').style.display = 'block';
+                deployNotificationGui("System Publisher dashboard instance loaded successfully.");
             } else {
-                triggerToastAlert("Matrix profiles are fully blank.");
+                document.getElementById('officialSectionTitle').style.display = 'none';
+                document.getElementById('officialPublishLink').style.display = 'none';
+                deployNotificationGui("Authentication access verified.");
             }
+            computeNodeIdentityLifecycle();
         }
 
-        function recalculateInstantQuote() {
-            const name = document.getElementById('valName').value.trim();
-            const cat = document.getElementById('valCat').value;
-            const cond = document.getElementById('valCond').value;
-
-            if(!name) { document.getElementById('quoteOutput').innerText = "$0.00"; return; }
-
-            let baselineValuation = 45;
-            if (cat === 'gpu') baselineValuation = 95;
-            if (cat === 'ram') baselineValuation = 30;
-
-            if (cond === 'pristine') baselineValuation = Math.floor(baselineValuation * 1.35);
-            if (cond === 'legacy') baselineValuation = Math.floor(baselineValuation * 0.65);
-
-            document.getElementById('quoteOutput').innerText = `$${baselineValuation.toFixed(2)}`;
+        function handleRequiredLogin() {
+            document.getElementById('authGate').style.display = 'flex';
+            document.getElementById('terminalUserHandle').innerText = "Not Connected";
+            document.getElementById('adminSidebarLink').style.display = 'none';
+            document.getElementById('officialSectionTitle').style.display = 'none';
+            document.getElementById('officialPublishLink').style.display = 'none';
         }
 
-        function commitPeerHardwareToGlobalPool() {
-            const name = document.getElementById('valName').value.trim();
-            const cat = document.getElementById('valCat').value;
-            const priceText = document.getElementById('quoteOutput').innerText;
-            const numericValue = parseFloat(priceText.replace('$', ''));
+        function renderMarketplace() {
+            const display = document.getElementById('marketplaceProductsDisplay');
+            display.innerHTML = "";
+            mockDatabase.products.forEach(p => {
+                const card = document.createElement('div');
+                card.className = "listing-card";
+                
+                const badgeClass = p.type === 'official' ? 'official' : 'used';
+                const badgeText = p.type === 'official' ? 'Brand New' : 'Verified Used';
+                
+                card.innerHTML = `
+                    <span class="badge ${badgeClass}">${badgeText}</span>
+                    <h3 style="margin: 24px 0 8px 0; font-size: 16px; font-weight: 600;">${p.title}</h3>
+                    <p style="font-weight: 700; color: var(--primary); margin: 0 0 16px 0;">$${p.price}</p>
+                    <button class="omnifix-btn" style="width:100%; padding: 10px; font-size:13px;" onclick="deployNotificationGui('Asset added to queue processing queue.')">Order Module</button>
+                `;
+                display.appendChild(card);
+            });
+        }
 
-            if (!name) { triggerToastAlert("Validation parameter checks failed."); return; }
+        function renderGameVault() {
+            const display = document.getElementById('vaultGamesDisplay');
+            display.innerHTML = "";
+            mockDatabase.games.forEach(g => {
+                const card = document.createElement('div');
+                card.className = "listing-card";
+                card.innerHTML = `
+                    <h3 style="margin: 0 0 8px 0; font-size: 16px; font-weight:600; color: #fbbf24;">${g.title}</h3>
+                    <p style="font-size: 13px; color: var(--text-muted); margin: 0 0 20px 0; line-height:1.4;">${g.description}</p>
+                    <button class="omnifix-btn" style="width:100%; padding: 10px; font-size:13px; background:#fbbf24; color:#000;" onclick="deployNotificationGui('Booting arcade module sandbox...')">Launch Sandbox</button>
+                `;
+                display.appendChild(card);
+            });
+        }
 
-            hardwareDatabase.products.push({
-                id: hardwareDatabase.products.length + 500,
-                title: `Pre-Owned ${name} (Matoc Labs Certified Integrity Core)`,
-                price: numericValue,
-                category: cat,
-                currentRating: 0,
-                totalRatingsCount: 0,
-                tags: "User Node Swap"
+        function submitPeerUsedListing() {
+            const name = document.getElementById('p2pProdName').value.trim();
+            const price = document.getElementById('p2pProdPrice').value;
+            if(!name || !price) { deployNotificationGui("Configuration entries invalid."); return; }
+            
+            mockDatabase.products.push({
+                id: mockDatabase.products.length + 1,
+                title: name,
+                price: parseInt(price),
+                type: "peer",
+                condition: "USED"
+            });
+            
+            document.getElementById('p2pProdName').value = "";
+            document.getElementById('p2pProdPrice').value = "";
+            deployNotificationGui("Used asset safely logged to stream.");
+            renderMarketplace();
+            switchTab('marketView');
+        }
+
+        function publishOfficialGame() {
+            const title = document.getElementById('gameTitleInput').value.trim();
+            const desc = document.getElementById('gameMetaInput').value.trim();
+            if(!title) return;
+
+            mockDatabase.games.push({
+                id: mockDatabase.games.length + 1,
+                title: title,
+                description: desc || "No parameters specified."
             });
 
-            document.getElementById('valName').value = "";
-            triggerToastAlert("Component profile published to active system index feed.");
-            renderMarketplace(hardwareDatabase.products);
-            populateConfiguratorDropdowns();
-            switchView('marketView');
+            document.getElementById('gameTitleInput').value = "";
+            document.getElementById('gameMetaInput').value = "";
+            deployNotificationGui("Module deployed to environment.");
+            renderGameVault();
+            switchTab('gameVaultView');
         }
 
-        function addHardwareToCart(id, isCombo) {
-            const target = isCombo ? hardwareDatabase.combos.find(c => c.id === id) : hardwareDatabase.products.find(p => p.id === id);
-            if (!target) return;
+        function publishOfficialProduct() {
+            const name = document.getElementById('offProdName').value.trim();
+            const price = document.getElementById('offProdPrice').value;
+            if(!name || !price) return;
 
-            const duplicateIdx = amazonCart.findIndex(i => i.id === id && i.isCombo === isCombo);
-            if (duplicateIdx > -1) {
-                amazonCart[duplicateIdx].qty += 1;
+            mockDatabase.products.push({
+                id: mockDatabase.products.length + 1,
+                title: name,
+                price: parseInt(price),
+                type: "official",
+                condition: "NEW"
+            });
+
+            document.getElementById('offProdName').value = "";
+            document.getElementById('offProdPrice').value = "";
+            deployNotificationGui("New retail catalog item synchronized.");
+            renderMarketplace();
+            switchTab('marketView');
+        }
+
+        function computeNodeIdentityLifecycle() {
+            const ageDisplay = document.getElementById('profileAgeDisplay');
+            const timeGateStatus = document.getElementById('profileTimeGateStatus');
+            const nodeStatus = document.getElementById('profileNodeStatus');
+
+            const gateTimestamp = Date.UTC(2026, 5, 18, 0, 0, 0); 
+            const currentTimestamp = Date.now();
+
+            if (currentTimestamp >= gateTimestamp) {
+                ageDisplay.innerText = "16";
+                timeGateStatus.innerText = "AUTO_SYNCED // LEVEL_16_CONFIRMED";
+                nodeStatus.innerText = "(Verified System Lead)";
             } else {
-                amazonCart.push({ id: target.id, title: target.title, price: target.price, isCombo: isCombo, qty: 1 });
+                ageDisplay.innerText = "15";
+                timeGateStatus.innerText = "PENDING // VALIDATING_TEMPORAL_MARK";
+                nodeStatus.innerText = "(Active Access Node)";
             }
-
-            triggerToastAlert(`Added component selection to logistics pipeline allocation.`);
-            synchronizeCartUI();
         }
 
-        function modifyCartQty(id, isCombo, amount) {
-            const index = amazonCart.findIndex(i => i.id === id && i.isCombo === isCombo);
-            if (index === -1) return;
-
-            amazonCart[index].qty += amount;
-            if(amazonCart[index].qty <= 0) amazonCart.splice(index, 1);
-            synchronizeCartUI();
+        function syncProfileToServer() {
+            const user = firebase.auth().currentUser;
+            if (user) {
+                const targetAge = document.getElementById('profileAgeDisplay').innerText;
+                const profilePayload = {
+                    name: "Mohamed Nafeez",
+                    calculatedAge: targetAge,
+                    clientSyncTime: new Date().toISOString()
+                };
+                firebase.database().ref('users/' + user.uid + '/about_owner').set(profilePayload)
+                    .catch(err => console.error("Sync payload execution error: " + err.message));
+            }
         }
 
-        function synchronizeCartUI() {
-            const cartStream = document.getElementById('cartItemsStream');
-            const totalCountBadge = document.getElementById('headerCartCount');
-            const summaryBox = document.getElementById('cartSummarySection');
+        function toggleAuthState() {
+            isSignUpState = !isSignUpState;
+            const title = document.getElementById('authTitle');
+            const button = document.getElementById('authPrimaryBtn'), toggleLink = document.getElementById('authStateToggle');
+            if (isSignUpState) {
+                title.innerText = "Register Account";
+                button.innerText = "Register"; toggleLink.innerText = "Existing account? Sign in here";
+            } else {
+                title.innerText = "Customer Login";
+                button.innerText = "Login"; toggleLink.innerText = "Need an account? Register credentials";
+            }
+        }
 
-            cartStream.innerHTML = "";
-            let aggregatedCost = 0;
-            let totalItemsCount = 0;
-
-            if (amazonCart.length === 0) {
-                cartStream.innerHTML = `<p style="text-align:center; font-size:13px; color:var(--text-muted); margin-top:40px;">Logistics manifest allocations empty.</p>`;
-                summaryBox.style.display = "none";
-                totalCountBadge.innerText = "0";
+        async function executeEmailAuth() {
+            const email = document.getElementById('authEmail').value.trim();
+            const password = document.getElementById('authPassword').value;
+            if (!email || !password) { deployNotificationGui("Input entries cannot be blank."); return; }
+            
+            if (email.includes('@') === false) {
+                deployNotificationGui("Syntax error. Standard corporate email format required.");
                 return;
             }
 
-            amazonCart.forEach(item => {
-                aggregatedCost += item.price * item.qty;
-                totalItemsCount += item.qty;
-
-                const element = document.createElement('div');
-                element.style = "background:white; border:1px solid var(--border); padding:16px; border-radius:var(--radius-main); display:flex; flex-direction:column; gap:8px; box-shadow:var(--shadow-sm);";
-                element.innerHTML = `
-                    <div style="font-size:13px; font-weight:600; color:var(--text);">${item.title.substring(0, 50)}...</div>
-                    <div style="font-size:15px; font-weight:800; color:var(--primary);">$${item.price.toFixed(2)}</div>
-                    <div style="display:flex; align-items:center; gap:12px; font-size:12px;">
-                        <span style="color:var(--text-muted)">Units: <strong>${item.qty}</strong></span>
-                        <span style="color:var(--primary); cursor:pointer; font-weight:700;" onclick="modifyCartQty(${item.id}, ${item.isCombo}, 1)">+</span>
-                        <span style="color:var(--text-muted); cursor:pointer; font-weight:700;" onclick="modifyCartQty(${item.id}, ${item.isCombo}, -1)">&minus;</span>
-                    </div>
-                `;
-                cartStream.appendChild(element);
-            });
-
-            totalCountBadge.innerText = totalItemsCount;
-            document.getElementById('cartSubtotalValue').innerText = `$${aggregatedCost.toFixed(2)}`;
-            summaryBox.style.display = "block";
+            if (isSignUpState) {
+                firebase.auth().createUserWithEmailAndPassword(email, password)
+                    .then((userCredential) => {
+                        deployNotificationGui("Credentials mapped and synchronized.");
+                        currentUserSessionEmail = userCredential.user.email;
+                        handleSuccessfulLogin(userCredential.user.email);
+                    })
+                    .catch(err => deployNotificationGui("Creation fault: " + err.message));
+            } else {
+                firebase.auth().signInWithEmailAndPassword(email, password)
+                    .then((userCredential) => {
+                        deployNotificationGui("Session token generated.");
+                        currentUserSessionEmail = userCredential.user.email;
+                        handleSuccessfulLogin(userCredential.user.email);
+                    })
+                    .catch(err => deployNotificationGui("Access Denied: " + err.message));
+            }
         }
 
-        function executeAmazonCheckout() {
-            triggerToastAlert("Encrypting subtotal manifest hashes...");
-            setTimeout(() => {
-                amazonCart = [];
-                synchronizeCartUI();
-                toggleCartPanel();
-                triggerToastAlert("Logistics manifest deployed successfully to database nodes!");
-            }, 1000);
+        function logoutTerminal() {
+            firebase.auth().signOut().then(() => {
+                deployNotificationGui("Session dropped.");
+                toggleSidebar();
+            }).catch(err => deployNotificationGui("Disconnection fault: " + err.message));
         }
 
-        function renderArcadeVault() {
-            const vaultDisplay = document.getElementById('arcadeShelfDisplay');
-            vaultDisplay.innerHTML = "";
-            hardwareDatabase.games.forEach(g => {
-                const card = document.createElement('div');
-                card.className = "premium-product-card";
-                card.innerHTML = `
-                    <div>
-                        <div class="pill-badge" style="background:#f1f5f9; color:var(--text-muted);">Logic Container</div>
-                        <h4 style="margin:0 0 8px 0; font-size:15px; font-weight:700; color:var(--text);">${g.title}</h4>
-                        <p style="font-size:13px; color:var(--text-muted); line-height:1.5; margin:12px 0;">${g.info}</p>
-                    </div>
-                    <button class="action-button-cta" onclick="triggerToastAlert('Deploying vector container execution state...')">Execute Sandboxed Script</button>
-                `;
-                vaultDisplay.appendChild(card);
-            });
-        }
-
-        function switchView(viewId) {
+        function switchTab(viewId) {
             document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
-            document.getElementById(viewId).classList.add('active');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            document.querySelectorAll('.sidebar .nav-item').forEach(n => n.classList.remove('active-nav'));
+            
+            let targetView = document.getElementById(viewId);
+            let targetNav = document.getElementById('nav-' + viewId);
+            
+            if(targetView) targetView.classList.add('active');
+            if(targetNav) targetNav.classList.add('active-nav');
+            toggleSidebar();
         }
 
-        function toggleSidebarDrawer() {
-            const drw = document.getElementById('sidebarDrawer');
-            const crt = document.getElementById('globalCurtain');
-            drw.classList.toggle('active');
-            crt.style.display = drw.classList.contains('active') ? "block" : "none";
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
+        function toggleCart() { document.getElementById('cartPanel').classList.toggle('active'); }
+        
+        function toggleAiSupport() { 
+            document.getElementById('aiSupportPanel').classList.toggle('active'); 
+            if(document.getElementById('sidebar').classList.contains('active')) toggleSidebar();
         }
 
-        function toggleCartPanel() {
-            const pnl = document.getElementById('cartPanel');
-            const crt = document.getElementById('globalCurtain');
-            pnl.classList.toggle('active');
-            crt.style.display = pnl.classList.contains('active') ? "block" : "none";
+        function sendAiMessage() {
+            const inputField = document.getElementById('aiSupportInput');
+            const query = inputField.value.trim();
+            if (!query) return;
+
+            const stream = document.getElementById('aiChatStream');
+            
+            const userBox = document.createElement('div');
+            userBox.className = 'ai-msg user';
+            userBox.innerText = query;
+            stream.appendChild(userBox);
+            inputField.value = '';
+            stream.scrollTop = stream.scrollHeight;
+
+            setTimeout(() => {
+                const agentBox = document.createElement('div');
+                agentBox.className = 'ai-msg agent';
+                let reply = "Statement analyzed within ecosystem architecture constraints.";
+                
+                const lower = query.toLowerCase();
+                if (lower.includes('godot') || lower.includes('physics') || lower.includes('script') || lower.includes('game')) {
+                    reply = "[Diagnostic Subsystem]: Streamline asset hierarchy matrices. Run physics steps asynchronously for mobile optimization branches.";
+                } else if (lower.includes('gpu') || lower.includes('hardware') || lower.includes('ram') || lower.includes('ssd') || lower.includes('pc')) {
+                    reply = "[Hardware Diagnostic Subsystem]: Resource mapping and storage bandwidth calculations completed successfully.";
+                } else if (lower.includes('profile') || lower.includes('about') || lower.includes('owner') || lower.includes('nafeez')) {
+                    reply = "[Registry Subsystem]: Record verification for Mohamed Nafeez complete. Age value parameters verified at level 16.";
+                }
+
+                agentBox.innerText = reply;
+                stream.appendChild(agentBox);
+                stream.scrollTop = stream.scrollHeight;
+            }, 600);
         }
 
-        function closeAllDrawers() {
-            document.getElementById('sidebarDrawer').classList.remove('active');
-            document.getElementById('cartPanel').classList.remove('active');
-            document.getElementById('globalCurtain').style.display = "none";
+        function deployNotificationGui(msg) {
+            const banner = document.getElementById('terminalAlertGui');
+            document.getElementById('guiAlertMessage').innerText = msg;
+            banner.classList.add('show');
+            setTimeout(() => banner.classList.remove('show'), 3000);
         }
 
-        function triggerToastAlert(msg) {
-            const toast = document.getElementById('toastNotification');
-            toast.innerText = msg;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 2500);
-        }
-
-        initApp();
+        runInitialPreflightChecks();
     </script>
 </body>
 </html>
