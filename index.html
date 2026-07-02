@@ -3,21 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MATOC BUILDERS</title>
+    <title>MATOC BUILDERS - Premium Hardware Exchange</title>
    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
         :root { 
             --primary: #2563eb; 
             --primary-light: #eff6ff;
-            --bg: #f8fafc; /* Crisp, clean modern light backdrop */
+            --bg: #f8fafc; 
             --card: #ffffff; 
-            --text: #0f172a; /* Slate 900 - dark, readable typography */
-            --text-muted: #64748b; /* Slate 500 */
-            --border: #e2e8f0; /* Soft modern border */
+            --text: #0f172a; 
+            --text-muted: #64748b; 
+            --border: #e2e8f0; 
             --radius-large: 16px;
             --radius-main: 12px;
             --radius-small: 8px;
@@ -39,7 +39,7 @@
             min-height: 100vh;
         }
 
-        /* --- PREMIUM MODERN FLOATING NAVIGATION --- */
+        /* --- NAVIGATION LAYOUT --- */
         .premium-header {
             background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(12px);
@@ -48,11 +48,18 @@
             padding: 16px 32px;
             display: flex;
             align-items: center;
+            justify-content: space-between;
             gap: 24px;
             position: sticky;
             top: 0;
             z-index: 5000;
             box-shadow: var(--shadow-sm);
+        }
+
+        .header-left-cluster {
+            display: flex;
+            align-items: center;
+            gap: 16px;
         }
 
         .brand-identity {
@@ -61,6 +68,7 @@
             letter-spacing: -0.5px;
             cursor: pointer;
             color: var(--text);
+            white-space: nowrap;
         }
         .brand-identity span { color: var(--primary); }
 
@@ -74,12 +82,13 @@
             font-size: 13px;
             color: var(--primary);
             font-weight: 600;
+            white-space: nowrap;
         }
 
-        /* Redesigned Search Engine */
         .search-engine-bay {
             display: flex;
             flex: 1;
+            max-width: 600px;
             height: 46px;
             background: #f1f5f9;
             border-radius: var(--radius-main);
@@ -111,6 +120,7 @@
             font-size: 14px;
             font-family: var(--font);
             color: var(--text);
+            width: 100%;
         }
         .search-input:focus { outline: none; }
         .search-action-btn {
@@ -123,9 +133,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: background 0.2s;
         }
-        .search-action-btn:hover { background: var(--primary-hover); }
 
         .nav-utility-cluster {
             display: flex;
@@ -166,7 +174,6 @@
             border-radius: 20px;
         }
 
-        /* Clean Secondary Navigation Strip */
         .premium-subbar {
             background: white;
             border-bottom: 1px solid var(--border);
@@ -181,7 +188,7 @@
         .subbar-link { cursor: pointer; transition: color 0.2s; display: flex; align-items: center; gap: 6px; }
         .subbar-link:hover { color: var(--primary); }
 
-        /* --- IMMERSIVE HERO BANNER --- */
+        /* --- HERO DISPLAY --- */
         .hero-showcase {
             width: 100%;
             height: 280px;
@@ -204,7 +211,7 @@
         .hero-text h1 { font-size: 32px; margin: 0 0 8px 0; font-weight: 800; letter-spacing: -1px; }
         .hero-text p { font-size: 16px; margin: 0; color: #94a3b8; }
 
-        /* --- DASHBOARD GRID ARCHITECTURE --- */
+        /* --- MAIN CORE PANELS --- */
         .main-layout-stream {
             max-width: 1440px;
             margin: -40px auto 60px auto;
@@ -232,25 +239,12 @@
             justify-content: space-between;
             transition: transform 0.2s, box-shadow 0.2s;
         }
-        .interactive-feature-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-lg);
-        }
-        .interactive-feature-card h3 { margin: 0 0 12px 0; font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
+        .interactive-feature-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+        .interactive-feature-card h3 { margin: 0 0 12px 0; font-size: 18px; font-weight: 700; }
         .interactive-feature-card p { font-size: 14px; color: var(--text-muted); line-height: 1.5; margin: 0 0 20px 0; }
         
-        .card-action-trigger {
-            color: var(--primary);
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 700;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-        }
-        .card-action-trigger:hover { text-decoration: underline; }
+        .card-action-trigger { color: var(--primary); text-decoration: none; font-size: 14px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; }
 
-        /* Modernized Shelves */
         .showcase-shelf {
             background: var(--card);
             padding: 32px;
@@ -259,14 +253,13 @@
             border: 1px solid var(--border);
             margin-bottom: 32px;
         }
-        .showcase-shelf h3 { margin: 0 0 24px 0; font-size: 20px; font-weight: 800; letter-spacing: -0.5px; }
+        .showcase-shelf h3 { margin: 0 0 24px 0; font-size: 20px; font-weight: 800; }
         .shelf-flex-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
             gap: 24px;
         }
 
-        /* Redesigned Premium Product Cards */
         .premium-product-card {
             background: var(--card);
             border: 1px solid var(--border);
@@ -277,48 +270,16 @@
             justify-content: space-between;
             transition: all 0.2s ease;
         }
-        .premium-product-card:hover { 
-            border-color: var(--primary);
-            box-shadow: var(--shadow-md);
-        }
+        .premium-product-card:hover { border-color: var(--primary); box-shadow: var(--shadow-md); }
         
-        .pill-badge {
-            background: var(--primary-light);
-            color: var(--primary);
-            font-size: 11px;
-            padding: 4px 10px;
-            width: fit-content;
-            font-weight: 700;
-            margin-bottom: 14px;
-            border-radius: 20px;
-            letter-spacing: 0.3px;
-        }
-
-        .rating-engine-row {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            margin: 8px 0 14px 0;
-        }
+        .pill-badge { background: var(--primary-light); color: var(--primary); font-size: 11px; padding: 4px 10px; width: fit-content; font-weight: 700; margin-bottom: 14px; border-radius: 20px; }
+        .rating-engine-row { display: flex; align-items: center; gap: 6px; margin: 8px 0 14px 0; }
         .stars-filled { color: var(--accent-gold); font-size: 13px; }
-        .rating-volume { color: var(--text-muted); font-size: 12px; font-weight: 500; }
+        .rating-volume { color: var(--text-muted); font-size: 12px; }
+        .premium-price-tag { color: var(--text); font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+        .shipping-sla-line { font-size: 12px; color: var(--text-muted); margin-bottom: 18px; }
+        .shipping-sla-line strong { color: #10b981; }
 
-        .premium-price-tag {
-            color: var(--text);
-            font-size: 22px;
-            font-weight: 800;
-            margin-bottom: 4px;
-            letter-spacing: -0.5px;
-        }
-
-        .shipping-sla-line {
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-bottom: 18px;
-        }
-        .shipping-sla-line strong { color: #10b981; font-weight: 600; } /* Modern green */
-
-        /* Premium Minimal Action Buttons */
         .action-button-cta {
             background: #f1f5f9;
             border: 1px solid #e2e8f0;
@@ -333,17 +294,12 @@
             transition: all 0.15s ease;
             box-sizing: border-box;
         }
-        .action-button-cta:hover { 
-            background: var(--primary); 
-            border-color: var(--primary); 
-            color: white; 
-        }
+        .action-button-cta:hover { background: var(--primary); border-color: var(--primary); color: white; }
 
-        /* --- VISIBILITY LAYER --- */
         .app-view { display: none; }
         .app-view.active { display: block; }
 
-        /* --- MODERNIZE DRAWERS & PANELS --- */
+        /* --- SLIDING DRAWERS --- */
         .sliding-blur-panel {
             position: fixed; top: 0; width: 380px; height: 100%; background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
@@ -354,32 +310,107 @@
         .sliding-blur-panel.right-side { right: 0; transform: translateX(100%); border-left: 1px solid var(--border); }
         .sliding-blur-panel.active { transform: translateX(0); }
         
-        .panel-headline { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; padding-bottom: 16px; margin-bottom: 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-        
+        .panel-headline { font-size: 20px; font-weight: 800; padding-bottom: 16px; margin-bottom: 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
         .global-curtain { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(15, 23, 42, 0.3); backdrop-filter: blur(4px); z-index: 4500; display: none; }
-
-        /* Notification Engine */
-        .toast-engine-banner {
-            position: fixed; bottom: 24px; right: 24px; background: var(--text); color: white;
-            padding: 16px 24px; border-radius: var(--radius-main); box-shadow: var(--shadow-lg);
-            font-size: 14px; font-weight: 600; z-index: 10000; transform: translateY(150px); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        }
+        .toast-engine-banner { position: fixed; bottom: 24px; right: 24px; background: var(--text); color: white; padding: 16px 24px; border-radius: var(--radius-main); box-shadow: var(--shadow-lg); font-size: 14px; font-weight: 600; z-index: 10000; transform: translateY(150px); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
         .toast-engine-banner.show { transform: translateY(0); }
+
+        /* =======================================================
+           === NATIVE RESPONSIVE MATRIX OVERRIDE (MOBILE FIX) ===
+           ======================================================= */
+        @media (max-width: 900px) {
+            .premium-header {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 16px;
+                gap: 16px;
+            }
+
+            .header-left-cluster {
+                justify-content: space-between;
+                width: 100%;
+            }
+
+            .location-badge {
+                display: none !important; /* Save premium room on smaller display views */
+            }
+
+            .search-engine-bay {
+                max-width: 100%;
+                width: 100%;
+            }
+
+            .nav-utility-cluster {
+                width: 100%;
+                justify-content: space-between;
+                border-top: 1px solid var(--border);
+                padding-top: 12px;
+            }
+
+            .utility-node {
+                display: none !important;
+            }
+
+            .premium-cart-trigger {
+                width: 100%;
+                justify-content: center;
+                box-sizing: border-box;
+            }
+
+            .premium-subbar {
+                padding: 12px 16px;
+                gap: 16px;
+                overflow-x: auto;
+                white-space: nowrap;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .hero-showcase {
+                height: 180px;
+                padding: 0 20px;
+            }
+
+            .hero-text h1 { font-size: 22px; }
+            .hero-text p { font-size: 13px; }
+
+            .main-layout-stream {
+                padding: 0 16px;
+                margin-top: -24px;
+            }
+
+            .dashboard-masonry {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .shelf-flex-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .showcase-shelf {
+                padding: 20px;
+            }
+
+            .sliding-blur-panel {
+                width: 85%;
+            }
+        }
     </style>
 </head>
 <body>
 
-    <!-- Notification Engine Layer -->
     <div id="toastNotification" class="toast-engine-banner">System Notification Engine Online</div>
     <div id="globalCurtain" class="global-curtain" onclick="closeAllDrawers()"></div>
 
-    <!-- --- MODERN FLOATING HEADER --- -->
+    <!-- --- PREMIUM NAVIGATION LAYER --- -->
     <header class="premium-header">
-        <div class="brand-identity" onclick="switchView('marketView')">matoc<span>.builders</span></div>
-        
-        <div class="location-badge">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-            <span>GBWNS Main Node</span>
+        <div class="header-left-cluster">
+            <div class="brand-identity" onclick="switchView('marketView')">matoc<span>.builders</span></div>
+            <div class="location-badge">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                <span>GBWNS Main Node</span>
+            </div>
         </div>
 
         <div class="search-engine-bay">
@@ -408,7 +439,6 @@
         </div>
     </header>
 
-    <!-- Navigation Strip -->
     <div class="premium-subbar">
         <div class="subbar-link" onclick="toggleSidebarDrawer()">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
@@ -419,7 +449,7 @@
         <div class="subbar-link" onclick="switchView('gameVaultView')">Runtime Sandbox</div>
     </div>
 
-    <!-- --- APP LEFT DRAWER --- -->
+    <!-- --- LEFT SLIDING DEPARTMENTS DRAWER --- -->
     <div class="sliding-blur-panel left-side" id="sidebarDrawer">
         <div class="panel-headline">
             <span>Explore Ecosystem</span>
@@ -433,7 +463,7 @@
         </div>
     </div>
 
-    <!-- --- SLIDING CART PANEL --- -->
+    <!-- --- RIGHT SLIDING CART PANEL --- -->
     <div class="sliding-blur-panel right-side" id="cartPanel">
         <div class="panel-headline">
             <span>Selected Logistics</span>
@@ -449,7 +479,7 @@
         </div>
     </div>
 
-    <!-- --- MAIN MARKET STAGE --- -->
+    <!-- --- MARKET STAGE VIEW --- -->
     <main class="app-view active" id="marketView">
         <div class="hero-showcase">
             <div class="hero-text">
@@ -459,7 +489,6 @@
         </div>
         
         <div class="main-layout-stream">
-            <!-- Modernized Feature Row Cards -->
             <div class="dashboard-masonry">
                 <div class="interactive-feature-card">
                     <div>
@@ -484,7 +513,6 @@
                 </div>
             </div>
 
-            <!-- Shelf Containers -->
             <div class="showcase-shelf">
                 <h3>Top Configuration Bundles</h3>
                 <div id="comboShelfDisplay" class="shelf-flex-grid"></div>
@@ -497,27 +525,27 @@
         </div>
     </main>
 
-    <!-- --- RIG PICKER VIEW --- -->
-    <main class="app-view" id="pickerView" style="max-width:1000px; margin:60px auto; padding:0 32px;">
-        <div style="background: white; padding: 40px; border-radius: var(--radius-large); box-shadow: var(--shadow-md); border:1px solid var(--border);">
+    <!-- --- RIG CONFIGURATOR MATRIX --- -->
+    <main class="app-view" id="pickerView" style="max-width:1000px; margin:40px auto; padding:0 16px;">
+        <div style="background: white; padding: 24px; border-radius: var(--radius-large); box-shadow: var(--shadow-md); border:1px solid var(--border);">
             <h2 style="margin:0 0 8px 0; font-size:24px; letter-spacing:-0.5px;">Rig Architecture Configuration System</h2>
-            <p style="color:var(--text-muted); font-size:14px; margin-bottom:32px;">Map hardware logic gates efficiently. System tracks balance metrics dynamically.</p>
+            <p style="color:var(--text-muted); font-size:14px; margin-bottom:32px;">Map hardware logic gates efficiently.</p>
             
-            <div style="background: var(--primary-light); border-radius: var(--radius-main); padding: 24px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
+            <div style="background: var(--primary-light); border-radius: var(--radius-main); padding: 24px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; flex-wrap: wrap; gap: 16px;">
                 <div><span style="font-size:11px; color:var(--primary); font-weight:700; letter-spacing:0.5px; text-transform:uppercase;">Invoice Allocation Estimate</span><h3 id="pickerCostOutput" style="margin:4px 0 0 0; color:var(--text); font-size:28px; font-weight:800;">$0.00</h3></div>
                 <button class="action-button-cta" style="width:auto; background:var(--primary); color:white; border:none; padding:12px 24px;" onclick="addAllConfiguredToCart()">Deploy Setup to Logistics Block</button>
             </div>
 
             <div style="display:flex; flex-direction:column; gap:16px;">
-                <div style="background:white; border:1px solid var(--border); border-radius:var(--radius-main); padding:20px; display:flex; justify-content:space-between; align-items:center;">
+                <div style="background:white; border:1px solid var(--border); border-radius:var(--radius-main); padding:20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
                     <div><strong style="font-size:15px;">Logic Unit Node (CPU)</strong><p id="slotText-cpu" style="margin:4px 0 0 0; font-size:13px; color:var(--text-muted);">Awaiting choice mapping.</p></div>
                     <select id="select-cpu" onchange="mapConfiguratorNode('cpu')" style="padding:8px; border-radius:6px; border-color:var(--border); width:240px; font-family:var(--font);"></select>
                 </div>
-                <div style="background:white; border:1px solid var(--border); border-radius:var(--radius-main); padding:20px; display:flex; justify-content:space-between; align-items:center;">
+                <div style="background:white; border:1px solid var(--border); border-radius:var(--radius-main); padding:20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
                     <div><strong style="font-size:15px;">Graphics Core Bus (GPU)</strong><p id="slotText-gpu" style="margin:4px 0 0 0; font-size:13px; color:var(--text-muted);">Awaiting choice mapping.</p></div>
                     <select id="select-gpu" onchange="mapConfiguratorNode('gpu')" style="padding:8px; border-radius:6px; border-color:var(--border); width:240px; font-family:var(--font);"></select>
                 </div>
-                <div style="background:white; border:1px solid var(--border); border-radius:var(--radius-main); padding:20px; display:flex; justify-content:space-between; align-items:center;">
+                <div style="background:white; border:1px solid var(--border); border-radius:var(--radius-main); padding:20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
                     <div><strong style="font-size:15px;">Volatile Buffer Cache (RAM)</strong><p id="slotText-ram" style="margin:4px 0 0 0; font-size:13px; color:var(--text-muted);">Awaiting choice mapping.</p></div>
                     <select id="select-ram" onchange="mapConfiguratorNode('ram')" style="padding:8px; border-radius:6px; border-color:var(--border); width:240px; font-family:var(--font);"></select>
                 </div>
@@ -525,9 +553,9 @@
         </div>
     </main>
 
-    <!-- --- BUYBACK MATRIX VIEW --- -->
-    <main class="app-view" id="p2pSellView" style="max-width:640px; margin:60px auto; padding:0 32px;">
-        <div style="background:white; padding:40px; border-radius:var(--radius-large); box-shadow:var(--shadow-md); border:1px solid var(--border);">
+    <!-- --- BUYBACK INTERFACE MATRIX --- -->
+    <main class="app-view" id="p2pSellView" style="max-width:640px; margin:40px auto; padding:0 16px;">
+        <div style="background:white; padding:24px; border-radius:var(--radius-large); box-shadow:var(--shadow-md); border:1px solid var(--border);">
             <h2 style="margin:0 0 8px 0; font-size:24px; letter-spacing:-0.5px;">Hardware Buyback Interface Matrix</h2>
             <p style="color:var(--text-muted); font-size:14px; margin-bottom:32px;">Inject your pre-owned architecture elements directly into the active pool index.</p>
             
@@ -563,8 +591,8 @@
         </div>
     </main>
 
-    <!-- --- RUNTIME TESTING SANDBOX VIEW --- -->
-    <main class="app-view" id="gameVaultView" style="max-width:1200px; margin:60px auto; padding:0 32px;">
+    <!-- --- RUNTIME TESTING SANDBOX --- -->
+    <main class="app-view" id="gameVaultView" style="max-width:1200px; margin:40px auto; padding:0 16px;">
         <h2 style="margin:0 0 6px 0; font-size:24px; letter-spacing:-0.5px;">Interactive Module Testing Arenas</h2>
         <p style="color:var(--text-muted); font-size:14px; margin-bottom:32px;">Execute architecture runtime test simulations inside isolated asset containers.</p>
         <div id="arcadeShelfDisplay" class="shelf-flex-grid"></div>
