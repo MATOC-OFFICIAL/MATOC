@@ -80,7 +80,6 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* NEW Professional & Clean Premium PC Build Inspired Auth Gate */
         .auth-gate { 
             position: fixed; 
             top:0; 
@@ -118,7 +117,6 @@
             opacity: 0.9;
         }
         
-        /* Clean line design input system based on your screenshot */
         .auth-input-wrapper {
             position: relative;
             margin-bottom: 28px;
@@ -152,7 +150,6 @@
             color: rgba(255, 255, 255, 0.5);
         }
 
-        /* Extra utilities row (Remember me / Forgot pass) */
         .auth-utilities {
             display: flex;
             justify-content: space-between;
@@ -174,7 +171,6 @@
             accent-color: var(--primary);
         }
 
-        /* Clean solid accent login action */
         .auth-submit-action {
             background: #1d4ed8; 
             color: white; 
@@ -210,7 +206,6 @@
             color: #fff;
         }
 
-        /* Main Application Frame */
         .header { 
             position: fixed; 
             top: 0; 
@@ -369,7 +364,6 @@
             border-color: var(--primary);
         }
 
-        /* Listing Grid Elements */
         .listing-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; position: relative; display: flex; flex-direction: column; justify-content: space-between; }
         .badge { position: absolute; top: 16px; right: 16px; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; }
         .badge.used { background: rgba(230, 126, 34, 0.15); color: #e67e22; }
@@ -430,8 +424,8 @@
             </svg>
         </div>
         <div style="display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 16px;">
-            <div style="width: 28px; height: 28px; background: var(--primary); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 13px; font-weight: bold;">DB</div>
-            <span>DamnBuilders <span style="color:var(--primary)">Official</span></span>
+            <div style="width: 28px; height: 28px; background: var(--primary); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 13px; font-weight: bold;">M</div>
+            <span>MATOC <span style="color:var(--primary)">Official</span></span>
         </div>
         <div style="display:flex; gap:16px; align-items:center;">
             <div id="terminalUserHandle" style="font-size:13px; color:var(--text-muted); max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Loading...</div>
@@ -547,7 +541,7 @@
             <h2 style="margin: 0 0 4px 0; font-size: 24px; font-weight: 700;">
                 Mohamed Nafeez <span id="profileNodeStatus" class="owner-status-text">(Verifying Verification...)</span>
             </h2>
-            <p style="color: var(--text-muted); font-size: 13px; margin: 0 0 28px 0; text-transform: uppercase; letter-spacing: 0.5px;">System Security Lead Registry</p>
+            <p style="color: var(--text-muted); font-size: 13px; margin: 0 0 28px 0; text-transform: uppercase; letter-spacing: 0.5px;">Founder of MATOC</p>
             
             <div style="display: flex; flex-direction: column; gap: 20px; max-width: 400px; background: var(--card); padding: 24px; border-radius: var(--radius); border: 1px solid var(--border);">
                 <div>
@@ -575,13 +569,8 @@
         let currentUserSessionEmail = "";
 
         let mockDatabase = {
-            products: [
-                { id: 1, title: "Official Dev Suite Asset Pack", price: 45, type: "official", condition: "NEW" },
-                { id: 2, title: "Used Intel i7-4790K Processor Node", price: 75, type: "peer", condition: "USED" }
-            ],
-            games: [
-                { id: 1, title: "Bermuda Mutation Simulator", description: "Alpha engine instance compilation" }
-            ]
+            products: [],
+            games: []
         };
 
         const firebaseConfig = {
@@ -595,6 +584,13 @@
         };
         
         firebase.initializeApp(firebaseConfig);
+
+        function escapeHTML(str) {
+            if (!str) return '';
+            return str.replace(/[&<>'"]/g, 
+                tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+            );
+        }
 
         function runInitialPreflightChecks() {
             grecaptcha.enterprise.ready(async () => {
@@ -642,8 +638,31 @@
                 })
                 .catch(err => console.error("Session persistence error: ", err));
                 
-            renderMarketplace();
-            renderGameVault();
+            listenToFirebaseStreams();
+        }
+
+        function listenToFirebaseStreams() {
+            firebase.database().ref('products').on('value', (snapshot) => {
+                const data = snapshot.val();
+                mockDatabase.products = [];
+                if (data) {
+                    Object.keys(data).forEach(key => {
+                        mockDatabase.products.push({ id: key, ...data[key] });
+                    });
+                }
+                renderMarketplace();
+            });
+
+            firebase.database().ref('games').on('value', (snapshot) => {
+                const data = snapshot.val();
+                mockDatabase.games = [];
+                if (data) {
+                    Object.keys(data).forEach(key => {
+                        mockDatabase.games.push({ id: key, ...data[key] });
+                    });
+                }
+                renderGameVault();
+            });
         }
 
         function handleSuccessfulLogin(emailText) {
@@ -683,8 +702,8 @@
                 
                 card.innerHTML = `
                     <span class="badge ${badgeClass}">${badgeText}</span>
-                    <h3 style="margin: 24px 0 8px 0; font-size: 16px; font-weight: 600;">${p.title}</h3>
-                    <p style="font-weight: 700; color: var(--primary); margin: 0 0 16px 0;">$${p.price}</p>
+                    <h3 style="margin: 24px 0 8px 0; font-size: 16px; font-weight: 600;">${escapeHTML(p.title)}</h3>
+                    <p style="font-weight: 700; color: var(--primary); margin: 0 0 16px 0;">$${escapeHTML(String(p.price))}</p>
                     <button class="omnifix-btn" style="width:100%; padding: 10px; font-size:13px;" onclick="deployNotificationGui('Asset added to queue processing queue.')">Order Module</button>
                 `;
                 display.appendChild(card);
@@ -698,8 +717,8 @@
                 const card = document.createElement('div');
                 card.className = "listing-card";
                 card.innerHTML = `
-                    <h3 style="margin: 0 0 8px 0; font-size: 16px; font-weight:600; color: #fbbf24;">${g.title}</h3>
-                    <p style="font-size: 13px; color: var(--text-muted); margin: 0 0 20px 0; line-height:1.4;">${g.description}</p>
+                    <h3 style="margin: 0 0 8px 0; font-size: 16px; font-weight:600; color: #fbbf24;">${escapeHTML(g.title)}</h3>
+                    <p style="font-size: 13px; color: var(--text-muted); margin: 0 0 20px 0; line-height:1.4;">${escapeHTML(g.description)}</p>
                     <button class="omnifix-btn" style="width:100%; padding: 10px; font-size:13px; background:#fbbf24; color:#000;" onclick="deployNotificationGui('Booting arcade module sandbox...')">Launch Sandbox</button>
                 `;
                 display.appendChild(card);
@@ -711,19 +730,21 @@
             const price = document.getElementById('p2pProdPrice').value;
             if(!name || !price) { deployNotificationGui("Configuration entries invalid."); return; }
             
-            mockDatabase.products.push({
-                id: mockDatabase.products.length + 1,
+            const newProduct = {
                 title: name,
                 price: parseInt(price),
                 type: "peer",
                 condition: "USED"
-            });
-            
-            document.getElementById('p2pProdName').value = "";
-            document.getElementById('p2pProdPrice').value = "";
-            deployNotificationGui("Used asset safely logged to stream.");
-            renderMarketplace();
-            switchTab('marketView');
+            };
+
+            firebase.database().ref('products').push(newProduct)
+                .then(() => {
+                    document.getElementById('p2pProdName').value = "";
+                    document.getElementById('p2pProdPrice').value = "";
+                    deployNotificationGui("Used asset safely logged to cloud matrix stream.");
+                    switchTab('marketView');
+                })
+                .catch(err => deployNotificationGui("Write Fail: " + err.message));
         }
 
         function publishOfficialGame() {
@@ -731,17 +752,19 @@
             const desc = document.getElementById('gameMetaInput').value.trim();
             if(!title) return;
 
-            mockDatabase.games.push({
-                id: mockDatabase.games.length + 1,
+            const newGame = {
                 title: title,
                 description: desc || "No parameters specified."
-            });
+            };
 
-            document.getElementById('gameTitleInput').value = "";
-            document.getElementById('gameMetaInput').value = "";
-            deployNotificationGui("Module deployed to environment.");
-            renderGameVault();
-            switchTab('gameVaultView');
+            firebase.database().ref('games').push(newGame)
+                .then(() => {
+                    document.getElementById('gameTitleInput').value = "";
+                    document.getElementById('gameMetaInput').value = "";
+                    deployNotificationGui("Module deployed to target vault index.");
+                    switchTab('gameVaultView');
+                })
+                .catch(err => deployNotificationGui("Publish Fail: " + err.message));
         }
 
         function publishOfficialProduct() {
@@ -749,19 +772,21 @@
             const price = document.getElementById('offProdPrice').value;
             if(!name || !price) return;
 
-            mockDatabase.products.push({
-                id: mockDatabase.products.length + 1,
+            const newOfficialProduct = {
                 title: name,
                 price: parseInt(price),
                 type: "official",
                 condition: "NEW"
-            });
+            };
 
-            document.getElementById('offProdName').value = "";
-            document.getElementById('offProdPrice').value = "";
-            deployNotificationGui("New retail catalog item synchronized.");
-            renderMarketplace();
-            switchTab('marketView');
+            firebase.database().ref('products').push(newOfficialProduct)
+                .then(() => {
+                    document.getElementById('offProdName').value = "";
+                    document.getElementById('offProdPrice').value = "";
+                    deployNotificationGui("New retail catalog item synchronized.");
+                    switchTab('marketView');
+                })
+                .catch(err => deployNotificationGui("Publish Fail: " + err.message));
         }
 
         function computeNodeIdentityLifecycle() {
@@ -816,7 +841,7 @@
             if (!email || !password) { deployNotificationGui("Input entries cannot be blank."); return; }
             
             if (email.includes('@') === false) {
-                deployNotificationGui("Syntax error. Standard corporate email format required.");
+                deployNotificationGui("Syntax error. Standard format required.");
                 return;
             }
 
@@ -891,7 +916,7 @@
                 } else if (lower.includes('gpu') || lower.includes('hardware') || lower.includes('ram') || lower.includes('ssd') || lower.includes('pc')) {
                     reply = "[Hardware Diagnostic Subsystem]: Resource mapping and storage bandwidth calculations completed successfully.";
                 } else if (lower.includes('profile') || lower.includes('about') || lower.includes('owner') || lower.includes('nafeez')) {
-                    reply = "[Registry Subsystem]: Record verification for Mohamed Nafeez complete. Age value parameters verified at level 16.";
+                    reply = "[Registry Subsystem]: Record verification for Mohamed Nafeez complete. Role identified as Founder of MATOC.";
                 }
 
                 agentBox.innerText = reply;
