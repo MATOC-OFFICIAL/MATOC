@@ -38,6 +38,7 @@
             overflow-x: hidden; 
             min-height: 100vh;
             -webkit-font-smoothing: antialiased;
+            transition: background 0.3s, color 0.3s;
         }
 
         .dm-input-area input { margin: 0; border: none; border-radius: 0; background: var(--card); color: #fff; }
@@ -221,6 +222,7 @@
             z-index: 1000; 
             border-bottom: 1px solid var(--border); 
             box-sizing: border-box; 
+            transition: background 0.3s;
         }
         
         .hamburger-btn {
@@ -357,20 +359,24 @@
             box-sizing: border-box; 
             font-size: 14px; 
             font-family: inherit;
-            transition: border-color 0.2s;
+            transition: border-color 0.2s, background 0.3s, color 0.3s;
         }
         input:focus, select:focus, textarea:focus {
             outline: none;
             border-color: var(--primary);
         }
 
-        .listing-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; position: relative; display: flex; flex-direction: column; justify-content: space-between; }
-        .badge { position: absolute; top: 16px; right: 16px; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; }
+        .listing-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; position: relative; display: flex; flex-direction: column; justify-content: space-between; transition: background 0.3s; }
+        .badge { position: absolute; top: 16px; left: 16px; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; }
         .badge.used { background: rgba(230, 126, 34, 0.15); color: #e67e22; }
         .badge.official { background: rgba(37, 99, 235, 0.15); color: #60a5fa; }
         
         .insta-btn { background: #e1306c; color: white !important; border: none; padding: 12px; border-radius: var(--radius); font-weight: 600; cursor: pointer; font-size: 13px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; margin-top: 10px; width: 100%; box-sizing: border-box; transition: opacity 0.2s; }
         .insta-btn:hover { opacity: 0.9; }
+
+        .filter-bar { display: flex; gap: 10px; margin-bottom: 24px; overflow-x: auto; padding-bottom: 8px; }
+        .filter-btn { background: transparent; color: var(--text-muted); border: 1px solid var(--border); padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; text-transform: capitalize; transition: all 0.2s; }
+        .filter-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
     </style>
 </head>
 <body>
@@ -438,6 +444,7 @@
             <span>Shopping Cart</span>
             <span class="cart-count" id="cartCount">0</span>
         </div>
+        <div class="nav-item" id="themeToggleOption" onclick="toggleSystemTheme()">Toggle System Theme</div>
 
         <div class="sidebar-section-title">Navigation</div>
         <div class="nav-item active-nav" id="nav-marketView" onclick="switchTab('marketView')">Browse Marketplace</div>
@@ -446,7 +453,7 @@
         <div class="nav-item" id="nav-gameVaultView" onclick="switchTab('gameVaultView')">Arcade Vault</div>
         
         <div class="sidebar-section-title">External Access</div>
-        <a href="https://www.instagram.com/m.a.t.o.c?igsh=Z2hiZGVjbnpmMXQ1" target="_blank" class="nav-item" style="color: #e1306c; text-decoration: none;">Official Instagram</a>
+        <a href="https://www.instagram.com/damnbuilders_official?igsh=Z2hiZGVjbnpmMXQ1" target="_blank" class="nav-item" style="color: #e1306c; text-decoration: none;">Official Instagram</a>
 
         <div class="sidebar-section-title official-only-nav" id="officialSectionTitle">Publisher Controls</div>
         <div class="nav-item official-only-nav" id="officialPublishLink" onclick="switchTab('officialPublishView')">Management Core</div>
@@ -486,6 +493,15 @@
     <div class="app-view active" id="marketView">
         <h2 style="margin: 0 0 6px 0; font-size: 24px; font-weight: 700;">Marketplace Stream</h2>
         <p style="color:var(--text-muted); font-size:14px; margin: 0 0 24px 0;">Authorised brand releases alongside peer-reviewed systems configurations.</p>
+        
+        <div class="filter-bar" id="marketplaceFilterBar">
+            <button class="filter-btn active" onclick="setMarketplaceFilter('all', this)">All Nodes</button>
+            <button class="filter-btn" onclick="setMarketplaceFilter('hardware', this)">Hardware</button>
+            <button class="filter-btn" onclick="setMarketplaceFilter('scripts', this)">Scripts</button>
+            <button class="filter-btn" onclick="setMarketplaceFilter('3d models', this)">3D Models</button>
+            <button class="filter-btn" onclick="setMarketplaceFilter('favorites', this)">★ Bookmarks</button>
+        </div>
+
         <div id="marketplaceProductsDisplay" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px;">
         </div>
     </div>
@@ -498,8 +514,18 @@
             <label style="font-size: 13px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Product Specifications Title</label>
             <input type="text" id="p2pProdName" placeholder="e.g., Used Intel i7-4790K Node">
             
+            <label style="font-size: 13px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Classification Branch</label>
+            <select id="p2pProdCategory">
+                <option value="hardware">Hardware Component</option>
+                <option value="scripts">Scripts Module</option>
+                <option value="3d models">3D Asset Model</option>
+            </select>
+
             <label style="font-size: 13px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Asset Evaluation Valuation ($)</label>
             <input type="number" id="p2pProdPrice" placeholder="Value Amount">
+
+            <label style="font-size: 13px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Direct Contact Node handle (Instagram)</label>
+            <input type="text" id="p2pProdSocial" placeholder="e.g., your_insta_username">
 
             <label style="font-size: 13px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Enforced Condition Tier Flag</label>
             <input type="text" value="USED HARDWARE ASSET" disabled style="opacity: 0.5; background: var(--bg);">
@@ -523,7 +549,13 @@
             <div style="background: var(--card); padding: 28px; border-radius: var(--radius); border: 1px solid var(--border);">
                 <h3 style="margin: 0 0 16px 0; font-size: 16px; color: #fbbf24;">Launch Brand Product</h3>
                 <input type="text" id="offProdName" placeholder="Product Asset Model">
+                <select id="offProdCategory" style="border-color: #fbbf24;">
+                    <option value="hardware">Hardware Component</option>
+                    <option value="scripts">Scripts Module</option>
+                    <option value="3d models">3D Asset Model</option>
+                </select>
                 <input type="number" id="offProdPrice" placeholder="Wholesale Value Profile">
+                <input type="text" id="offProdSocial" placeholder="Publisher Instagram Node Link Offset">
                 <button class="omnifix-btn" onclick="publishOfficialProduct()" style="background: #fbbf24; color: #000; width: 100%;">Authorize Release</button>
             </div>
         </div>
@@ -554,7 +586,7 @@
                 </div>
                 <div>
                     <span class="owner-subtext">Operational Portal Link</span>
-                    <a href="https://www.instagram.com/m.a.t.o.c?igsh=Z2hiZGVjbnpmMXQ1" target="_blank" class="insta-btn">
+                    <a href="https://www.instagram.com/damnbuilders_official?igsh=Z2hiZGVjbnpmMXQ1" target="_blank" class="insta-btn">
                         Open Instagram Link
                     </a>
                 </div>
@@ -567,6 +599,7 @@
     <script>
         let isSignUpState = false;
         let currentUserSessionEmail = "";
+        let activeMarketplaceFilter = "all";
 
         let mockDatabase = {
             products: [],
@@ -593,6 +626,7 @@
         }
 
         function runInitialPreflightChecks() {
+            initLocalStorageData();
             grecaptcha.enterprise.ready(async () => {
                 try {
                     const token = await grecaptcha.enterprise.execute('6LcAVCotAAAAAPtUw0X7fwbiaMOz68bew5HlRtpT', { action: 'PORTAL_ACCESS' });
@@ -621,6 +655,17 @@
                     initSessionWatch();
                 }
             });
+        }
+
+        function initLocalStorageData() {
+            if (!localStorage.getItem('matoc_fav_ledger')) {
+                localStorage.setItem('matoc_fav_ledger', JSON.stringify([]));
+            }
+            if (localStorage.getItem('matoc_app_theme') === 'light') {
+                applyThemeConfiguration('light');
+            } else {
+                applyThemeConfiguration('dark');
+            }
         }
 
         function initSessionWatch() {
@@ -690,21 +735,87 @@
             document.getElementById('officialPublishLink').style.display = 'none';
         }
 
+        function setMarketplaceFilter(filterValue, element) {
+            activeMarketplaceFilter = filterValue;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
+            renderMarketplace();
+        }
+
+        function toggleLocalFavorite(productId, event) {
+            event.stopPropagation();
+            let storedFavs = JSON.parse(localStorage.getItem('matoc_fav_ledger'));
+            if (storedFavs.includes(productId)) {
+                storedFavs = storedFavs.filter(id => id !== productId);
+                deployNotificationGui("Removed from local favorites registry.");
+            } else {
+                storedFavs.push(productId);
+                deployNotificationGui("Saved to local bookmarks ledger.");
+            }
+            localStorage.setItem('matoc_fav_ledger', JSON.stringify(storedFavs));
+            renderMarketplace();
+        }
+
+        function toggleSystemTheme() {
+            let nextTheme = localStorage.getItem('matoc_app_theme') === 'light' ? 'dark' : 'light';
+            localStorage.setItem('matoc_app_theme', nextTheme);
+            applyThemeConfiguration(nextTheme);
+            deployNotificationGui(`Theme set to ${nextTheme} configuration.`);
+        }
+
+        function applyThemeConfiguration(theme) {
+            const root = document.documentElement;
+            if (theme === 'light') {
+                root.style.setProperty('--bg', '#f1f5f9');
+                root.style.setProperty('--card', '#ffffff');
+                root.style.setProperty('--text', '#0f172a');
+                root.style.setProperty('--text-muted', '#64748b');
+                root.style.setProperty('--border', '#e2e8f0');
+                document.getElementById('themeToggleOption').innerText = '☀️ Light Theme Active';
+            } else {
+                root.style.setProperty('--bg', '#0f172a');
+                root.style.setProperty('--card', '#1e293b');
+                root.style.setProperty('--text', '#f8fafc');
+                root.style.setProperty('--text-muted', '#94a3b8');
+                root.style.setProperty('--border', '#334155');
+                document.getElementById('themeToggleOption').innerText = '🌙 Dark Theme Active';
+            }
+        }
+
         function renderMarketplace() {
             const display = document.getElementById('marketplaceProductsDisplay');
             display.innerHTML = "";
-            mockDatabase.products.forEach(p => {
+            const currentFavs = JSON.parse(localStorage.getItem('matoc_fav_ledger'));
+
+            const filteredProducts = mockDatabase.products.filter(p => {
+                if (activeMarketplaceFilter === "favorites") return currentFavs.includes(p.id);
+                if (activeMarketplaceFilter !== "all") return p.category === activeMarketplaceFilter;
+                return true;
+            });
+
+            if(filteredProducts.length === 0) {
+                display.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--text-muted);">No active nodes found matching parameters.</div>`;
+                return;
+            }
+
+            filteredProducts.forEach(p => {
                 const card = document.createElement('div');
                 card.className = "listing-card";
                 
                 const badgeClass = p.type === 'official' ? 'official' : 'used';
                 const badgeText = p.type === 'official' ? 'Brand New' : 'Verified Used';
+                const isItemFavorited = currentFavs.includes(p.id);
+                const targetedSocial = p.socialHandle ? p.socialHandle : "damnbuilders_official";
                 
                 card.innerHTML = `
-                    <span class="badge ${badgeClass}">${badgeText}</span>
-                    <h3 style="margin: 24px 0 8px 0; font-size: 16px; font-weight: 600;">${escapeHTML(p.title)}</h3>
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 24px;">
+                        <span class="badge ${badgeClass}">${badgeText}</span>
+                        <button onclick="toggleLocalFavorite('${p.id}', event)" style="background:transparent; border:none; font-size:18px; cursor:pointer; color:${isItemFavorited ? '#fbbf24' : 'var(--text-muted)'}; padding:0; line-height:1;">★</button>
+                    </div>
+                    <div style="font-size:10px; color:var(--primary); font-weight:700; text-transform:uppercase; margin-bottom:2px;">${escapeHTML(p.category || 'general')}</div>
+                    <h3 style="margin: 0 0 8px 0; font-size: 16px; font-weight: 600;">${escapeHTML(p.title)}</h3>
                     <p style="font-weight: 700; color: var(--primary); margin: 0 0 16px 0;">$${escapeHTML(String(p.price))}</p>
-                    <button class="omnifix-btn" style="width:100%; padding: 10px; font-size:13px;" onclick="deployNotificationGui('Asset added to queue processing queue.')">Order Module</button>
+                    <a href="https://ig.me/m/${encodeURIComponent(targetedSocial)}" target="_blank" class="omnifix-btn" style="width:100%; padding: 10px; font-size:13px; text-decoration:none; text-align:center; display:block; box-sizing:border-box;">Contact Node</a>
                 `;
                 display.appendChild(card);
             });
@@ -728,11 +839,15 @@
         function submitPeerUsedListing() {
             const name = document.getElementById('p2pProdName').value.trim();
             const price = document.getElementById('p2pProdPrice').value;
+            const category = document.getElementById('p2pProdCategory').value;
+            const social = document.getElementById('p2pProdSocial').value.trim();
             if(!name || !price) { deployNotificationGui("Configuration entries invalid."); return; }
             
             const newProduct = {
                 title: name,
                 price: parseInt(price),
+                category: category,
+                socialHandle: social || "damnbuilders_official",
                 type: "peer",
                 condition: "USED"
             };
@@ -741,6 +856,7 @@
                 .then(() => {
                     document.getElementById('p2pProdName').value = "";
                     document.getElementById('p2pProdPrice').value = "";
+                    document.getElementById('p2pProdSocial').value = "";
                     deployNotificationGui("Used asset safely logged to cloud matrix stream.");
                     switchTab('marketView');
                 })
@@ -770,11 +886,15 @@
         function publishOfficialProduct() {
             const name = document.getElementById('offProdName').value.trim();
             const price = document.getElementById('offProdPrice').value;
+            const category = document.getElementById('offProdCategory').value;
+            const social = document.getElementById('offProdSocial').value.trim();
             if(!name || !price) return;
 
             const newOfficialProduct = {
                 title: name,
                 price: parseInt(price),
+                category: category,
+                socialHandle: social || "damnbuilders_official",
                 type: "official",
                 condition: "NEW"
             };
@@ -783,6 +903,7 @@
                 .then(() => {
                     document.getElementById('offProdName').value = "";
                     document.getElementById('offProdPrice').value = "";
+                    document.getElementById('offProdSocial').value = "";
                     deployNotificationGui("New retail catalog item synchronized.");
                     switchTab('marketView');
                 })
