@@ -283,6 +283,8 @@
         .omnifix-btn { background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: var(--radius); font-weight: 600; cursor: pointer; font-size: 14px; transition: background 0.2s; }
         .omnifix-btn:hover { background: var(--primary-hover); }
         .omnifix-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-danger { background: #ef4444 !important; color: #fff !important; }
+        .btn-danger:hover { background: #dc2626 !important; }
         
         .owner-container { padding: 12px 0; }
         .owner-subtext { font-size: 12px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; font-weight: 700; letter-spacing: 0.5px; }
@@ -636,6 +638,18 @@
             renderMarketplace();
         }
 
+        async function deleteListing(productId, event) {
+            if (event) event.stopPropagation();
+            if (!confirm("Are you sure you want to remove this second-hand listing from the database?")) return;
+            
+            try {
+                await firebase.database().ref('products/' + productId).remove();
+                deployNotificationGui("Listing permanently deleted from cloud database.");
+            } catch (err) {
+                deployNotificationGui("Delete error: " + err.message);
+            }
+        }
+
         function toggleSystemTheme() {
             let nextTheme = localStorage.getItem('matoc_app_theme') === 'light' ? 'dark' : 'light';
             localStorage.setItem('matoc_app_theme', nextTheme);
@@ -688,6 +702,11 @@
                 const targetedSocial = p.socialHandle ? p.socialHandle : "damnbuilders_official";
                 const imgSource = p.imageUrl ? p.imageUrl : DEFAULT_IMG;
                 
+                // Show delete button on second hand (peer) listings
+                const deleteActionHtml = p.type === 'peer' 
+                    ? `<button class="omnifix-btn btn-danger" style="width:100%; padding: 10px; font-size:13px; margin-top:8px;" onclick="deleteListing('${p.id}', event)">Delete Listing</button>` 
+                    : '';
+
                 card.innerHTML = `
                     <span class="badge ${badgeClass}">${badgeText}</span>
                     <button onclick="toggleLocalFavorite('${p.id}', event)" style="position:absolute; top:16px; right:16px; background:rgba(0,0,0,0.4); border:none; border-radius:50%; width:28px; height:28px; font-size:16px; cursor:pointer; color:${isItemFavorited ? '#fbbf24' : '#fff'}; z-index:2; display:flex; align-items:center; justify-content:center;">★</button>
@@ -700,6 +719,7 @@
                     <h3 style="margin: 0 0 8px 0; font-size: 16px; font-weight: 600;">${escapeHTML(p.title)}</h3>
                     <p style="font-weight: 700; color: var(--primary); margin: 0 0 16px 0;">$${escapeHTML(String(p.price))}</p>
                     <a href="https://ig.me/m/${encodeURIComponent(targetedSocial)}" target="_blank" class="omnifix-btn" style="width:100%; padding: 10px; font-size:13px; text-decoration:none; text-align:center; display:block; box-sizing:border-box;">Contact Node</a>
+                    ${deleteActionHtml}
                 `;
                 display.appendChild(card);
             });
