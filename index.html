@@ -560,6 +560,7 @@
                             currentUserSessionEmail = user.email;
                             handleSuccessfulLogin(user.email);
                         } else {
+                            currentUserSessionEmail = "";
                             handleRequiredLogin();
                         }
                     });
@@ -607,6 +608,7 @@
                 document.getElementById('officialPublishLink').style.display = 'none';
                 deployNotificationGui("Authentication access verified.");
             }
+            renderMarketplace();
         }
 
         function handleRequiredLogin() {
@@ -640,6 +642,16 @@
 
         async function deleteListing(productId, event) {
             if (event) event.stopPropagation();
+
+            const product = mockDatabase.products.find(p => p.id === productId);
+            if (!product) return;
+
+            // Verify ownership check
+            if (!currentUserSessionEmail || product.ownerEmail.toLowerCase() !== currentUserSessionEmail.toLowerCase()) {
+                deployNotificationGui("Unauthorized: Only the uploader can delete this listing.");
+                return;
+            }
+
             if (!confirm("Are you sure you want to remove this second-hand listing from the database?")) return;
             
             try {
@@ -702,8 +714,9 @@
                 const targetedSocial = p.socialHandle ? p.socialHandle : "damnbuilders_official";
                 const imgSource = p.imageUrl ? p.imageUrl : DEFAULT_IMG;
                 
-                // Show delete button on second hand (peer) listings
-                const deleteActionHtml = p.type === 'peer' 
+                // Show delete button ONLY if product is 'peer' AND current user is the uploader
+                const isOwner = p.ownerEmail && currentUserSessionEmail && (p.ownerEmail.toLowerCase() === currentUserSessionEmail.toLowerCase());
+                const deleteActionHtml = (p.type === 'peer' && isOwner) 
                     ? `<button class="omnifix-btn btn-danger" style="width:100%; padding: 10px; font-size:13px; margin-top:8px;" onclick="deleteListing('${p.id}', event)">Delete Listing</button>` 
                     : '';
 
@@ -772,6 +785,7 @@
                     category: category,
                     imageUrl: imageUrl,
                     socialHandle: social || "damnbuilders_official",
+                    ownerEmail: currentUserSessionEmail,
                     type: "peer",
                     condition: "USED"
                 };
@@ -836,6 +850,7 @@
                     category: category,
                     imageUrl: imageUrl,
                     socialHandle: social || "damnbuilders_official",
+                    ownerEmail: currentUserSessionEmail,
                     type: "official",
                     condition: "NEW"
                 };
