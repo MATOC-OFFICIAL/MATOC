@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="google-site-verification" content="kxN6PFyFMD2O4fn_ktqGmQGFkKjtf206DfUuvJXOYv0" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MATOC BUILDERS</title>
    
@@ -14,8 +13,6 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
-    
-    <script src="https://www.google.com/recaptcha/enterprise.js?render=6LcAVCotAAAAAPtUw0X7fwbiaMOz68bew5HlRtpT"></script>
 
     <style>
         :root { 
@@ -41,9 +38,6 @@
             transition: background 0.3s, color 0.3s;
         }
 
-        .dm-input-area input { margin: 0; border: none; border-radius: 0; background: var(--card); color: #fff; }
-        .dm-input-area button { background: var(--primary); border: none; color: white; padding: 8px; }
-
         .gui-alert-container {
             position: fixed;
             top: -100px;
@@ -65,20 +59,6 @@
         }
         .gui-alert-container.show {
             top: 25px;
-        }
-
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid rgba(37, 99, 235, 0.1);
-            border-top: 4px solid var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 20px;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
         }
 
         .auth-gate { 
@@ -294,59 +274,16 @@
         .nav-item.active-nav:hover {
             background: var(--primary-hover);
         }
-        
-        .cart-trigger-menu .cart-count {
-            background: var(--primary);
-            color: white;
-            font-size: 11px;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-weight: bold;
-        }
 
         .admin-only-nav { display: none; color: #38bdf8; }
         .official-only-nav { display: none; color: #fbbf24; font-weight: 600; }
         .logout-nav-item { color: #f87171 !important; margin-top: 30px; border-top: 1px solid var(--border); padding-top: 20px; }
-
-        .cart-panel, .ai-support-panel { 
-            position: fixed; 
-            top: 0; 
-            width: 340px; 
-            height: 100%; 
-            background: var(--card); 
-            border-left: 1px solid var(--border); 
-            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
-            z-index: 2000; 
-            padding: 80px 24px 24px 24px; 
-            box-sizing: border-box; 
-            display: flex; 
-            flex-direction: column; 
-            visibility: hidden; 
-        }
-        .cart-panel { right: -360px; }
-        .cart-panel.active { right: 0; visibility: visible; }
-        
-        .ai-support-panel { right: -360px; }
-        .ai-support-panel.active { right: 0; visibility: visible; }
-
-        .drawer-header-title { font-size: 16px; font-weight: 700; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
-        .drawer-content-stream { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding-right: 4px; }
-        
-        .ai-msg { padding: 12px 16px; border-radius: var(--radius); font-size: 13.5px; line-height: 1.5; max-width: 85%; word-wrap: break-word; }
-        .ai-msg.user { background: var(--primary); color: #fff; align-self: flex-end; border-bottom-right-radius: 2px; }
-        .ai-msg.agent { background: var(--bg); color: var(--text); align-self: flex-start; border-bottom-left-radius: 2px; border: 1px solid var(--border); }
-
-        .drawer-input-footer { border-top: 1px solid var(--border); padding-top: 16px; margin-top: 16px; display: flex; gap: 8px; }
-        .drawer-input-footer input { margin-bottom: 0; flex: 1; padding: 10px 14px; }
-        .drawer-send-btn { background: var(--primary); border: none; color: white; padding: 0 16px; border-radius: var(--radius); font-weight: 600; cursor: pointer; font-size: 13px; transition: background 0.2s; }
-        .drawer-send-btn:hover { background: var(--primary-hover); }
 
         .omnifix-btn { background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: var(--radius); font-weight: 600; cursor: pointer; font-size: 14px; transition: background 0.2s; }
         .omnifix-btn:hover { background: var(--primary-hover); }
         
         .owner-container { padding: 12px 0; }
         .owner-subtext { font-size: 12px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; font-weight: 700; letter-spacing: 0.5px; }
-        .owner-status-text { font-size: 13px; color: var(--primary); margin-left: 8px; font-weight: 500; }
 
         input, select, textarea { 
             width: 100%; 
@@ -382,7 +319,7 @@
 <body>
 
     <div id="terminalAlertGui" class="gui-alert-container">
-        <span id="guiAlertMessage">Initialising system architecture...</span>
+        <span id="guiAlertMessage">Initialising system...</span>
     </div>
 
     <div class="auth-gate" id="authGate">
@@ -410,7 +347,7 @@
                 <label class="auth-checkbox-label">
                     <input type="checkbox" checked> Remember me
                 </label>
-                <span style="cursor: pointer; opacity: 0.8;" onclick="deployNotificationGui('Password reset matrix triggered.')">Forgot Password?</span>
+                <span style="cursor: pointer; opacity: 0.8;" onclick="deployNotificationGui('Password reset link sent.')">Forgot Password?</span>
             </div>
             
             <button id="authPrimaryBtn" class="auth-submit-action" onclick="executeEmailAuth()">Login</button>
@@ -440,10 +377,6 @@
 
     <div class="sidebar" id="sidebar">
         <div class="sidebar-section-title">Quick Actions</div>
-        <div class="nav-item cart-trigger-menu" onclick="toggleCart()">
-            <span>Shopping Cart</span>
-            <span class="cart-count" id="cartCount">0</span>
-        </div>
         <div class="nav-item" id="themeToggleOption" onclick="toggleSystemTheme()">Toggle System Theme</div>
 
         <div class="sidebar-section-title">Navigation</div>
@@ -458,36 +391,8 @@
         <div class="sidebar-section-title official-only-nav" id="officialSectionTitle">Publisher Controls</div>
         <div class="nav-item official-only-nav" id="officialPublishLink" onclick="switchTab('officialPublishView')">Management Core</div>
         <div class="nav-item admin-only-nav" id="adminSidebarLink" onclick="switchTab('opsView')">Live Order Stream</div>
-        
-        <div class="nav-item" onclick="toggleAiSupport()" style="color: #38bdf8; margin-top: 10px; background: rgba(56, 189, 248, 0.05);">AI Engineering Assistant</div>
 
         <div class="nav-item logout-nav-item" onclick="logoutTerminal()">Disconnect Session</div>
-    </div>
-
-    <div class="cart-panel" id="cartPanel">
-        <div class="drawer-header-title">
-            <span>Selected Assets</span>
-            <span style="cursor:pointer; color:var(--text-muted);" onclick="toggleCart()">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-            </span>
-        </div>
-        <div class="drawer-content-stream" id="cartItemsContainer"></div>
-    </div>
-
-    <div class="ai-support-panel" id="aiSupportPanel">
-        <div class="drawer-header-title">
-            <span>AI Assistant Interface</span>
-            <span style="cursor:pointer; color:var(--text-muted);" onclick="toggleAiSupport()">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-            </span>
-        </div>
-        <div class="drawer-content-stream" id="aiChatStream">
-            <div class="ai-msg agent">System connection successful. Cloud environment records fully loaded. Ready to perform codebase testing adjustments, layout reviews, or core logic diagnostics.</div>
-        </div>
-        <div class="drawer-input-footer">
-            <input type="text" id="aiSupportInput" placeholder="Enter service request..." onkeydown="if(event.key === 'Enter') sendAiMessage()">
-            <button class="drawer-send-btn" onclick="sendAiMessage()">Execute</button>
-        </div>
     </div>
 
     <div class="app-view active" id="marketView">
@@ -570,20 +475,10 @@
 
     <div class="app-view" id="ownerProfileView">
         <div class="owner-container">
-            <h2 style="margin: 0 0 4px 0; font-size: 24px; font-weight: 700;">
-                Mohamed Nafeez <span id="profileNodeStatus" class="owner-status-text">(Verifying Verification...)</span>
-            </h2>
+            <h2 style="margin: 0 0 4px 0; font-size: 24px; font-weight: 700;">Mohamed Nafeez</h2>
             <p style="color: var(--text-muted); font-size: 13px; margin: 0 0 28px 0; text-transform: uppercase; letter-spacing: 0.5px;">Founder of MATOC</p>
             
             <div style="display: flex; flex-direction: column; gap: 20px; max-width: 400px; background: var(--card); padding: 24px; border-radius: var(--radius); border: 1px solid var(--border);">
-                <div>
-                    <span class="owner-subtext">Age Node Metric</span>
-                    <span style="font-size: 18px; font-weight: 700;" id="profileAgeDisplay">15</span>
-                </div>
-                <div>
-                    <span class="owner-subtext">Core Framework Status Log</span>
-                    <span style="font-size: 14px; color: var(--text-muted);" id="profileTimeGateStatus">Parsing cloud clock configurations...</span>
-                </div>
                 <div>
                     <span class="owner-subtext">Operational Portal Link</span>
                     <a href="https://www.instagram.com/damnbuilders_official?igsh=Z2hiZGVjbnpmMXQ1" target="_blank" class="insta-btn">
@@ -627,34 +522,7 @@
 
         function runInitialPreflightChecks() {
             initLocalStorageData();
-            grecaptcha.enterprise.ready(async () => {
-                try {
-                    const token = await grecaptcha.enterprise.execute('6LcAVCotAAAAAPtUw0X7fwbiaMOz68bew5HlRtpT', { action: 'PORTAL_ACCESS' });
-                    
-                    const assessmentPayload = {
-                        "event": {
-                            "token": token,
-                            "expectedAction": "PORTAL_ACCESS",
-                            "siteKey": "6LcAVCotAAAAAPtUw0X7fwbiaMOz68bew5HlRtpT"
-                        }
-                    };
-
-                    const API_KEY = "AIzaSyAhnYH_rj7VkdcshB_g3QO2LU9KUmwGtHk"; 
-                    const targetEndpoint = `https://recaptchaenterprise.googleapis.com/v1/projects/nigbwns/assessments?key=${API_KEY}`;
-
-                    fetch(targetEndpoint, {
-                        method: "POST",
-                        mode: "cors",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(assessmentPayload)
-                    }).catch(err => console.error("Background assessment error:", err));
-
-                    initSessionWatch();
-                } catch (err) {
-                    console.error("Initial Captcha verification fault:", err);
-                    initSessionWatch();
-                }
-            });
+            initSessionWatch();
         }
 
         function initLocalStorageData() {
@@ -675,7 +543,6 @@
                         if (user) {
                             currentUserSessionEmail = user.email;
                             handleSuccessfulLogin(user.email);
-                            syncProfileToServer();
                         } else {
                             handleRequiredLogin();
                         }
@@ -724,7 +591,6 @@
                 document.getElementById('officialPublishLink').style.display = 'none';
                 deployNotificationGui("Authentication access verified.");
             }
-            computeNodeIdentityLifecycle();
         }
 
         function handleRequiredLogin() {
@@ -910,39 +776,6 @@
                 .catch(err => deployNotificationGui("Publish Fail: " + err.message));
         }
 
-        function computeNodeIdentityLifecycle() {
-            const ageDisplay = document.getElementById('profileAgeDisplay');
-            const timeGateStatus = document.getElementById('profileTimeGateStatus');
-            const nodeStatus = document.getElementById('profileNodeStatus');
-
-            const gateTimestamp = Date.UTC(2026, 5, 18, 0, 0, 0); 
-            const currentTimestamp = Date.now();
-
-            if (currentTimestamp >= gateTimestamp) {
-                ageDisplay.innerText = "16";
-                timeGateStatus.innerText = "AUTO_SYNCED // LEVEL_16_CONFIRMED";
-                nodeStatus.innerText = "(Verified System Lead)";
-            } else {
-                ageDisplay.innerText = "15";
-                timeGateStatus.innerText = "PENDING // VALIDATING_TEMPORAL_MARK";
-                nodeStatus.innerText = "(Active Access Node)";
-            }
-        }
-
-        function syncProfileToServer() {
-            const user = firebase.auth().currentUser;
-            if (user) {
-                const targetAge = document.getElementById('profileAgeDisplay').innerText;
-                const profilePayload = {
-                    name: "Mohamed Nafeez",
-                    calculatedAge: targetAge,
-                    clientSyncTime: new Date().toISOString()
-                };
-                firebase.database().ref('users/' + user.uid + '/about_owner').set(profilePayload)
-                    .catch(err => console.error("Sync payload execution error: " + err.message));
-            }
-        }
-
         function toggleAuthState() {
             isSignUpState = !isSignUpState;
             const title = document.getElementById('authTitle');
@@ -1005,46 +838,6 @@
         }
 
         function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
-        function toggleCart() { document.getElementById('cartPanel').classList.toggle('active'); }
-        
-        function toggleAiSupport() { 
-            document.getElementById('aiSupportPanel').classList.toggle('active'); 
-            if(document.getElementById('sidebar').classList.contains('active')) toggleSidebar();
-        }
-
-        function sendAiMessage() {
-            const inputField = document.getElementById('aiSupportInput');
-            const query = inputField.value.trim();
-            if (!query) return;
-
-            const stream = document.getElementById('aiChatStream');
-            
-            const userBox = document.createElement('div');
-            userBox.className = 'ai-msg user';
-            userBox.innerText = query;
-            stream.appendChild(userBox);
-            inputField.value = '';
-            stream.scrollTop = stream.scrollHeight;
-
-            setTimeout(() => {
-                const agentBox = document.createElement('div');
-                agentBox.className = 'ai-msg agent';
-                let reply = "Statement analyzed within ecosystem architecture constraints.";
-                
-                const lower = query.toLowerCase();
-                if (lower.includes('godot') || lower.includes('physics') || lower.includes('script') || lower.includes('game')) {
-                    reply = "[Diagnostic Subsystem]: Streamline asset hierarchy matrices. Run physics steps asynchronously for mobile optimization branches.";
-                } else if (lower.includes('gpu') || lower.includes('hardware') || lower.includes('ram') || lower.includes('ssd') || lower.includes('pc')) {
-                    reply = "[Hardware Diagnostic Subsystem]: Resource mapping and storage bandwidth calculations completed successfully.";
-                } else if (lower.includes('profile') || lower.includes('about') || lower.includes('owner') || lower.includes('nafeez')) {
-                    reply = "[Registry Subsystem]: Record verification for Mohamed Nafeez complete. Role identified as Founder of MATOC.";
-                }
-
-                agentBox.innerText = reply;
-                stream.appendChild(agentBox);
-                stream.scrollTop = stream.scrollHeight;
-            }, 600);
-        }
 
         function deployNotificationGui(msg) {
             const banner = document.getElementById('terminalAlertGui');
