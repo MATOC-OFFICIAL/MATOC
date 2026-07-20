@@ -13,6 +13,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
 
     <style>
         :root { 
@@ -281,6 +282,7 @@
 
         .omnifix-btn { background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: var(--radius); font-weight: 600; cursor: pointer; font-size: 14px; transition: background 0.2s; }
         .omnifix-btn:hover { background: var(--primary-hover); }
+        .omnifix-btn:disabled { opacity: 0.5; cursor: not-allowed; }
         
         .owner-container { padding: 12px 0; }
         .owner-subtext { font-size: 12px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; font-weight: 700; letter-spacing: 0.5px; }
@@ -297,6 +299,10 @@
             font-size: 14px; 
             font-family: inherit;
             transition: border-color 0.2s, background 0.3s, color 0.3s;
+        }
+        input[type="file"] {
+            padding: 8px;
+            cursor: pointer;
         }
         input:focus, select:focus, textarea:focus {
             outline: none;
@@ -431,8 +437,8 @@
             <label style="font-size: 13px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Asset Evaluation Valuation ($)</label>
             <input type="number" id="p2pProdPrice" placeholder="Value Amount">
 
-            <label style="font-size: 13px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Product Image URL</label>
-            <input type="url" id="p2pProdImg" placeholder="https://example.com/image.jpg">
+            <label style="font-size: 13px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Select Product Image from Gallery</label>
+            <input type="file" id="p2pProdFile" accept="image/*">
 
             <label style="font-size: 13px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Direct Contact Node handle (Instagram)</label>
             <input type="text" id="p2pProdSocial" placeholder="e.g., your_insta_username">
@@ -440,7 +446,7 @@
             <label style="font-size: 13px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Enforced Condition Tier Flag</label>
             <input type="text" value="USED HARDWARE ASSET" disabled style="opacity: 0.5; background: var(--bg);">
             
-            <button class="omnifix-btn" onclick="submitPeerUsedListing()" style="width: 100%;">Commit Asset Submission</button>
+            <button id="p2pSubmitBtn" class="omnifix-btn" onclick="submitPeerUsedListing()" style="width: 100%;">Commit Asset Submission</button>
         </div>
     </div>
 
@@ -465,9 +471,10 @@
                     <option value="3d models">3D Asset Model</option>
                 </select>
                 <input type="number" id="offProdPrice" placeholder="Wholesale Value Profile">
-                <input type="url" id="offProdImg" placeholder="Image URL (https://...)">
+                <label style="font-size: 13px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Select Product Image from Gallery</label>
+                <input type="file" id="offProdFile" accept="image/*">
                 <input type="text" id="offProdSocial" placeholder="Publisher Instagram Node Link Offset">
-                <button class="omnifix-btn" onclick="publishOfficialProduct()" style="background: #fbbf24; color: #000; width: 100%;">Authorize Release</button>
+                <button id="offSubmitBtn" class="omnifix-btn" onclick="publishOfficialProduct()" style="background: #fbbf24; color: #000; width: 100%;">Authorize Release</button>
             </div>
         </div>
     </div>
@@ -713,35 +720,55 @@
             });
         }
 
-        function submitPeerUsedListing() {
+        async function uploadFileToStorage(file) {
+            if (!file) return "";
+            const fileRef = firebase.storage().ref(`product_images/${Date.now()}_${file.name}`);
+            await fileRef.put(file);
+            return await fileRef.getDownloadURL();
+        }
+
+        async function submitPeerUsedListing() {
             const name = document.getElementById('p2pProdName').value.trim();
             const price = document.getElementById('p2pProdPrice').value;
             const category = document.getElementById('p2pProdCategory').value;
-            const imageUrl = document.getElementById('p2pProdImg').value.trim();
+            const fileInput = document.getElementById('p2pProdFile');
             const social = document.getElementById('p2pProdSocial').value.trim();
+            const btn = document.getElementById('p2pSubmitBtn');
             
             if(!name || !price) { deployNotificationGui("Configuration entries invalid."); return; }
-            
-            const newProduct = {
-                title: name,
-                price: parseInt(price),
-                category: category,
-                imageUrl: imageUrl || "",
-                socialHandle: social || "damnbuilders_official",
-                type: "peer",
-                condition: "USED"
-            };
 
-            firebase.database().ref('products').push(newProduct)
-                .then(() => {
-                    document.getElementById('p2pProdName').value = "";
-                    document.getElementById('p2pProdPrice').value = "";
-                    document.getElementById('p2pProdImg').value = "";
-                    document.getElementById('p2pProdSocial').value = "";
-                    deployNotificationGui("Used asset safely logged to cloud matrix stream.");
-                    switchTab('marketView');
-                })
-                .catch(err => deployNotificationGui("Write Fail: " + err.message));
+            try {
+                btn.disabled = true;
+                btn.innerText = "Uploading Image...";
+                let imageUrl = "";
+
+                if (fileInput.files.length > 0) {
+                    imageUrl = await uploadFileToStorage(fileInput.files[0]);
+                }
+                
+                const newProduct = {
+                    title: name,
+                    price: parseInt(price),
+                    category: category,
+                    imageUrl: imageUrl,
+                    socialHandle: social || "damnbuilders_official",
+                    type: "peer",
+                    condition: "USED"
+                };
+
+                await firebase.database().ref('products').push(newProduct);
+                document.getElementById('p2pProdName').value = "";
+                document.getElementById('p2pProdPrice').value = "";
+                document.getElementById('p2pProdFile').value = "";
+                document.getElementById('p2pProdSocial').value = "";
+                deployNotificationGui("Used asset safely logged to cloud matrix stream.");
+                switchTab('marketView');
+            } catch (err) {
+                deployNotificationGui("Write Fail: " + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "Commit Asset Submission";
+            }
         }
 
         function publishOfficialGame() {
@@ -764,35 +791,48 @@
                 .catch(err => deployNotificationGui("Publish Fail: " + err.message));
         }
 
-        function publishOfficialProduct() {
+        async function publishOfficialProduct() {
             const name = document.getElementById('offProdName').value.trim();
             const price = document.getElementById('offProdPrice').value;
             const category = document.getElementById('offProdCategory').value;
-            const imageUrl = document.getElementById('offProdImg').value.trim();
+            const fileInput = document.getElementById('offProdFile');
             const social = document.getElementById('offProdSocial').value.trim();
+            const btn = document.getElementById('offSubmitBtn');
             
             if(!name || !price) return;
 
-            const newOfficialProduct = {
-                title: name,
-                price: parseInt(price),
-                category: category,
-                imageUrl: imageUrl || "",
-                socialHandle: social || "damnbuilders_official",
-                type: "official",
-                condition: "NEW"
-            };
+            try {
+                btn.disabled = true;
+                btn.innerText = "Uploading Image...";
+                let imageUrl = "";
 
-            firebase.database().ref('products').push(newOfficialProduct)
-                .then(() => {
-                    document.getElementById('offProdName').value = "";
-                    document.getElementById('offProdPrice').value = "";
-                    document.getElementById('offProdImg').value = "";
-                    document.getElementById('offProdSocial').value = "";
-                    deployNotificationGui("New retail catalog item synchronized.");
-                    switchTab('marketView');
-                })
-                .catch(err => deployNotificationGui("Publish Fail: " + err.message));
+                if (fileInput.files.length > 0) {
+                    imageUrl = await uploadFileToStorage(fileInput.files[0]);
+                }
+
+                const newOfficialProduct = {
+                    title: name,
+                    price: parseInt(price),
+                    category: category,
+                    imageUrl: imageUrl,
+                    socialHandle: social || "damnbuilders_official",
+                    type: "official",
+                    condition: "NEW"
+                };
+
+                await firebase.database().ref('products').push(newOfficialProduct);
+                document.getElementById('offProdName').value = "";
+                document.getElementById('offProdPrice').value = "";
+                document.getElementById('offProdFile').value = "";
+                document.getElementById('offProdSocial').value = "";
+                deployNotificationGui("New retail catalog item synchronized.");
+                switchTab('marketView');
+            } catch (err) {
+                deployNotificationGui("Publish Fail: " + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "Authorize Release";
+            }
         }
 
         function toggleAuthState() {
