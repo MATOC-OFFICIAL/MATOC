@@ -425,31 +425,31 @@
         <h2 style="margin: 0 0 6px 0; font-size: 24px; font-weight: 700;">List Used Product</h2>
         <p style="color:var(--text-muted); font-size:14px; margin: 0 0 24px 0;">Peer submissions are systematically verified for strict hardware operational performance metrics.</p>
         
-        <div style="max-width: 500px; background: var(--card); padding: 32px; border-radius: var(--radius); border: 1px solid var(--border);">
+        <form style="max-width: 500px; background: var(--card); padding: 32px; border-radius: var(--radius); border: 1px solid var(--border);" onsubmit="submitPeerUsedListing(event)">
             <label style="font-size: 13px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Product Specifications Title</label>
-            <input type="text" id="p2pProdName" placeholder="e.g., Used Intel i7-4790K Node">
+            <input type="text" id="p2pProdName" placeholder="e.g., Used Intel i7-4790K Node" required>
             
             <label style="font-size: 13px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Classification Branch</label>
-            <select id="p2pProdCategory">
+            <select id="p2pProdCategory" required>
                 <option value="hardware">Hardware Component</option>
                 <option value="scripts">Scripts Module</option>
                 <option value="3d models">3D Asset Model</option>
             </select>
 
             <label style="font-size: 13px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Asset Evaluation Valuation ($)</label>
-            <input type="number" id="p2pProdPrice" placeholder="Value Amount">
+            <input type="number" id="p2pProdPrice" placeholder="Value Amount" min="0" step="any" required>
 
             <label style="font-size: 13px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Select Product Image from Gallery</label>
-            <input type="file" id="p2pProdFile" accept="image/*">
+            <input type="file" id="p2pProdFile" accept="image/*" required>
 
             <label style="font-size: 13px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Direct Contact Node handle (Instagram)</label>
-            <input type="text" id="p2pProdSocial" placeholder="e.g., your_insta_username">
+            <input type="text" id="p2pProdSocial" placeholder="e.g., your_insta_username" pattern="^@?[A-Za-z0-9_.]+$" title="Please enter a valid Instagram handle (letters, numbers, underscores, or periods only)." required>
 
             <label style="font-size: 13px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Enforced Condition Tier Flag</label>
             <input type="text" value="USED HARDWARE ASSET" disabled style="opacity: 0.5; background: var(--bg);">
             
-            <button id="p2pSubmitBtn" class="omnifix-btn" onclick="submitPeerUsedListing()" style="width: 100%;">Commit Asset Submission</button>
-        </div>
+            <button type="submit" id="p2pSubmitBtn" class="omnifix-btn" style="width: 100%;">Commit Asset Submission</button>
+        </form>
     </div>
 
     <div class="app-view" id="officialPublishView">
@@ -464,20 +464,20 @@
                 <button class="omnifix-btn" onclick="publishOfficialGame()" style="background: #fbbf24; color: #000; width: 100%;">Deploy to Vault</button>
             </div>
             
-            <div style="background: var(--card); padding: 28px; border-radius: var(--radius); border: 1px solid var(--border);">
+            <form style="background: var(--card); padding: 28px; border-radius: var(--radius); border: 1px solid var(--border);" onsubmit="publishOfficialProduct(event)">
                 <h3 style="margin: 0 0 16px 0; font-size: 16px; color: #fbbf24;">Launch Brand Product</h3>
-                <input type="text" id="offProdName" placeholder="Product Asset Model">
-                <select id="offProdCategory" style="border-color: #fbbf24;">
+                <input type="text" id="offProdName" placeholder="Product Asset Model" required>
+                <select id="offProdCategory" style="border-color: #fbbf24;" required>
                     <option value="hardware">Hardware Component</option>
                     <option value="scripts">Scripts Module</option>
                     <option value="3d models">3D Asset Model</option>
                 </select>
-                <input type="number" id="offProdPrice" placeholder="Wholesale Value Profile">
+                <input type="number" id="offProdPrice" placeholder="Wholesale Value Profile" min="0" step="any" required>
                 <label style="font-size: 13px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Select Product Image from Gallery</label>
-                <input type="file" id="offProdFile" accept="image/*">
-                <input type="text" id="offProdSocial" placeholder="Publisher Instagram Node Link Offset">
-                <button id="offSubmitBtn" class="omnifix-btn" onclick="publishOfficialProduct()" style="background: #fbbf24; color: #000; width: 100%;">Authorize Release</button>
-            </div>
+                <input type="file" id="offProdFile" accept="image/*" required>
+                <input type="text" id="offProdSocial" placeholder="Publisher Instagram Node Link Offset" pattern="^@?[A-Za-z0-9_.]+$" title="Please enter a valid Instagram handle." required>
+                <button type="submit" id="offSubmitBtn" class="omnifix-btn" style="background: #fbbf24; color: #000; width: 100%;">Authorize Release</button>
+            </form>
         </div>
     </div>
 
@@ -646,7 +646,6 @@
             const product = mockDatabase.products.find(p => p.id === productId);
             if (!product) return;
 
-            // Verify ownership check
             if (!currentUserSessionEmail || product.ownerEmail.toLowerCase() !== currentUserSessionEmail.toLowerCase()) {
                 deployNotificationGui("Unauthorized: Only the uploader can delete this listing.");
                 return;
@@ -711,10 +710,9 @@
                 const badgeClass = p.type === 'official' ? 'official' : 'used';
                 const badgeText = p.type === 'official' ? 'Brand New' : 'Verified Used';
                 const isItemFavorited = currentFavs.includes(p.id);
-                const targetedSocial = p.socialHandle ? p.socialHandle : "damnbuilders_official";
+                const targetedSocial = p.socialHandle ? p.socialHandle.replace(/^@/, '') : "damnbuilders_official";
                 const imgSource = p.imageUrl ? p.imageUrl : DEFAULT_IMG;
                 
-                // Show delete button ONLY if product is 'peer' AND current user is the uploader
                 const isOwner = p.ownerEmail && currentUserSessionEmail && (p.ownerEmail.toLowerCase() === currentUserSessionEmail.toLowerCase());
                 const deleteActionHtml = (p.type === 'peer' && isOwner) 
                     ? `<button class="omnifix-btn btn-danger" style="width:100%; padding: 10px; font-size:13px; margin-top:8px;" onclick="deleteListing('${p.id}', event)">Delete Listing</button>` 
@@ -760,15 +758,15 @@
             return await fileRef.getDownloadURL();
         }
 
-        async function submitPeerUsedListing() {
+        async function submitPeerUsedListing(event) {
+            if (event) event.preventDefault();
+            
             const name = document.getElementById('p2pProdName').value.trim();
             const price = document.getElementById('p2pProdPrice').value;
             const category = document.getElementById('p2pProdCategory').value;
             const fileInput = document.getElementById('p2pProdFile');
             const social = document.getElementById('p2pProdSocial').value.trim();
             const btn = document.getElementById('p2pSubmitBtn');
-            
-            if(!name || !price) { deployNotificationGui("Configuration entries invalid."); return; }
 
             try {
                 btn.disabled = true;
@@ -781,10 +779,10 @@
                 
                 const newProduct = {
                     title: name,
-                    price: parseInt(price),
+                    price: parseFloat(price),
                     category: category,
                     imageUrl: imageUrl,
-                    socialHandle: social || "damnbuilders_official",
+                    socialHandle: social,
                     ownerEmail: currentUserSessionEmail,
                     type: "peer",
                     condition: "USED"
@@ -825,15 +823,15 @@
                 .catch(err => deployNotificationGui("Publish Fail: " + err.message));
         }
 
-        async function publishOfficialProduct() {
+        async function publishOfficialProduct(event) {
+            if (event) event.preventDefault();
+
             const name = document.getElementById('offProdName').value.trim();
             const price = document.getElementById('offProdPrice').value;
             const category = document.getElementById('offProdCategory').value;
             const fileInput = document.getElementById('offProdFile');
             const social = document.getElementById('offProdSocial').value.trim();
             const btn = document.getElementById('offSubmitBtn');
-            
-            if(!name || !price) return;
 
             try {
                 btn.disabled = true;
@@ -846,10 +844,10 @@
 
                 const newOfficialProduct = {
                     title: name,
-                    price: parseInt(price),
+                    price: parseFloat(price),
                     category: category,
                     imageUrl: imageUrl,
-                    socialHandle: social || "damnbuilders_official",
+                    socialHandle: social,
                     ownerEmail: currentUserSessionEmail,
                     type: "official",
                     condition: "NEW"
