@@ -324,6 +324,37 @@
         .filter-bar { display: flex; gap: 10px; margin-bottom: 24px; overflow-x: auto; padding-bottom: 8px; }
         .filter-btn { background: transparent; color: var(--text-muted); border: 1px solid var(--border); padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; text-transform: capitalize; transition: all 0.2s; }
         .filter-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+        /* AI Chat Bubble Styles */
+        .chat-msg {
+            margin-bottom: 12px;
+            display: flex;
+            flex-direction: column;
+        }
+        .chat-msg.user {
+            align-items: flex-end;
+        }
+        .chat-msg.ai {
+            align-items: flex-start;
+        }
+        .chat-bubble {
+            max-width: 80%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 14px;
+            line-height: 1.4;
+            word-wrap: break-word;
+        }
+        .chat-msg.user .chat-bubble {
+            background: var(--primary);
+            color: #ffffff;
+            border-bottom-right-radius: 2px;
+        }
+        .chat-msg.ai .chat-bubble {
+            background: #334155;
+            color: var(--text);
+            border-bottom-left-radius: 2px;
+        }
     </style>
 </head>
 <body>
@@ -391,6 +422,7 @@
 
         <div class="sidebar-section-title">Navigation</div>
         <div class="nav-item active-nav" id="nav-marketView" onclick="switchTab('marketView')">Browse Marketplace</div>
+        <div class="nav-item" id="nav-aiChatView" onclick="switchTab('aiChatView')">🤖 Live AI Chat</div>
         <div class="nav-item" id="nav-p2pSellView" onclick="switchTab('p2pSellView')">Submit Used Asset</div>
         <div class="nav-item" id="nav-ownerProfileView" onclick="switchTab('ownerProfileView')">Profile Dossier</div>
         <div class="nav-item" id="nav-gameVaultView" onclick="switchTab('gameVaultView')">Arcade Vault</div>
@@ -418,6 +450,30 @@
         </div>
 
         <div id="marketplaceProductsDisplay" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px;">
+        </div>
+    </div>
+
+    <!-- Live AI Chat View -->
+    <div class="app-view" id="aiChatView">
+        <h2 style="margin: 0 0 6px 0; font-size: 24px; font-weight: 700;">AI Web Grounded Assistant</h2>
+        <p style="color:var(--text-muted); font-size:14px; margin: 0 0 20px 0;">Chat with real-time web search capabilities.</p>
+
+        <div style="background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; max-width: 700px; display: flex; flex-direction: column; height: 500px;">
+            
+            <!-- Chat Container -->
+            <div id="aiChatContainer" style="flex: 1; overflow-y: auto; padding-right: 6px; margin-bottom: 12px;">
+                <div class="chat-msg ai">
+                    <div class="chat-bubble">
+                        Hello! Ask me anything about hardware specs, web trends, or code snippets. I'm connected to live web search!
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Input Form -->
+            <form onsubmit="handleAiChatSubmit(event)" style="display: flex; gap: 8px; margin: 0;">
+                <input type="text" id="aiQueryInput" placeholder="Type your message..." style="margin: 0; flex: 1;" required autocomplete="off">
+                <button type="submit" id="aiSubmitBtn" class="omnifix-btn" style="white-space: nowrap;">Send</button>
+            </form>
         </div>
     </div>
 
@@ -510,6 +566,7 @@
         let isSignUpState = false;
         let currentUserSessionEmail = "";
         let activeMarketplaceFilter = "all";
+        let conversationHistory = []; // Chat history array
         const DEFAULT_IMG = "https://via.placeholder.com/300x200?text=No+Image+Available";
 
         let mockDatabase = {
@@ -866,6 +923,76 @@
                 btn.disabled = false;
                 btn.innerText = "Authorize Release";
             }
+        }
+
+        /* --- Live AI Chat Functionality --- */
+        async function handleAiChatSubmit(event) {
+            if (event) event.preventDefault();
+
+            const input = document.getElementById('aiQueryInput');
+            const chatContainer = document.getElementById('aiChatContainer');
+            const submitBtn = document.getElementById('aiSubmitBtn');
+            const userText = input.value.trim();
+
+            if (!userText) return;
+
+            // Render User Bubble
+            appendChatMessage("user", userText);
+            input.value = "";
+
+            // Push to history
+            conversationHistory.push({ role: "user", parts: [{ text: userText }] });
+
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Searching...";
+
+            // Append loading indicator bubble
+            const loadingBubble = appendChatMessage("ai", "Searching the live web...");
+
+            const GEMINI_API_KEY = "AQ.Ab8RN6L6kNZE6fkUAmPqTrdIcZUyvOW5z-O1KOwopZ7LiK8HZQ";
+
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: conversationHistory,
+                        tools: [{ google_search: {} }]
+                    })
+                });
+
+                const data = await response.json();
+                const aiResponseText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                if (aiResponseText) {
+                    loadingBubble.innerText = aiResponseText;
+                    conversationHistory.push({ role: "model", parts: [{ text: aiResponseText }] });
+                } else {
+                    loadingBubble.innerText = "Error: " + (data.error?.message || "Unable to retrieve response.");
+                }
+            } catch (err) {
+                loadingBubble.innerText = "Connection error. Please try again.";
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerText = "Send";
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+        }
+
+        function appendChatMessage(role, text) {
+            const chatContainer = document.getElementById('aiChatContainer');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `chat-msg ${role}`;
+            
+            const bubbleDiv = document.createElement('div');
+            bubbleDiv.className = 'chat-bubble';
+            bubbleDiv.innerText = text;
+
+            msgDiv.appendChild(bubbleDiv);
+            chatContainer.appendChild(msgDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            return bubbleDiv; // Return bubble reference for live updating
         }
 
         function toggleAuthState() {
