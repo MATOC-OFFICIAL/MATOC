@@ -344,6 +344,7 @@
             font-size: 14px;
             line-height: 1.4;
             word-wrap: break-word;
+            white-space: pre-wrap;
         }
         .chat-msg.user .chat-bubble {
             background: var(--primary);
@@ -455,8 +456,8 @@
 
     <!-- Live AI Chat View -->
     <div class="app-view" id="aiChatView">
-        <h2 style="margin: 0 0 6px 0; font-size: 24px; font-weight: 700;">AI Web Grounded Assistant</h2>
-        <p style="color:var(--text-muted); font-size:14px; margin: 0 0 20px 0;">Chat with real-time web search capabilities.</p>
+        <h2 style="margin: 0 0 6px 0; font-size: 24px; font-weight: 700;">Groq AI Assistant</h2>
+        <p style="color:var(--text-muted); font-size:14px; margin: 0 0 20px 0;">Powered by Llama 3.3 70B via Groq.</p>
 
         <div style="background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; max-width: 700px; display: flex; flex-direction: column; height: 500px;">
             
@@ -464,7 +465,7 @@
             <div id="aiChatContainer" style="flex: 1; overflow-y: auto; padding-right: 6px; margin-bottom: 12px;">
                 <div class="chat-msg ai">
                     <div class="chat-bubble">
-                        Hello! Ask me anything about hardware specs, web trends, or code snippets. I'm connected to live web search!
+                        Hello! Ask me anything about hardware specs, coding, or system configs!
                     </div>
                 </div>
             </div>
@@ -566,8 +567,85 @@
         let isSignUpState = false;
         let currentUserSessionEmail = "";
         let activeMarketplaceFilter = "all";
-        let conversationHistory = []; // Chat history array
+        let conversationHistory = []; // OpenAI/Groq context format [{ role: "user", content: "..." }]
         const DEFAULT_IMG = "https://via.placeholder.com/300x200?text=No+Image+Available";
+
+        /* --- Live AI Chat Functionality (Powered by Groq) --- */
+        const GROQ_API_KEY = "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"; // Starts with gsk_...
+
+        async function handleAiChatSubmit(event) {
+            if (event) event.preventDefault();
+
+            const input = document.getElementById('aiQueryInput');
+            const chatContainer = document.getElementById('aiChatContainer');
+            const submitBtn = document.getElementById('aiSubmitBtn');
+            const userText = input.value.trim();
+
+            if (!userText) return;
+
+            // Render User Bubble
+            appendChatMessage("user", userText);
+            input.value = "";
+
+            // Add user message to conversation history in OpenAI/Groq format
+            conversationHistory.push({ role: "user", content: userText });
+
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Thinking...";
+
+            // Append loading indicator bubble
+            const loadingBubble = appendChatMessage("ai", "Generating response...");
+
+            try {
+                const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${GROQ_API_KEY.trim()}`
+                    },
+                    body: JSON.stringify({
+                        model: "llama-3.3-70b-versatile",
+                        messages: conversationHistory
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok && data.choices && data.choices[0]?.message?.content) {
+                    const aiResponseText = data.choices[0].message.content;
+                    loadingBubble.innerText = aiResponseText;
+                    
+                    // Save model response to context history
+                    conversationHistory.push({ role: "assistant", content: aiResponseText });
+                } else {
+                    const errDetail = data.error?.message || "Unable to retrieve response.";
+                    loadingBubble.innerText = "Error: " + errDetail;
+                }
+            } catch (err) {
+                loadingBubble.innerText = "Connection error. Please try again.";
+                console.error("Groq Fetch Error:", err);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerText = "Send";
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+        }
+
+        function appendChatMessage(role, text) {
+            const chatContainer = document.getElementById('aiChatContainer');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `chat-msg ${role}`;
+            
+            const bubbleDiv = document.createElement('div');
+            bubbleDiv.className = 'chat-bubble';
+            bubbleDiv.innerText = text;
+
+            msgDiv.appendChild(bubbleDiv);
+            chatContainer.appendChild(msgDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            return bubbleDiv; // Return bubble reference for live updating
+        }
 
         let mockDatabase = {
             products: [],
@@ -923,76 +1001,6 @@
                 btn.disabled = false;
                 btn.innerText = "Authorize Release";
             }
-        }
-
-        /* --- Live AI Chat Functionality --- */
-        async function handleAiChatSubmit(event) {
-            if (event) event.preventDefault();
-
-            const input = document.getElementById('aiQueryInput');
-            const chatContainer = document.getElementById('aiChatContainer');
-            const submitBtn = document.getElementById('aiSubmitBtn');
-            const userText = input.value.trim();
-
-            if (!userText) return;
-
-            // Render User Bubble
-            appendChatMessage("user", userText);
-            input.value = "";
-
-            // Push to history
-            conversationHistory.push({ role: "user", parts: [{ text: userText }] });
-
-            submitBtn.disabled = true;
-            submitBtn.innerText = "Searching...";
-
-            // Append loading indicator bubble
-            const loadingBubble = appendChatMessage("ai", "Searching the live web...");
-
-            const GEMINI_API_KEY = "AQ.Ab8RN6L6kNZE6fkUAmPqTrdIcZUyvOW5z-O1KOwopZ7LiK8HZQ";
-
-            try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: conversationHistory,
-                        tools: [{ google_search: {} }]
-                    })
-                });
-
-                const data = await response.json();
-                const aiResponseText = data.candidates?.[0]?.content?.parts?.[0]?.text;
-
-                if (aiResponseText) {
-                    loadingBubble.innerText = aiResponseText;
-                    conversationHistory.push({ role: "model", parts: [{ text: aiResponseText }] });
-                } else {
-                    loadingBubble.innerText = "Error: " + (data.error?.message || "Unable to retrieve response.");
-                }
-            } catch (err) {
-                loadingBubble.innerText = "Connection error. Please try again.";
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerText = "Send";
-                chatContainer.scrollTop = chatContainer.scrollHeight;
-            }
-        }
-
-        function appendChatMessage(role, text) {
-            const chatContainer = document.getElementById('aiChatContainer');
-            const msgDiv = document.createElement('div');
-            msgDiv.className = `chat-msg ${role}`;
-            
-            const bubbleDiv = document.createElement('div');
-            bubbleDiv.className = 'chat-bubble';
-            bubbleDiv.innerText = text;
-
-            msgDiv.appendChild(bubbleDiv);
-            chatContainer.appendChild(msgDiv);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-
-            return bubbleDiv; // Return bubble reference for live updating
         }
 
         function toggleAuthState() {
