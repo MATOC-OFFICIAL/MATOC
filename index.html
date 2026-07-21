@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MATOC BUILDERS</title>
+    <title>MATOC PC-BUILDERS</title>
    
     <link rel="manifest" href="manifest.json">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -101,7 +101,7 @@
         
         .auth-input-wrapper {
             position: relative;
-            margin-bottom: 28px;
+            margin-bottom: 24px;
             display: flex;
             align-items: center;
         }
@@ -321,9 +321,64 @@
         .insta-btn { background: #e1306c; color: white !important; border: none; padding: 12px; border-radius: var(--radius); font-weight: 600; cursor: pointer; font-size: 13px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; margin-top: 10px; width: 100%; box-sizing: border-box; transition: opacity 0.2s; }
         .insta-btn:hover { opacity: 0.9; }
 
-        .filter-bar { display: flex; gap: 10px; margin-bottom: 24px; overflow-x: auto; padding-bottom: 8px; }
-        .filter-btn { background: transparent; color: var(--text-muted); border: 1px solid var(--border); padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; text-transform: capitalize; transition: all 0.2s; }
-        .filter-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+        /* Enhanced Filter Controls */
+        .filter-controls-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 24px;
+            background: var(--card);
+            padding: 12px 16px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+        }
+
+        .filter-bar { 
+            display: flex; 
+            gap: 8px; 
+            overflow-x: auto; 
+            align-items: center;
+            padding-bottom: 2px;
+        }
+        .filter-btn { 
+            background: transparent; 
+            color: var(--text-muted); 
+            border: 1px solid var(--border); 
+            padding: 6px 14px; 
+            border-radius: 20px; 
+            font-size: 13px; 
+            font-weight: 600; 
+            cursor: pointer; 
+            white-space: nowrap;
+            transition: all 0.2s; 
+        }
+        .filter-btn:hover {
+            color: var(--text);
+            border-color: var(--primary);
+        }
+        .filter-btn.active { 
+            background: var(--primary); 
+            color: #fff; 
+            border-color: var(--primary); 
+        }
+
+        .sort-select {
+            width: auto;
+            margin-bottom: 0;
+            padding: 6px 12px;
+            font-size: 13px;
+            border-radius: 20px;
+            background: var(--bg);
+            cursor: pointer;
+        }
+
+        .filter-results-count {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
 
         /* AI Chat Bubble Styles */
         .chat-msg {
@@ -384,6 +439,12 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
                 <input type="password" id="authPassword" class="auth-clean-input" placeholder="Password">
             </div>
+
+            <!-- Username Input Field (hidden by default on login, visible on signup) -->
+            <div class="auth-input-wrapper" id="usernameInputContainer" style="display: none;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                <input type="text" id="authUsername" class="auth-clean-input" placeholder="Choose a Username">
+            </div>
             
             <div class="auth-utilities">
                 <label class="auth-checkbox-label">
@@ -440,14 +501,25 @@
 
     <div class="app-view active" id="marketView">
         <h2 style="margin: 0 0 6px 0; font-size: 24px; font-weight: 700;">Marketplace Stream</h2>
-        <p style="color:var(--text-muted); font-size:14px; margin: 0 0 24px 0;">Authorised brand releases alongside peer-reviewed systems configurations.</p>
+        <p style="color:var(--text-muted); font-size:14px; margin: 0 0 20px 0;">Authorised brand releases alongside peer-reviewed hardware configurations.</p>
         
-        <div class="filter-bar" id="marketplaceFilterBar">
-            <button class="filter-btn active" onclick="setMarketplaceFilter('all', this)">All Nodes</button>
-            <button class="filter-btn" onclick="setMarketplaceFilter('hardware', this)">Hardware</button>
-            <button class="filter-btn" onclick="setMarketplaceFilter('scripts', this)">Scripts</button>
-            <button class="filter-btn" onclick="setMarketplaceFilter('3d models', this)">3D Models</button>
-            <button class="filter-btn" onclick="setMarketplaceFilter('favorites', this)">★ Bookmarks</button>
+        <!-- Enhanced Filter Bar & Sort Controls -->
+        <div class="filter-controls-wrapper">
+            <div class="filter-bar" id="marketplaceFilterBar">
+                <button class="filter-btn active" onclick="setMarketplaceFilter('all', this)">All Nodes</button>
+                <button class="filter-btn" onclick="setMarketplaceFilter('official', this)">Brand New</button>
+                <button class="filter-btn" onclick="setMarketplaceFilter('used', this)">Used Assets</button>
+                <button class="filter-btn" onclick="setMarketplaceFilter('favorites', this)">★ Bookmarks</button>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <span class="filter-results-count" id="filterCountLabel">0 Assets Available</span>
+                <select id="marketSortOrder" class="sort-select" onchange="renderMarketplace()">
+                    <option value="newest">Sort: Latest</option>
+                    <option value="price-asc">Price: Low to High</option>
+                    <option value="price-desc">Price: High to Low</option>
+                </select>
+            </div>
         </div>
 
         <div id="marketplaceProductsDisplay" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px;">
@@ -465,7 +537,7 @@
             <div id="aiChatContainer" style="flex: 1; overflow-y: auto; padding-right: 6px; margin-bottom: 12px;">
                 <div class="chat-msg ai">
                     <div class="chat-bubble">
-                        Hello! Ask me anything about hardware specs, coding, or system configs!
+                        Hello! Ask me anything about hardware specs, system configs, or optimization!
                     </div>
                 </div>
             </div>
@@ -485,13 +557,6 @@
         <form style="max-width: 500px; background: var(--card); padding: 32px; border-radius: var(--radius); border: 1px solid var(--border);" onsubmit="submitPeerUsedListing(event)">
             <label style="font-size: 13px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Product Specifications Title</label>
             <input type="text" id="p2pProdName" placeholder="e.g., Used Intel i7-4790K Node" required>
-            
-            <label style="font-size: 13px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Classification Branch</label>
-            <select id="p2pProdCategory" required>
-                <option value="hardware">Hardware Component</option>
-                <option value="scripts">Scripts Module</option>
-                <option value="3d models">3D Asset Model</option>
-            </select>
 
             <label style="font-size: 13px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Asset Evaluation Valuation ($)</label>
             <input type="number" id="p2pProdPrice" placeholder="Value Amount" min="0" step="any" required>
@@ -522,13 +587,8 @@
             </div>
             
             <form style="background: var(--card); padding: 28px; border-radius: var(--radius); border: 1px solid var(--border);" onsubmit="publishOfficialProduct(event)">
-                <h3 style="margin: 0 0 16px 0; font-size: 16px; color: #fbbf24;">Launch Brand Product</h3>
+                <h3 style="margin: 0 0 16px 0; font-size: 16px; color: #fbbf24;">Launch Brand Hardware</h3>
                 <input type="text" id="offProdName" placeholder="Product Asset Model" required>
-                <select id="offProdCategory" style="border-color: #fbbf24;" required>
-                    <option value="hardware">Hardware Component</option>
-                    <option value="scripts">Scripts Module</option>
-                    <option value="3d models">3D Asset Model</option>
-                </select>
                 <input type="number" id="offProdPrice" placeholder="Wholesale Value Profile" min="0" step="any" required>
                 <label style="font-size: 13px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Select Product Image from Gallery</label>
                 <input type="file" id="offProdFile" accept="image/*" required>
@@ -566,12 +626,13 @@
     <script>
         let isSignUpState = false;
         let currentUserSessionEmail = "";
+        let currentUserDisplayName = "";
         let activeMarketplaceFilter = "all";
-        let conversationHistory = []; // OpenAI/Groq context format [{ role: "user", content: "..." }]
+        let conversationHistory = [];
         const DEFAULT_IMG = "https://via.placeholder.com/300x200?text=No+Image+Available";
 
         /* --- Live AI Chat Functionality (Powered by Groq) --- */
-        const GROQ_API_KEY = "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"; // Starts with gsk_...
+        const GROQ_API_KEY = "PASTE_YOUR_GROQ_KEY_HERE"; 
 
         async function handleAiChatSubmit(event) {
             if (event) event.preventDefault();
@@ -583,17 +644,14 @@
 
             if (!userText) return;
 
-            // Render User Bubble
             appendChatMessage("user", userText);
             input.value = "";
 
-            // Add user message to conversation history in OpenAI/Groq format
             conversationHistory.push({ role: "user", content: userText });
 
             submitBtn.disabled = true;
             submitBtn.innerText = "Thinking...";
 
-            // Append loading indicator bubble
             const loadingBubble = appendChatMessage("ai", "Generating response...");
 
             try {
@@ -614,8 +672,6 @@
                 if (response.ok && data.choices && data.choices[0]?.message?.content) {
                     const aiResponseText = data.choices[0].message.content;
                     loadingBubble.innerText = aiResponseText;
-                    
-                    // Save model response to context history
                     conversationHistory.push({ role: "assistant", content: aiResponseText });
                 } else {
                     const errDetail = data.error?.message || "Unable to retrieve response.";
@@ -644,7 +700,7 @@
             chatContainer.appendChild(msgDiv);
             chatContainer.scrollTop = chatContainer.scrollHeight;
 
-            return bubbleDiv; // Return bubble reference for live updating
+            return bubbleDiv;
         }
 
         let mockDatabase = {
@@ -693,9 +749,11 @@
                     firebase.auth().onAuthStateChanged((user) => {
                         if (user) {
                             currentUserSessionEmail = user.email;
-                            handleSuccessfulLogin(user.email);
+                            currentUserDisplayName = user.displayName || user.email;
+                            handleSuccessfulLogin(user);
                         } else {
                             currentUserSessionEmail = "";
+                            currentUserDisplayName = "";
                             handleRequiredLogin();
                         }
                     });
@@ -729,9 +787,12 @@
             });
         }
 
-        function handleSuccessfulLogin(emailText) {
+        function handleSuccessfulLogin(user) {
+            const emailText = user.email || "";
+            const displayName = user.displayName || emailText;
+
             document.getElementById('authGate').style.display = 'none';
-            document.getElementById('terminalUserHandle').innerText = emailText;
+            document.getElementById('terminalUserHandle').innerText = displayName;
             document.getElementById('adminSidebarLink').style.display = 'block';
             
             if (emailText.toLowerCase() === "damnbuilders_official" || emailText.toLowerCase() === "official@damnbuilders.com" || emailText.toLowerCase() === "nz") {
@@ -824,17 +885,31 @@
 
         function renderMarketplace() {
             const display = document.getElementById('marketplaceProductsDisplay');
+            const countLabel = document.getElementById('filterCountLabel');
+            const sortVal = document.getElementById('marketSortOrder').value;
+
             display.innerHTML = "";
             const currentFavs = JSON.parse(localStorage.getItem('matoc_fav_ledger'));
 
-            const filteredProducts = mockDatabase.products.filter(p => {
+            // 1. Filter Logic
+            let filteredProducts = mockDatabase.products.filter(p => {
                 if (activeMarketplaceFilter === "favorites") return currentFavs.includes(p.id);
-                if (activeMarketplaceFilter !== "all") return p.category === activeMarketplaceFilter;
+                if (activeMarketplaceFilter === "official") return p.type === "official";
+                if (activeMarketplaceFilter === "used") return p.type === "peer";
                 return true;
             });
 
-            if(filteredProducts.length === 0) {
-                display.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--text-muted);">No active nodes found matching parameters.</div>`;
+            // 2. Sorting Logic
+            if (sortVal === "price-asc") {
+                filteredProducts.sort((a, b) => Number(a.price) - Number(b.price));
+            } else if (sortVal === "price-desc") {
+                filteredProducts.sort((a, b) => Number(b.price) - Number(a.price));
+            }
+
+            countLabel.innerText = `${filteredProducts.length} Asset${filteredProducts.length === 1 ? '' : 's'} Available`;
+
+            if (filteredProducts.length === 0) {
+                display.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--text-muted);">No hardware assets found matching criteria.</div>`;
                 return;
             }
 
@@ -861,7 +936,7 @@
                         <img src="${escapeHTML(imgSource)}" class="card-img" alt="Product Image" onerror="this.src='${DEFAULT_IMG}'">
                     </div>
 
-                    <div style="font-size:10px; color:var(--primary); font-weight:700; text-transform:uppercase; margin-bottom:2px;">${escapeHTML(p.category || 'general')}</div>
+                    <div style="font-size:10px; color:var(--primary); font-weight:700; text-transform:uppercase; margin-bottom:2px;">Hardware Component</div>
                     <h3 style="margin: 0 0 8px 0; font-size: 16px; font-weight: 600;">${escapeHTML(p.title)}</h3>
                     <p style="font-weight: 700; color: var(--primary); margin: 0 0 16px 0;">$${escapeHTML(String(p.price))}</p>
                     <a href="https://ig.me/m/${encodeURIComponent(targetedSocial)}" target="_blank" class="omnifix-btn" style="width:100%; padding: 10px; font-size:13px; text-decoration:none; text-align:center; display:block; box-sizing:border-box;">Contact Node</a>
@@ -898,7 +973,6 @@
             
             const name = document.getElementById('p2pProdName').value.trim();
             const price = document.getElementById('p2pProdPrice').value;
-            const category = document.getElementById('p2pProdCategory').value;
             const fileInput = document.getElementById('p2pProdFile');
             const social = document.getElementById('p2pProdSocial').value.trim();
             const btn = document.getElementById('p2pSubmitBtn');
@@ -915,7 +989,7 @@
                 const newProduct = {
                     title: name,
                     price: parseFloat(price),
-                    category: category,
+                    category: "hardware",
                     imageUrl: imageUrl,
                     socialHandle: social,
                     ownerEmail: currentUserSessionEmail,
@@ -963,7 +1037,6 @@
 
             const name = document.getElementById('offProdName').value.trim();
             const price = document.getElementById('offProdPrice').value;
-            const category = document.getElementById('offProdCategory').value;
             const fileInput = document.getElementById('offProdFile');
             const social = document.getElementById('offProdSocial').value.trim();
             const btn = document.getElementById('offSubmitBtn');
@@ -980,7 +1053,7 @@
                 const newOfficialProduct = {
                     title: name,
                     price: parseFloat(price),
-                    category: category,
+                    category: "hardware",
                     imageUrl: imageUrl,
                     socialHandle: social,
                     ownerEmail: currentUserSessionEmail,
@@ -1006,40 +1079,64 @@
         function toggleAuthState() {
             isSignUpState = !isSignUpState;
             const title = document.getElementById('authTitle');
-            const button = document.getElementById('authPrimaryBtn'), toggleLink = document.getElementById('authStateToggle');
+            const button = document.getElementById('authPrimaryBtn');
+            const toggleLink = document.getElementById('authStateToggle');
+            const usernameContainer = document.getElementById('usernameInputContainer');
+
             if (isSignUpState) {
                 title.innerText = "Register Account";
-                button.innerText = "Register"; toggleLink.innerText = "Existing account? Sign in here";
+                button.innerText = "Register"; 
+                toggleLink.innerText = "Existing account? Sign in here";
+                usernameContainer.style.display = "flex";
             } else {
                 title.innerText = "Customer Login";
-                button.innerText = "Login"; toggleLink.innerText = "Need an account? Register credentials";
+                button.innerText = "Login"; 
+                toggleLink.innerText = "Need an account? Register credentials";
+                usernameContainer.style.display = "none";
             }
         }
 
         async function executeEmailAuth() {
             const email = document.getElementById('authEmail').value.trim();
             const password = document.getElementById('authPassword').value;
-            if (!email || !password) { deployNotificationGui("Input entries cannot be blank."); return; }
+            const username = document.getElementById('authUsername').value.trim();
+
+            if (!email || !password) { 
+                deployNotificationGui("Input entries cannot be blank."); 
+                return; 
+            }
             
-            if (email.includes('@') === false) {
-                deployNotificationGui("Syntax error. Standard format required.");
+            if (!email.includes('@')) {
+                deployNotificationGui("Syntax error. Standard email format required.");
                 return;
             }
 
             if (isSignUpState) {
-                firebase.auth().createUserWithEmailAndPassword(email, password)
-                    .then((userCredential) => {
-                        deployNotificationGui("Credentials mapped and synchronized.");
-                        currentUserSessionEmail = userCredential.user.email;
-                        handleSuccessfulLogin(userCredential.user.email);
-                    })
-                    .catch(err => deployNotificationGui("Creation fault: " + err.message));
+                if (!username) {
+                    deployNotificationGui("Please specify a username to register.");
+                    return;
+                }
+
+                try {
+                    const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
+                    await userCredential.user.updateProfile({
+                        displayName: username
+                    });
+
+                    deployNotificationGui("Account and username created successfully!");
+                    currentUserSessionEmail = userCredential.user.email;
+                    currentUserDisplayName = username;
+                    handleSuccessfulLogin(userCredential.user);
+                } catch (err) {
+                    deployNotificationGui("Creation fault: " + err.message);
+                }
             } else {
                 firebase.auth().signInWithEmailAndPassword(email, password)
                     .then((userCredential) => {
                         deployNotificationGui("Session token generated.");
                         currentUserSessionEmail = userCredential.user.email;
-                        handleSuccessfulLogin(userCredential.user.email);
+                        currentUserDisplayName = userCredential.user.displayName || userCredential.user.email;
+                        handleSuccessfulLogin(userCredential.user);
                     })
                     .catch(err => deployNotificationGui("Access Denied: " + err.message));
             }
