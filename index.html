@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MATOC PC-BUILDERS</title>
+    <title>MATOC BUILDERS</title>
    
     <link rel="manifest" href="manifest.json">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -285,6 +285,8 @@
         .omnifix-btn:disabled { opacity: 0.5; cursor: not-allowed; }
         .btn-danger { background: #ef4444 !important; color: #fff !important; }
         .btn-danger:hover { background: #dc2626 !important; }
+        .btn-secondary { background: var(--border); color: var(--text); }
+        .btn-secondary:hover { opacity: 0.9; }
         
         .owner-container { padding: 12px 0; }
         .owner-subtext { font-size: 12px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; font-weight: 700; letter-spacing: 0.5px; }
@@ -317,6 +319,9 @@
         .badge { position: absolute; top: 16px; left: 16px; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; z-index: 2; }
         .badge.used { background: rgba(230, 126, 34, 0.9); color: #fff; }
         .badge.official { background: rgba(37, 99, 235, 0.9); color: #fff; }
+        .badge.status-pending { background: #f59e0b; color: #fff; }
+        .badge.status-accepted { background: #10b981; color: #fff; }
+        .badge.status-declined { background: #ef4444; color: #fff; }
         
         .insta-btn { background: #e1306c; color: white !important; border: none; padding: 12px; border-radius: var(--radius); font-weight: 600; cursor: pointer; font-size: 13px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; margin-top: 10px; width: 100%; box-sizing: border-box; transition: opacity 0.2s; }
         .insta-btn:hover { opacity: 0.9; }
@@ -380,6 +385,48 @@
             font-weight: 600;
         }
 
+        /* Modal Popup Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(8px);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            width: 100%;
+            max-width: 480px;
+            padding: 28px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            position: relative;
+        }
+
+        /* Message / Offer Item Cards */
+        .offer-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
         /* AI Chat Bubble Styles */
         .chat-msg {
             margin-bottom: 12px;
@@ -419,6 +466,31 @@
         <span id="guiAlertMessage">Initialising system...</span>
     </div>
 
+    <!-- Direct Messaging & Offer Modal -->
+    <div class="modal-overlay" id="offerModal">
+        <div class="modal-card">
+            <h3 id="offerModalTitle" style="margin: 0 0 6px 0; font-size: 18px; font-weight: 700;">Send Direct Inquiry</h3>
+            <p id="offerModalProductText" style="color: var(--text-muted); font-size: 13px; margin: 0 0 16px 0;">Item: ...</p>
+            
+            <form onsubmit="submitOfferInquiry(event)">
+                <input type="hidden" id="offerProductId">
+                <input type="hidden" id="offerSellerEmail">
+                <input type="hidden" id="offerProductTitle">
+
+                <label style="font-size: 12px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Your Offer Price ($) (Optional)</label>
+                <input type="number" id="offerPriceInput" placeholder="Leave blank if just sending a message" min="0" step="any">
+
+                <label style="font-size: 12px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Message / Note</label>
+                <textarea id="offerMessageInput" rows="3" placeholder="e.g. Is this item still available? Can we meet locally?" required></textarea>
+
+                <div style="display: flex; gap: 10px; margin-top: 8px;">
+                    <button type="submit" id="sendOfferBtn" class="omnifix-btn" style="flex: 1;">Send Offer</button>
+                    <button type="button" class="omnifix-btn btn-secondary" onclick="closeOfferModal()" style="flex: 1;">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <div class="auth-gate" id="authGate">
         <div class="auth-card" id="loginFormContainer">
             <div class="auth-user-icon">
@@ -440,7 +512,6 @@
                 <input type="password" id="authPassword" class="auth-clean-input" placeholder="Password">
             </div>
 
-            <!-- Username Input Field (hidden by default on login, visible on signup) -->
             <div class="auth-input-wrapper" id="usernameInputContainer" style="display: none;">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                 <input type="text" id="authUsername" class="auth-clean-input" placeholder="Choose a Username">
@@ -484,6 +555,7 @@
 
         <div class="sidebar-section-title">Navigation</div>
         <div class="nav-item active-nav" id="nav-marketView" onclick="switchTab('marketView')">Browse Marketplace</div>
+        <div class="nav-item" id="nav-offersView" onclick="switchTab('offersView')">📩 Messages & Offers</div>
         <div class="nav-item" id="nav-aiChatView" onclick="switchTab('aiChatView')">🤖 Live AI Chat</div>
         <div class="nav-item" id="nav-p2pSellView" onclick="switchTab('p2pSellView')">Submit Used Asset</div>
         <div class="nav-item" id="nav-ownerProfileView" onclick="switchTab('ownerProfileView')">Profile Dossier</div>
@@ -503,7 +575,6 @@
         <h2 style="margin: 0 0 6px 0; font-size: 24px; font-weight: 700;">Marketplace Stream</h2>
         <p style="color:var(--text-muted); font-size:14px; margin: 0 0 20px 0;">Authorised brand releases alongside peer-reviewed hardware configurations.</p>
         
-        <!-- Enhanced Filter Bar & Sort Controls -->
         <div class="filter-controls-wrapper">
             <div class="filter-bar" id="marketplaceFilterBar">
                 <button class="filter-btn active" onclick="setMarketplaceFilter('all', this)">All Nodes</button>
@@ -526,14 +597,34 @@
         </div>
     </div>
 
+    <!-- Direct Messages & Offers Tab View -->
+    <div class="app-view" id="offersView">
+        <h2 style="margin: 0 0 6px 0; font-size: 24px; font-weight: 700;">Messages & Direct Offers</h2>
+        <p style="color:var(--text-muted); font-size:14px; margin: 0 0 20px 0;">Track inquiries sent and received for marketplace listings.</p>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px;">
+            <div>
+                <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 12px;">Received Inquiries & Offers</h3>
+                <div id="receivedOffersList">
+                    <p style="color: var(--text-muted); font-size: 13px;">No inquiries received yet.</p>
+                </div>
+            </div>
+
+            <div>
+                <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 12px;">Sent Inquiries</h3>
+                <div id="sentOffersList">
+                    <p style="color: var(--text-muted); font-size: 13px;">No inquiries sent yet.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Live AI Chat View -->
     <div class="app-view" id="aiChatView">
         <h2 style="margin: 0 0 6px 0; font-size: 24px; font-weight: 700;">Groq AI Assistant</h2>
         <p style="color:var(--text-muted); font-size:14px; margin: 0 0 20px 0;">Powered by Llama 3.3 70B via Groq.</p>
 
         <div style="background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; max-width: 700px; display: flex; flex-direction: column; height: 500px;">
-            
-            <!-- Chat Container -->
             <div id="aiChatContainer" style="flex: 1; overflow-y: auto; padding-right: 6px; margin-bottom: 12px;">
                 <div class="chat-msg ai">
                     <div class="chat-bubble">
@@ -542,7 +633,6 @@
                 </div>
             </div>
 
-            <!-- Chat Input Form -->
             <form onsubmit="handleAiChatSubmit(event)" style="display: flex; gap: 8px; margin: 0;">
                 <input type="text" id="aiQueryInput" placeholder="Type your message..." style="margin: 0; flex: 1;" required autocomplete="off">
                 <button type="submit" id="aiSubmitBtn" class="omnifix-btn" style="white-space: nowrap;">Send</button>
@@ -631,8 +721,7 @@
         let conversationHistory = [];
         const DEFAULT_IMG = "https://via.placeholder.com/300x200?text=No+Image+Available";
 
-        /* --- Live AI Chat Functionality (Powered by Groq) --- */
-        const GROQ_API_KEY = " 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"; 
+        const GROQ_API_KEY = "PASTE_YOUR_GROQ_KEY_HERE"; 
 
         async function handleAiChatSubmit(event) {
             if (event) event.preventDefault();
@@ -705,7 +794,8 @@
 
         let mockDatabase = {
             products: [],
-            games: []
+            games: [],
+            offers: []
         };
 
         const firebaseConfig = {
@@ -785,6 +875,17 @@
                 }
                 renderGameVault();
             });
+
+            firebase.database().ref('offers').on('value', (snapshot) => {
+                const data = snapshot.val();
+                mockDatabase.offers = [];
+                if (data) {
+                    Object.keys(data).forEach(key => {
+                        mockDatabase.offers.push({ id: key, ...data[key] });
+                    });
+                }
+                renderOffersAndMessages();
+            });
         }
 
         function handleSuccessfulLogin(user) {
@@ -805,6 +906,7 @@
                 deployNotificationGui("Authentication access verified.");
             }
             renderMarketplace();
+            renderOffersAndMessages();
         }
 
         function handleRequiredLogin() {
@@ -883,6 +985,135 @@
             }
         }
 
+        /* --- In-App Offer & Direct Message Modal Functions --- */
+        function openOfferModal(productId, productTitle, sellerEmail) {
+            if (!currentUserSessionEmail) {
+                deployNotificationGui("Please log in to send offers or messages.");
+                return;
+            }
+            document.getElementById('offerProductId').value = productId;
+            document.getElementById('offerProductTitle').value = productTitle;
+            document.getElementById('offerSellerEmail').value = sellerEmail || 'official@damnbuilders.com';
+            document.getElementById('offerModalProductText').innerText = `Item: ${productTitle}`;
+            document.getElementById('offerPriceInput').value = '';
+            document.getElementById('offerMessageInput').value = '';
+
+            document.getElementById('offerModal').classList.add('active');
+        }
+
+        function closeOfferModal() {
+            document.getElementById('offerModal').classList.remove('active');
+        }
+
+        async function submitOfferInquiry(event) {
+            event.preventDefault();
+            const productId = document.getElementById('offerProductId').value;
+            const productTitle = document.getElementById('offerProductTitle').value;
+            const sellerEmail = document.getElementById('offerSellerEmail').value;
+            const offerPrice = document.getElementById('offerPriceInput').value;
+            const message = document.getElementById('offerMessageInput').value.trim();
+            const sendBtn = document.getElementById('sendOfferBtn');
+
+            if (!message) return;
+
+            try {
+                sendBtn.disabled = true;
+                sendBtn.innerText = "Sending...";
+
+                const newOffer = {
+                    productId,
+                    productTitle,
+                    sellerEmail: sellerEmail.toLowerCase(),
+                    buyerEmail: currentUserSessionEmail.toLowerCase(),
+                    buyerName: currentUserDisplayName || currentUserSessionEmail,
+                    offerPrice: offerPrice ? parseFloat(offerPrice) : null,
+                    message,
+                    status: 'pending',
+                    createdAt: Date.now()
+                };
+
+                await firebase.database().ref('offers').push(newOffer);
+                deployNotificationGui("Inquiry sent successfully!");
+                closeOfferModal();
+                switchTab('offersView');
+            } catch (err) {
+                deployNotificationGui("Error sending offer: " + err.message);
+            } finally {
+                sendBtn.disabled = false;
+                sendBtn.innerText = "Send Offer";
+            }
+        }
+
+        async function updateOfferStatus(offerId, newStatus) {
+            try {
+                await firebase.database().ref(`offers/${offerId}`).update({ status: newStatus });
+                deployNotificationGui(`Offer status updated to: ${newStatus.toUpperCase()}`);
+            } catch (err) {
+                deployNotificationGui("Error updating status: " + err.message);
+            }
+        }
+
+        function renderOffersAndMessages() {
+            const receivedContainer = document.getElementById('receivedOffersList');
+            const sentContainer = document.getElementById('sentOffersList');
+
+            if (!currentUserSessionEmail) return;
+
+            const userEmail = currentUserSessionEmail.toLowerCase();
+            const receivedOffers = mockDatabase.offers.filter(o => o.sellerEmail === userEmail);
+            const sentOffers = mockDatabase.offers.filter(o => o.buyerEmail === userEmail);
+
+            // Render Received
+            if (receivedOffers.length === 0) {
+                receivedContainer.innerHTML = `<p style="color: var(--text-muted); font-size: 13px;">No inquiries received yet.</p>`;
+            } else {
+                receivedContainer.innerHTML = "";
+                receivedOffers.forEach(o => {
+                    const priceText = o.offerPrice ? `<p style="margin:2px 0; font-weight:700; color:var(--primary);">Proposed Price: $${o.offerPrice}</p>` : '';
+                    const card = document.createElement('div');
+                    card.className = "offer-card";
+                    card.innerHTML = `
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span style="font-size:12px; font-weight:700; color:var(--text-muted);">${escapeHTML(o.buyerName)}</span>
+                            <span class="badge status-${o.status}" style="position:static;">${o.status}</span>
+                        </div>
+                        <h4 style="margin: 4px 0; font-size: 15px;">${escapeHTML(o.productTitle)}</h4>
+                        ${priceText}
+                        <p style="margin: 4px 0; font-size: 13px; color: var(--text-muted);">${escapeHTML(o.message)}</p>
+                        ${o.status === 'pending' ? `
+                            <div style="display:flex; gap:8px; margin-top:8px;">
+                                <button class="omnifix-btn" style="padding:6px 12px; font-size:12px; flex:1;" onclick="updateOfferStatus('${o.id}', 'accepted')">Accept</button>
+                                <button class="omnifix-btn btn-danger" style="padding:6px 12px; font-size:12px; flex:1;" onclick="updateOfferStatus('${o.id}', 'declined')">Decline</button>
+                            </div>
+                        ` : ''}
+                    `;
+                    receivedContainer.appendChild(card);
+                });
+            }
+
+            // Render Sent
+            if (sentOffers.length === 0) {
+                sentContainer.innerHTML = `<p style="color: var(--text-muted); font-size: 13px;">No inquiries sent yet.</p>`;
+            } else {
+                sentContainer.innerHTML = "";
+                sentOffers.forEach(o => {
+                    const priceText = o.offerPrice ? `<p style="margin:2px 0; font-weight:700; color:var(--primary);">Proposed Price: $${o.offerPrice}</p>` : '';
+                    const card = document.createElement('div');
+                    card.className = "offer-card";
+                    card.innerHTML = `
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span style="font-size:12px; font-weight:700; color:var(--text-muted);">To: ${escapeHTML(o.sellerEmail)}</span>
+                            <span class="badge status-${o.status}" style="position:static;">${o.status}</span>
+                        </div>
+                        <h4 style="margin: 4px 0; font-size: 15px;">${escapeHTML(o.productTitle)}</h4>
+                        ${priceText}
+                        <p style="margin: 4px 0; font-size: 13px; color: var(--text-muted);">${escapeHTML(o.message)}</p>
+                    `;
+                    sentContainer.appendChild(card);
+                });
+            }
+        }
+
         function renderMarketplace() {
             const display = document.getElementById('marketplaceProductsDisplay');
             const countLabel = document.getElementById('filterCountLabel');
@@ -891,7 +1122,6 @@
             display.innerHTML = "";
             const currentFavs = JSON.parse(localStorage.getItem('matoc_fav_ledger'));
 
-            // 1. Filter Logic
             let filteredProducts = mockDatabase.products.filter(p => {
                 if (activeMarketplaceFilter === "favorites") return currentFavs.includes(p.id);
                 if (activeMarketplaceFilter === "official") return p.type === "official";
@@ -899,7 +1129,6 @@
                 return true;
             });
 
-            // 2. Sorting Logic
             if (sortVal === "price-asc") {
                 filteredProducts.sort((a, b) => Number(a.price) - Number(b.price));
             } else if (sortVal === "price-desc") {
@@ -928,6 +1157,10 @@
                     ? `<button class="omnifix-btn btn-danger" style="width:100%; padding: 10px; font-size:13px; margin-top:8px;" onclick="deleteListing('${p.id}', event)">Delete Listing</button>` 
                     : '';
 
+                const offerActionHtml = (!isOwner) ? `
+                    <button class="omnifix-btn" style="width:100%; padding: 10px; font-size:13px; margin-top:8px; background: #059669;" onclick="openOfferModal('${p.id}', '${escapeHTML(p.title)}', '${p.ownerEmail || ''}')">💬 Make Offer / Message</button>
+                ` : '';
+
                 card.innerHTML = `
                     <span class="badge ${badgeClass}">${badgeText}</span>
                     <button onclick="toggleLocalFavorite('${p.id}', event)" style="position:absolute; top:16px; right:16px; background:rgba(0,0,0,0.4); border:none; border-radius:50%; width:28px; height:28px; font-size:16px; cursor:pointer; color:${isItemFavorited ? '#fbbf24' : '#fff'}; z-index:2; display:flex; align-items:center; justify-content:center;">★</button>
@@ -939,7 +1172,8 @@
                     <div style="font-size:10px; color:var(--primary); font-weight:700; text-transform:uppercase; margin-bottom:2px;">Hardware Component</div>
                     <h3 style="margin: 0 0 8px 0; font-size: 16px; font-weight: 600;">${escapeHTML(p.title)}</h3>
                     <p style="font-weight: 700; color: var(--primary); margin: 0 0 16px 0;">$${escapeHTML(String(p.price))}</p>
-                    <a href="https://ig.me/m/${encodeURIComponent(targetedSocial)}" target="_blank" class="omnifix-btn" style="width:100%; padding: 10px; font-size:13px; text-decoration:none; text-align:center; display:block; box-sizing:border-box;">Contact Node</a>
+                    <a href="https://ig.me/m/${encodeURIComponent(targetedSocial)}" target="_blank" class="omnifix-btn" style="width:100%; padding: 10px; font-size:13px; text-decoration:none; text-align:center; display:block; box-sizing:border-box;">Instagram Contact</a>
+                    ${offerActionHtml}
                     ${deleteActionHtml}
                 `;
                 display.appendChild(card);
